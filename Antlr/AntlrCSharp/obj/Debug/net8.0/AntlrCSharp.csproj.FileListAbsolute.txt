@@ -1,0 +1,17 @@
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\bin\Debug\net8.0\AntlrCSharp.exe
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\bin\Debug\net8.0\AntlrCSharp.deps.json
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\bin\Debug\net8.0\AntlrCSharp.runtimeconfig.json
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\bin\Debug\net8.0\AntlrCSharp.dll
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\bin\Debug\net8.0\AntlrCSharp.pdb
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\bin\Debug\net8.0\Antlr4.Runtime.Standard.dll
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.csproj.AssemblyReference.cache
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.GeneratedMSBuildEditorConfig.editorconfig
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.AssemblyInfoInputs.cache
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.AssemblyInfo.cs
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.csproj.CoreCompileInputs.cache
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.csproj.CopyComplete
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.dll
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\refint\AntlrCSharp.dll
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.pdb
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.genruntimeconfig.cache
+C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\ref\AntlrCSharp.dll

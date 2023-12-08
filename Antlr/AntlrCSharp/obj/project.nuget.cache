@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "cNZlqz60zeH0WF2Cjdr6uSOCk6OBVkBZcwYvsnlUSD7+Q6yQfjHCwlFJaot+/nC4VcNgu5JaT65jz28662sM3A==",
+  "success": true,
+  "projectFilePath": "C:\\code\\github\\Bubblegum\\Antlr\\AntlrCSharp\\AntlrCSharp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\rushe\\.nuget\\packages\\antlr4.runtime.standard\\4.13.1\\antlr4.runtime.standard.4.13.1.nupkg.sha512"
+  ],
+  "logs": []
+}
