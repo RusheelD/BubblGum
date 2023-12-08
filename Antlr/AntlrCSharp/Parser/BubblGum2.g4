@@ -2,9 +2,8 @@ grammar BubblGum2;
 
 
 
-// program: (expression | function | class)* EOF;
-// program: ((ASSIGN | GUM | RECIPE | FLAVOR)* EOF) | program2;
-program: variable_assignment EOF; //(function | class | statement)* EOF;
+ program: (statement)* EOF;
+//program: variable_assignment EOF; //(function | class | statement)* EOF;
 
 //
 //class: GUM IDENTIFIER LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
@@ -25,29 +24,40 @@ program: variable_assignment EOF; //(function | class | statement)* EOF;
 ////scope_body: LEFT_CURLY_BRACKET (statement)* RIGHT_CURLY_BRACKET;
 ////
 //////
-//////statement: base_statement | print_statement | debug_statement | loop | if_statement;
+
+statement: base_statement; //| print_statement | debug_statement | loop | if_statement;
 //////print_statement:base_statement PRINT;
 //////debug_statement: base_statement DEBUG;
 //////
-//////// anything that can be printed out or debugged
-//////base_statement: variable_declaration | variable_declaration_assignment;
+// anything that can be printed out or debugged
+base_statement: variable_declaration | variable_declaration_assignment | variable_assignment;
 //////
 //////// return_statement: (POP expression (THICK_ARROW (INTEGER_LITERAL | IDENTIFIER))?) | (POP FLAVORS IDENTIFIER IN identifier THICK_ARROW POPSTREAM);
-//////variable_declaration_assignment: type IDENTIFIER ASSIGN expression;
-//////variable_declaration: type IDENTIFIER;
+variable_declaration_assignment: type IDENTIFIER ASSIGN expression;
+variable_declaration: type IDENTIFIER;
 
 variable_assignment: identifier ASSIGN expression;
+
+// operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
 expression: LEFT_PAREN expression RIGHT_PAREN |
-             expression (MULTIPLY | DIVIDE) expression |
-              expression (PLUS | MINUS) expression |
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET |
+              (PLUS_PLUS | MINUS_MINUS) expression |
+              expression (PLUS_PLUS | MINUS_MINUS) |
+              (NOT | NOT_OP) expression|
+              expression (POWER | MODULO) expression |
+              expression (MULTIPLY | DIVIDE) expression|
+              expression (PLUS | MINUS) expression |
+              expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
+              expression (GT_EQ | LT_EQ | LEFT_ANGLE_BRACKET | RIGHT_ANGLE_BRACKET) expression |
+              expression (EQUALS | NOT_EQ_1 | NOT_EQ_2) expression |
+              expression (AND | AND_OP) expression |
+              expression (XOR | XOR_OP) expression |
+              expression (OR | OR_OP) expression |
               boolean |
               (primitive_pack | (primitive PACK)) LEFT_PAREN expression RIGHT_PAREN |
-              NOT expression |
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN |
               expression THIN_ARROW SIZE |
               identifier |
-              INTEGER_LITERAL |
               number;
 
 ////term:  term LEFT_SQUARE_BRACKET term RIGHT_SQUARE_BRACKET |
@@ -62,13 +72,13 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
 //      number;
 
 //
-number: ((ARITHMETIC_OPERATOR)? INTEGER_LITERAL) | ((ARITHMETIC_OPERATOR)? INTEGER_LITERAL DOT INTEGER_LITERAL);
+number: ((PLUS | MINUS)? INTEGER_LITERAL) | ((PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL);
 boolean: YUP | NOPE;
 
 //// identifier: any identifier you can find in code
 identifier: (IDENTIFIER | THIS) (THIN_ARROW IDENTIFIER)*;
 //
-//type: primitive | primitive PACK | primitive_pack | IDENTIFIER;
+type: primitive | primitive PACK | primitive_pack | IDENTIFIER;
 primitive: FLAVOR | SUGAR | CARB | CAL | KCAL | YUM;
 primitive_pack: FLAVORPACK | SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK;
 ////operators: PLUS | MINUS | POWER | MULTIPLY | DIVIDE | LEFT_SHIFT | RIGHT_SHIFT | MODULO | BINARY_OPERATOR
@@ -151,18 +161,21 @@ NOT_EQ_2 : '~=';
 AND_OP: '&';
 OR_OP: '|';
 NOT_OP: '~';
+XOR_OP: '^';
 PLUS: '+';
 MINUS: '-';
 POWER: '**';
 MULTIPLY: '*';
 DIVIDE: '/';
 MODULO: '%';
+PLUS_PLUS: '++';
+MINUS_MINUS: '--';
 THIN_ARROW: '->';
 THICK_ARROW: '=>';
 
 IDENTIFIER: [a-zA-Z_] [a-zA-Z_0-9]*;
 LETTER: [a-zA-Z];
-INTEGER_LITERAL: ([0] | ([1-9] [0-9]*));
+INTEGER_LITERAL: (([0-9] [0-9]*));
 
 WHITE: [\r\n\t ] -> channel(HIDDEN);
 EOL: '\r\n' -> channel(HIDDEN);
