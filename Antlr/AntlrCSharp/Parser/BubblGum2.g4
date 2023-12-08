@@ -1,11 +1,9 @@
 grammar BubblGum2;
 
 
-
  program: (statement)* EOF;
-//program: variable_assignment EOF; //(function | class | statement)* EOF;
+//program: (function | class | statement)* EOF;
 
-//
 //class: GUM IDENTIFIER LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
 //class_member: visibility? (function | variable_declaration | variable_declaration_assignment);
 //visibility: BOLD | SUBTLE;
@@ -15,33 +13,35 @@ grammar BubblGum2;
 //parameters: LEFT_PAREN ((type IDENTIFIER)? | (type IDENTIFIER (COMMA type IDENTIFIER)*)) RIGHT_PAREN;
 //outputs: LEFT_ANGLE_BRACKET ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*)) RIGHT_ANGLE_BRACKET;
 //single_output: type;
-////
-////if_statement: IF LEFT_PAREN expression RIGHT_PAREN scope_body (ELIF LEFT_PAREN expression RIGHT_PAREN scope_body)* (ELSE scope_body)?;
-////loop: while_loop | repeat_loop | pop_loop;
-////while_loop: WHILE LEFT_PAREN expression RIGHT_PAREN scope_body;
-////repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (INTEGER_LITERAL | expression) COMMA (INTEGER_LITERAL | expression) RIGHT_PAREN scope_body;
-////pop_loop: POP FLAVORS IDENTIFIER IN identifier THICK_ARROW scope_body;
-////scope_body: LEFT_CURLY_BRACKET (statement)* RIGHT_CURLY_BRACKET;
-////
-//////
+
+//if_statement: IF LEFT_PAREN expression RIGHT_PAREN scope_body (ELIF LEFT_PAREN expression RIGHT_PAREN scope_body)* (ELSE scope_body)?;
+//loop: while_loop | repeat_loop | pop_loop;
+//while_loop: WHILE LEFT_PAREN expression RIGHT_PAREN scope_body;
+//repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (INTEGER_LITERAL | expression) COMMA (INTEGER_LITERAL | expression) RIGHT_PAREN scope_body;
+//pop_loop: POP FLAVORS IDENTIFIER IN identifier THICK_ARROW scope_body;
+//scope_body: LEFT_CURLY_BRACKET (statement)* RIGHT_CURLY_BRACKET;
 
 statement: base_statement; //| print_statement | debug_statement | loop | if_statement;
-//////print_statement:base_statement PRINT;
-//////debug_statement: base_statement DEBUG;
-//////
+//print_statement:base_statement PRINT;
+//debug_statement: base_statement DEBUG;
+
 // anything that can be printed out or debugged
 base_statement: variable_declaration | variable_declaration_assignment | variable_assignment;
-//////
-//////// return_statement: (POP expression (THICK_ARROW (INTEGER_LITERAL | IDENTIFIER))?) | (POP FLAVORS IDENTIFIER IN identifier THICK_ARROW POPSTREAM);
+// return_statement: (POP expression (THICK_ARROW (INTEGER_LITERAL | IDENTIFIER))?) | (POP FLAVORS IDENTIFIER IN identifier THICK_ARROW POPSTREAM);
 variable_declaration_assignment: type IDENTIFIER ASSIGN expression;
 variable_declaration: type IDENTIFIER;
 
-variable_assignment: identifier ASSIGN expression;
+variable_assignment: expression ASSIGN expression;
 
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
 expression: LEFT_PAREN expression RIGHT_PAREN |
-              expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET |
-              (PLUS_PLUS | MINUS_MINUS) expression |
+              expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
+              expression THIN_ARROW SIZE | // array size access
+              expression get_member | // member access
+              (primitive_pack | (primitive PACK)) LEFT_PAREN expression RIGHT_PAREN | // new array
+              expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call
+              expression LEFT_PAREN RIGHT_PAREN | // new object
+              (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
               expression (PLUS_PLUS | MINUS_MINUS) |
               (NOT | NOT_OP) expression|
               expression (POWER | MODULO) expression |
@@ -52,38 +52,21 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression (EQUALS | NOT_EQ_1 | NOT_EQ_2) expression |
               expression (AND | AND_OP) expression |
               expression (XOR | XOR_OP) expression |
-              expression (OR | OR_OP) expression |
+              expression (OR | OR_OP) expression | // end of operator precedence
               boolean |
-              (primitive_pack | (primitive PACK)) LEFT_PAREN expression RIGHT_PAREN |
-              expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN |
-              expression THIN_ARROW SIZE |
               identifier |
               number;
 
-////term:  term LEFT_SQUARE_BRACKET term RIGHT_SQUARE_BRACKET |
-//      boolean |
-//      (primitive_pack | (primitive PACK)) LEFT_PAREN term RIGHT_PAREN |
-//      NOT term |
-//      LEFT_PAREN term RIGHT_PAREN |
-//      term LEFT_PAREN (term? | (term (COMMA term)*))  RIGHT_PAREN |
-//      term THIN_ARROW SIZE |
-//      identifier |
-//      INTEGER_LITERAL |
-//      number;
-
-//
 number: ((PLUS | MINUS)? INTEGER_LITERAL) | ((PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL);
 boolean: YUP | NOPE;
 
 //// identifier: any identifier you can find in code
-identifier: (IDENTIFIER | THIS) (THIN_ARROW IDENTIFIER)*;
-//
+identifier: (IDENTIFIER | THIS);
+get_member: (THIN_ARROW IDENTIFIER)+;
+
 type: primitive | primitive PACK | primitive_pack | IDENTIFIER;
 primitive: FLAVOR | SUGAR | CARB | CAL | KCAL | YUM;
 primitive_pack: FLAVORPACK | SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK;
-////operators: PLUS | MINUS | POWER | MULTIPLY | DIVIDE | LEFT_SHIFT | RIGHT_SHIFT | MODULO | BINARY_OPERATOR
-////            | LEFT_ANGLE_BRACKET | RIGHT_ANGLE_BRACKET;
-
 
 /* ------------------------ TOKENS ------------------------*/
 // keywords
@@ -144,11 +127,6 @@ COMMA: ',';
 SEMICOLON: ';';
 COLON: ':';
 DOT: '.';
-//
-//UNARY_OPERATOR: NOT_OP | NOT;
-//OPERATOR: PLUS | MINUS | POWER | MULTIPLY | DIVIDE | LEFT_SHIFT | RIGHT_SHIFT | MODULO | BINARY_OPERATOR
-//            | LEFT_ANGLE_BRACKET | RIGHT_ANGLE_BRACKET;
-//BINARY_OPERATOR: EQUALS | GT_EQ | LT_EQ | NOT_EQ_1 | NOT_EQ_2 | AND_OP | OR_OP | AND | OR;
 
 // OPERATORS
 EQUALS: '=';
