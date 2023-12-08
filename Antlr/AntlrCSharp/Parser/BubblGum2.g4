@@ -37,7 +37,9 @@ variable_declaration_assignment: type IDENTIFIER ASSIGN expression;
 variable_declaration: type IDENTIFIER;
 
         
-variable_assignment: expression ASSIGN expression;
+variable_assignment: expression ASSIGN term;
+
+term: expression;
 
 expression: expression operators expression |
             expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET |
