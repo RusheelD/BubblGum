@@ -6,32 +6,130 @@ grammar BubblGum2;
 
 //class: GUM IDENTIFIER LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
 //class_member: visibility? (function | variable_declaration | variable_declaration_assignment);
-//visibility: BOLD | SUBTLE;
+//visibility: BOLD | SUBTLE | BLAND;
 //function: function_header scope_body;
 //function_header: constructor_header (outputs | single_output)?;
-//constructor_header: ((RECIPE COLON) | RECIPE_COLON) IDENTIFIER parameters;
-//parameters: LEFT_PAREN ((type IDENTIFIER)? | (type IDENTIFIER (COMMA type IDENTIFIER)*)) RIGHT_PAREN;
-//outputs: LEFT_ANGLE_BRACKET ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*)) RIGHT_ANGLE_BRACKET;
-//single_output: type;
+constructor_header: (RECIPE COLON) IDENTIFIER parameters;
+parameters: LEFT_PAREN ((ref_type IDENTIFIER)? | (ref_type IDENTIFIER (COMMA ref_type IDENTIFIER)*)) RIGHT_PAREN;
+outputs: LEFT_ANGLE_BRACKET ((ref_type IDENTIFIER?)? | (ref_type IDENTIFIER? (COMMA ref_type IDENTIFIER?)*)) RIGHT_ANGLE_BRACKET;
+ref_type: type | IDENTIFIER;
 
-//if_statement: IF LEFT_PAREN expression RIGHT_PAREN scope_body (ELIF LEFT_PAREN expression RIGHT_PAREN scope_body)* (ELSE scope_body)?;
-//loop: while_loop | repeat_loop | pop_loop;
-//while_loop: WHILE LEFT_PAREN expression RIGHT_PAREN scope_body;
-//repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (INTEGER_LITERAL | expression) COMMA (INTEGER_LITERAL | expression) RIGHT_PAREN scope_body;
-//pop_loop: POP FLAVORS IDENTIFIER IN identifier THICK_ARROW scope_body;
-//scope_body: LEFT_CURLY_BRACKET (statement)* RIGHT_CURLY_BRACKET;
+/*
 
-statement: base_statement; //| print_statement | debug_statement | loop | if_statement;
-//print_statement:base_statement PRINT;
-//debug_statement: base_statement DEBUG;
+if a:
+    (3 * 4)!
+
+if a = 2:
+   b :: 3
+a :: 3 singl
+
+if b = 2: a :: 3
+
+if b = 2 { a :: 2}
+
+
+if (b = 2) {
+   b :: 3
+   a :: 3
+}elif a:
+    b::3
+    a::3
+
+    
+if (b = 2) {
+   b :: 3
+   a :: 3
+}elif a {b :: 3}
+else:
+    a::3
+    b::3
+
+    
+if (b = 2) {
+   b :: 3
+   a :: 3
+}elif a {b :: 3}
+b:: 2
+else:
+    a::3
+    b::3
+
+while a:
+    b :: c
+    c::d
+
+while t {
+    c :: d
+    e::f
+}
+a : repeatUp (c, d):
+    a :: b
+    c :: d
+
+a : repeatDown (c, d){
+    a :: b
+    c :: d
+}
+
+sugar c :: 0
+pop flavors a in z => c +: a
+
+/*
+ {}
+ {statement}
+
+{
+sugar a :: 2
+sugar b :: 2
+}
+{}
+
+public class repeat
+ bool isUp
+ Exp e1
+
+ public class IntegerLiteral : Exp
+
+{{statement1; statement2; statement3;} {statement4; statement5; statement1;} }
+*/
+
+scope_body: LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET; // { statements }
+statement_list: (statement)*; // statements
+
+statement: single_statement | scope_body;
+single_statement: base_statement | print_statement | debug_statement | if_statement | loop;
+print_statement: (base_statement | expression) PRINT;
+debug_statement: (base_statement | expression) DEBUG;
 
 // anything that can be printed out or debugged
-base_statement: variable_declaration | variable_declaration_assignment | variable_assignment;
-// return_statement: (POP expression (THICK_ARROW (INTEGER_LITERAL | IDENTIFIER))?) | (POP FLAVORS IDENTIFIER IN identifier THICK_ARROW POPSTREAM);
+base_statement: variable_declaration | variable_declaration_assignment | variable_assignment | variable_inc_dec | object_declaration_assignment | return_statement;
+return_statement: (POP expression (THICK_ARROW expression)?) |
+              (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
+object_declaration_assignment: IDENTIFIER IDENTIFIER ASSIGN (FLAVORLESS | expression);
 variable_declaration_assignment: type IDENTIFIER ASSIGN expression;
-variable_declaration: type IDENTIFIER;
-
+variable_declaration: primitive IDENTIFIER;
 variable_assignment: expression ASSIGN expression;
+variable_inc_dec: expression (PLUS_COLON | MINUS_COLON) expression;
+
+if_statement: IF expression ((COLON single_statement) | scope_body) elif_statement* else_statement?;
+elif_statement: (ELIF expression ((COLON single_statement) | scope_body));
+else_statement: (ELSE ((COLON single_statement) | scope_body));
+
+loop: while_loop | repeat_loop | pop_loop;
+while_loop: WHILE expression ((COLON single_statement) | scope_body);
+repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (INTEGER_LITERAL | expression) COMMA (INTEGER_LITERAL | expression) RIGHT_PAREN ((COLON single_statement) | scope_body);
+pop_loop: POP FLAVORS IDENTIFIER IN expression THICK_ARROW (single_statement | scope_body);
+
+/*
+IDENTIfIER is IDENTIfIER
+a is b
+a is Animal Animal
+
+a = b // compare valeus (values of primitives or values at pointers)
+a is b // check if a and b are the same reference (same Object reference, same string Reference)
+a :< b // check if a is a subclass of b, or a is the same type as b
+  
+*/
 
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
 expression: LEFT_PAREN expression RIGHT_PAREN |
@@ -43,49 +141,51 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression LEFT_PAREN RIGHT_PAREN | // new object
               (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
               expression (PLUS_PLUS | MINUS_MINUS) |
-              (NOT | NOT_OP) expression|
+              (NOT | NOT_OP) expression |
               expression (POWER | MODULO) expression |
               expression (MULTIPLY | DIVIDE) expression|
               expression (PLUS | MINUS) expression |
               expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
               expression (GT_EQ | LT_EQ | LEFT_ANGLE_BRACKET | RIGHT_ANGLE_BRACKET) expression |
-              expression (EQUALS | NOT_EQ_1 | NOT_EQ_2) expression |
+              expression (EQUALS | NOT_EQ_1 | NOT_EQ_2 | IS | POINTER_EQUAL) expression |
               expression (AND | AND_OP) expression |
               expression (XOR | XOR_OP) expression |
               expression (OR | OR_OP) expression | // end of operator precedence
               boolean |
               identifier |
-              number;
+              double |
+              int;
 
-number: ((PLUS | MINUS)? INTEGER_LITERAL) | ((PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL);
+double : (PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL?;
+int : (PLUS | MINUS)? INTEGER_LITERAL;
 boolean: YUP | NOPE;
 
 //// identifier: any identifier you can find in code
 identifier: (IDENTIFIER | THIS);
 get_member: (THIN_ARROW IDENTIFIER)+;
 
-type: primitive | primitive PACK | primitive_pack | IDENTIFIER;
-primitive: FLAVOR | SUGAR | CARB | CAL | KCAL | YUM;
-primitive_pack: FLAVORPACK | SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK;
+type: primitive | primitive PACK | primitive_pack;
+primitive: FLAVOR | SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
+primitive_pack: FLAVORPACK | SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
 
 /* ------------------------ TOKENS ------------------------*/
 // keywords
-ASSIGN: '::';
 THIS: 'gum';
-RECIPE: 'recipe';
-RECIPE_COLON: 'recipe:';
-GUM: 'Gum';
-FLAVOR: 'flavor';
-FLAVORS: 'flavors';
-SUGAR: 'sugar'; 
-CARB: 'carb';
-CAL: 'cal';
-KCAL: 'kcal';
-YUM: 'yum';
-BOLD: 'bold';
-SUBTLE: 'subtle';
-POP: 'pop';
-SIZE: 'size';
+RECIPE: 'recipe';       // method
+GUM: 'Gum';             // class
+FLAVOR: 'flavor';       // var
+FLAVORS: 'flavors';     // keyword
+SUGAR: 'sugar';         // int
+CARB: 'carb';           // double
+CAL: 'cal';             // char
+KCAL: 'kcal';           // string
+YUM: 'yum';             // bool
+BOLD: 'bold';           // public
+SUBTLE: 'subtle';       // protected
+BLAND: 'bland';         // private
+POP: 'pop';             // return (but better) (also a foreach loop)
+SIZE: 'size';           // array size      
+PURE: 'pure';           // unsinged
 
 PACK: 'pack';
 FLAVORPACK: 'flavorpack';
@@ -101,8 +201,6 @@ AND: 'and';
 OR: 'or';
 XOR: 'xor';
 XNOR: 'xnor';
-PRINT: '!';
-DEBUG: '?';
 FLAVORLESS: 'flavorless';
 IF: 'if';
 ELSE: 'else';
@@ -113,8 +211,10 @@ REPEAT_DOWN: 'repeatDown';
 POPSTREAM: 'popstream';
 NOT: 'not';
 IN: 'in';
+IS: 'is';
 
-// DELIMEITERS
+// DELIMITERS
+ASSIGN: '::';
 LEFT_PAREN: '(';
 RIGHT_PAREN: ')';
 LEFT_SQUARE_BRACKET: '[';
@@ -126,16 +226,26 @@ RIGHT_ANGLE_BRACKET: '>';
 COMMA: ',';
 SEMICOLON: ';';
 COLON: ':';
+ELIPSES: '...';
 DOT: '.';
+PRINT: '!';
+DEBUG: '?';
 
 // OPERATORS
-EQUALS: '=';
 GT_EQ : '>=';
 LT_EQ : '<=';
 LEFT_SHIFT: '<<';
 RIGHT_SHIFT: '>>';
 NOT_EQ_1 : '<>';
 NOT_EQ_2 : '~=';
+PLUS_PLUS: '++';
+MINUS_MINUS: '--';
+PLUS_COLON: '+:';
+MINUS_COLON: '-:';
+THIN_ARROW: '->';
+THICK_ARROW: '=>';
+POINTER_EQUAL: ':<';
+EQUALS: '=';
 AND_OP: '&';
 OR_OP: '|';
 NOT_OP: '~';
@@ -146,10 +256,6 @@ POWER: '**';
 MULTIPLY: '*';
 DIVIDE: '/';
 MODULO: '%';
-PLUS_PLUS: '++';
-MINUS_MINUS: '--';
-THIN_ARROW: '->';
-THICK_ARROW: '=>';
 
 IDENTIFIER: [a-zA-Z_] [a-zA-Z_0-9]*;
 LETTER: [a-zA-Z];
