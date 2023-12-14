@@ -1,0 +1,27 @@
+while a:
+    b :: c
+    c::d
+
+while t {
+    c :: d
+    e::f
+}
+a : repeatUp (c, d):
+    a :: b
+    c :: d
+
+a : repeatDown (c, d){
+    a :: b
+    c :: d
+}
+
+sugar c :: 0
+pop flavors a in z => c +: a
+
+pop flavors dist in loc => {
+    d : repeatDown (c, d) {
+        d!
+    }
+    d : repeatUp (d, c):
+        1/d!
+}
