@@ -2,15 +2,19 @@ grammar BubblGum2;
 
 program: (class | function | statement)* EOF;
 
-class: GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
-class_member: visibility? (function | (variable_declaration (PRINT | DEBUG)?) | (variable_declaration_assignment (PRINT | DEBUG)?)
+class: STICKY? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
+class_member: STICKY? visibility? (function
+           | (variable_declaration (PRINT | DEBUG)?)
+           | (variable_declaration_assignment (PRINT | DEBUG)?)
             | (object_declaration_assignment (PRINT | DEBUG)?));
 visibility: BOLD | SUBTLE | BLAND;
 
 function: function_header ((COLON single_statement) | scope_body);
 function_header: (RECIPE COLON) IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
-parameters: LEFT_PAREN ((type IDENTIFIER)? | (type IDENTIFIER (COMMA type IDENTIFIER)*)) RIGHT_PAREN;
-outputs: LEFT_ANGLE_BRACKET ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*)) RIGHT_ANGLE_BRACKET;
+parameters: LEFT_PAREN ((IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)*)?) RIGHT_PAREN;
+outputs: LEFT_ANGLE_BRACKET
+        ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*) | (type ELIPSES))
+         RIGHT_ANGLE_BRACKET;
 
 /*
 
@@ -81,14 +85,6 @@ sugar a :: 2
 sugar b :: 2
 }
 {}
-
-public class repeat
- bool isUp
- Exp e1
-
- public class IntegerLiteral : Exp
-
-{{statement1; statement2; statement3;} {statement4; statement5; statement1;} }
 */
 
 scope_body: LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET; // { statements }
@@ -103,8 +99,8 @@ debug_statement: (base_statement | expression) DEBUG;
 base_statement: variable_declaration | variable_declaration_assignment | variable_assignment | variable_inc_dec | object_declaration_assignment | return_statement;
 return_statement: (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
-object_declaration_assignment: IDENTIFIER IDENTIFIER ASSIGN (FLAVORLESS | expression);
-variable_declaration_assignment: type IDENTIFIER ASSIGN expression;
+object_declaration_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER ASSIGN (FLAVORLESS | expression);
+variable_declaration_assignment: IMMUTABLE? type IDENTIFIER ASSIGN expression;
 variable_declaration: primitive IDENTIFIER;
 variable_assignment: expression ASSIGN expression;
 variable_inc_dec: expression (PLUS_COLON | MINUS_COLON) expression;
@@ -152,11 +148,16 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               boolean |
               identifier |
               double |
-              int;
+              int |
+              STRING_LITERAL |
+              CHAR_LITERAL;
 
 double : (PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL?;
 int : (PLUS | MINUS)? INTEGER_LITERAL;
 boolean: YUP | NOPE;
+
+//string_formatted : STRING_FORMAT_LESS | (STRING_FORMAT_OPEN (expression? STRING_FORMAT_INNER)* expression? STRING_FORMAT_CLOSE);
+//BACK_TICK (ESCAPE_SEQUENCE | '\\{' | '\\}' | STRING_FORMAT_TOKEN | '{' expression '}')* BACK_TICK;
 
 //// identifier: any identifier you can find in code
 identifier: (IDENTIFIER | THIS);
@@ -184,6 +185,7 @@ BLAND: 'bland';         // private
 POP: 'pop';             // return (but better) (also a foreach loop)
 SIZE: 'size';           // array size      
 PURE: 'pure';           // unsinged
+STICKY: 'sticky';       // static
 
 PACK: 'pack';
 FLAVORPACK: 'flavorpack';
@@ -228,6 +230,10 @@ ELIPSES: '...';
 DOT: '.';
 PRINT: '!';
 DEBUG: '?';
+DOUBLE_QUOTE: '"';
+SINGLE_QUOTE: '\'';
+BACK_TICK: '`';
+IMMUTABLE: '$';
 
 // OPERATORS
 GT_EQ : '>=';
@@ -258,9 +264,17 @@ MODULO: '%';
 IDENTIFIER: [a-zA-Z_] [a-zA-Z_0-9]*;
 LETTER: [a-zA-Z];
 INTEGER_LITERAL: (([0-9] [0-9]*));
+STRING_LITERAL : DOUBLE_QUOTE (ESCAPE_SEQUENCE | ~["\\])* DOUBLE_QUOTE;
+CHAR_LITERAL: SINGLE_QUOTE (ESCAPE_SEQUENCE | ~['\\]) SINGLE_QUOTE;
+
+//STRING_FORMATLESS: BACK_TICK (~[`\\{}])* BACK_TICK;
+//STRING_FORMAT_OPEN: BACK_TICK (~[`\\{}])* LEFT_CURLY_BRACKET;
+//STRING_FORMAT_INNER: RIGHT_CURLY_BRACKET (~[`\\{}])* LEFT_CURLY_BRACKET;
+//STRING_FORMAT_CLOSE: RIGHT_CURLY_BRACKET (~[`\\{}])* BACK_TICK;
+
+ESCAPE_SEQUENCE: '\\' [btnfr"'\\];
 
 WHITE: [\r\n\t ] -> channel(HIDDEN);
 EOL: '\r\n' -> channel(HIDDEN);
 SINGLE_LINE_COMMENT: '#' ~[\r\n]* -> channel(HIDDEN);
 MULTI_LINE_COMMENT: '#>' .*? '<#' -> channel(HIDDEN);
-
