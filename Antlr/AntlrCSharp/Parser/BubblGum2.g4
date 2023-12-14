@@ -1,18 +1,16 @@
 grammar BubblGum2;
 
+program: (class | function | statement)* EOF;
 
- program: (statement)* EOF;
-//program: (function | class | statement)* EOF;
+class: GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
+class_member: visibility? (function | (variable_declaration (PRINT | DEBUG)?) | (variable_declaration_assignment (PRINT | DEBUG)?)
+            | (object_declaration_assignment (PRINT | DEBUG)?));
+visibility: BOLD | SUBTLE | BLAND;
 
-//class: GUM IDENTIFIER LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
-//class_member: visibility? (function | variable_declaration | variable_declaration_assignment);
-//visibility: BOLD | SUBTLE | BLAND;
 function: function_header ((COLON single_statement) | scope_body);
-function_header: constructor_header (outputs | ref_type)?;
-constructor_header: (RECIPE COLON) IDENTIFIER parameters;
-parameters: LEFT_PAREN ((ref_type IDENTIFIER)? | (ref_type IDENTIFIER (COMMA ref_type IDENTIFIER)*)) RIGHT_PAREN;
-outputs: LEFT_ANGLE_BRACKET ((ref_type IDENTIFIER?)? | (ref_type IDENTIFIER? (COMMA ref_type IDENTIFIER?)*)) RIGHT_ANGLE_BRACKET;
-ref_type: type | IDENTIFIER;
+function_header: (RECIPE COLON) IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
+parameters: LEFT_PAREN ((type IDENTIFIER)? | (type IDENTIFIER (COMMA type IDENTIFIER)*)) RIGHT_PAREN;
+outputs: LEFT_ANGLE_BRACKET ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*)) RIGHT_ANGLE_BRACKET;
 
 /*
 
@@ -35,7 +33,7 @@ if (b = 2) {
     b::3
     a::3
 
-    
+
 if (b = 2) {
    b :: 3
    a :: 3
@@ -44,7 +42,7 @@ else:
     a::3
     b::3
 
-    
+
 if (b = 2) {
    b :: 3
    a :: 3
@@ -128,7 +126,7 @@ a is Animal Animal
 a = b // compare valeus (values of primitives or values at pointers)
 a is b // check if a and b are the same reference (same Object reference, same string Reference)
 a :< b // check if a is a subclass of b, or a is the same type as b
-  
+
 */
 
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
@@ -164,7 +162,7 @@ boolean: YUP | NOPE;
 identifier: (IDENTIFIER | THIS);
 get_member: (THIN_ARROW IDENTIFIER)+;
 
-type: primitive | primitive PACK | primitive_pack;
+type: primitive | primitive PACK | primitive_pack | IDENTIFIER | IDENTIFIER PACK;
 primitive: FLAVOR | SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
 primitive_pack: FLAVORPACK | SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
 
