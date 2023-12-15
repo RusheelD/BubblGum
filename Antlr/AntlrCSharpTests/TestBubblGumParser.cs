@@ -24,8 +24,6 @@ public class TestBubblGumParser
         sb.Append(testCaseName);
         sb.Append(TestConstants.FILE_EXTENSION)
         string inputFile = sb.ToString();
-
-        Asser
     }
 
 

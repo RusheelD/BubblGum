@@ -1,6 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Antlr",
+    "\\Antlr\\AntlrCSharp",
+    "\\Antlr\\AntlrCSharpTests",
+    "\\Antlr\\Tests"
   ],
+  "SelectedNode": "\\Antlr\\AntlrCSharpTests\\TestBubblGumParser.cs",
   "PreviewInSolutionExplorer": false
 }
