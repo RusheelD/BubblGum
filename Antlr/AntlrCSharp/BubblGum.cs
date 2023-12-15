@@ -13,7 +13,7 @@ public class BubblGum
     private const string OUTPUT_FILE = "Output.txt";
 
     public void Execute(CompilerMode mode, String filePath)
-    {
+    { 
         if (!File.Exists(filePath))
         {
             Console.Error.WriteLine($"File at path {Path.GetFullPath(filePath)} could not be found");
