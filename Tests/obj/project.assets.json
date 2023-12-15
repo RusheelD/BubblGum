@@ -311,7 +311,7 @@
           "build/net6.0/MSTest.TestAdapter.targets": {}
         }
       },
-      "MSTest.TestFramework/3.0.4": {
+      "MSTest.TestFramework/3.0.0": {
         "type": "package",
         "compile": {
           "lib/net6.0/Microsoft.VisualStudio.TestPlatform.TestFramework.dll": {
@@ -934,10 +934,10 @@
         "mstest.testadapter.nuspec"
       ]
     },
-    "MSTest.TestFramework/3.0.4": {
-      "sha512": "hYq5xOOr2k09rtXpmcHkJ4Tdt/yS4cy8jiFPNMdDJP+lB6OY8yekOmQC4Fsvug4rhLpXGDd6zbPWYeoewqfePA==",
+    "MSTest.TestFramework/3.0.0": {
+      "sha512": "/19FTytX0JOH6/ub3D2wF7WHQefCTOCzHVEoWd8LVQeU0d+rnubZkBIwZTwv/uqCuy6D+DxCab+2UsmhbHoWFw==",
       "type": "package",
-      "path": "mstest.testframework/3.0.4",
+      "path": "mstest.testframework/3.0.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1030,7 +1030,7 @@
         "lib/uap10.0/tr/Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll",
         "lib/uap10.0/zh-Hans/Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll",
         "lib/uap10.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.TestFramework.resources.dll",
-        "mstest.testframework.3.0.4.nupkg.sha512",
+        "mstest.testframework.3.0.0.nupkg.sha512",
         "mstest.testframework.nuspec"
       ]
     },
@@ -1110,7 +1110,7 @@
     "net7.0": [
       "AntlrCSharp >= 1.0.0",
       "MSTest.TestAdapter >= 3.0.4",
-      "MSTest.TestFramework >= 3.0.4",
+      "MSTest.TestFramework >= 3.0.0",
       "Microsoft.NET.Test.Sdk >= 17.6.0",
       "coverlet.collector >= 6.0.0"
     ]
@@ -1169,7 +1169,7 @@
           },
           "MSTest.TestFramework": {
             "target": "Package",
-            "version": "[3.0.4, )"
+            "version": "[3.0.0, )"
           },
           "Microsoft.NET.Test.Sdk": {
             "target": "Package",
