@@ -97,7 +97,7 @@ debug_statement: (base_statement | expression) DEBUG;
 
 // anything that can be printed out or debugged
 base_statement: variable_declaration | variable_declaration_assignment | variable_assignment | variable_inc_dec | object_declaration_assignment | return_statement;
-return_statement: (POP expression (THICK_ARROW expression)?) |
+return_statement: (POP) | (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
 object_declaration_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN (FLAVORLESS | expression);
 variable_declaration_assignment: IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)* ASSIGN expression;
