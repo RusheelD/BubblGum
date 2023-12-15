@@ -16,77 +16,6 @@ outputs: LEFT_ANGLE_BRACKET
         ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*) | (type ELIPSES))
          RIGHT_ANGLE_BRACKET;
 
-/*
-
-if a:
-    (3 * 4)!
-
-if a = 2:
-   b :: 3
-a :: 3 singl
-
-if b = 2: a :: 3
-
-if b = 2 { a :: 2}
-
-
-if (b = 2) {
-   b :: 3
-   a :: 3
-}elif a:
-    b::3
-    a::3
-
-
-if (b = 2) {
-   b :: 3
-   a :: 3
-}elif a {b :: 3}
-else:
-    a::3
-    b::3
-
-
-if (b = 2) {
-   b :: 3
-   a :: 3
-}elif a {b :: 3}
-b:: 2
-else:
-    a::3
-    b::3
-
-while a:
-    b :: c
-    c::d
-
-while t {
-    c :: d
-    e::f
-}
-a : repeatUp (c, d):
-    a :: b
-    c :: d
-
-a : repeatDown (c, d){
-    a :: b
-    c :: d
-}
-
-sugar c :: 0
-pop flavors a in z => c +: a
-
-/*
- {}
- {statement}
-
-{
-sugar a :: 2
-sugar b :: 2
-}
-{}
-*/
-
 scope_body: LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET; // { statements }
 statement_list: (statement)*; // statements
 
@@ -114,21 +43,11 @@ while_loop: WHILE expression ((COLON single_statement) | scope_body);
 repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (INTEGER_LITERAL | expression) COMMA (INTEGER_LITERAL | expression) RIGHT_PAREN ((COLON single_statement) | scope_body);
 pop_loop: POP FLAVORS IDENTIFIER IN expression THICK_ARROW (single_statement | scope_body);
 
-/*
-IDENTIfIER is IDENTIfIER
-a is b
-a is Animal Animal
-
-a = b // compare valeus (values of primitives or values at pointers)
-a is b // check if a and b are the same reference (same Object reference, same string Reference)
-a :< b // check if a is a subclass of b, or a is the same type as b
-
-*/
-
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
 expression: LEFT_PAREN expression RIGHT_PAREN |
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
               expression THIN_ARROW SIZE | // array size access
+              expression THIN_ARROW EMPTY | // object empty access
               expression THIN_ARROW expression | // member access
               (primitive_pack | (primitive PACK)) LEFT_PAREN expression RIGHT_PAREN | // new array
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call
@@ -184,6 +103,7 @@ SUBTLE: 'subtle';       // protected
 BLAND: 'bland';         // private
 POP: 'pop';             // return (but better) (also a foreach loop)
 SIZE: 'size';           // array size 
+EMPTY: 'empty';         // Object's empty status
 INPUT: 'input';         // input from stdin     
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
@@ -202,7 +122,7 @@ AND: 'and';
 OR: 'or';
 XOR: 'xor';
 XNOR: 'xnor';
-FLAVORLESS: 'flavorless';
+FLAVORLESS: 'flavorless' | 'nflv';
 IF: 'if';
 ELSE: 'else';
 ELIF: 'elif';
@@ -273,7 +193,6 @@ ESCAPE_SEQUENCE: '\\' [btnfr"'\\];
 //STRING_FORMAT_OPEN: BACK_TICK (~[`\\{}])* LEFT_CURLY_BRACKET;
 //STRING_FORMAT_INNER: RIGHT_CURLY_BRACKET (~[`\\{}])* LEFT_CURLY_BRACKET;
 //STRING_FORMAT_CLOSE: RIGHT_CURLY_BRACKET (~[`\\{}])* BACK_TICK;
-
 
 WHITE: [\r\n\t ] -> channel(HIDDEN);
 EOL: '\r\n' -> channel(HIDDEN);

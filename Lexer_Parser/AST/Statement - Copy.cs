@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace AntlrCSharp.AST
 {
-    public abstract class Exp : AstNode
+    public class Statement : AstNode
     {
-        public AnyType TypeInfo;
+       
     }
 }

@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace AntlrCSharp.AST
 {
-    public abstract class Exp : AstNode
+    public class NonObjectType : AnyType
     {
-        public AnyType TypeInfo;
+        public TypeBI Type;
+
+        public NonObjectType(TypeBI type)
+        {
+            Type = type;
+        }
     }
 }
