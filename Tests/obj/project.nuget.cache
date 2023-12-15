@@ -1,18 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "XyxG8hvDuM5S9UCFetx+cBhY22XLzkNhrACQoTaGugQMXg3LEb92TxR3ZSjvyLljWWdCnNhOZ7a2GSq+6Fn4nQ==",
-  "success": false,
+  "dgSpecHash": "HK9F0iupGIf6xn/oQ7apX6OcyaVUhEqm3Q0fYxY4RAeC6wpxanZIe+kUjLskzeE2tvvm+qCitqM9jmTmZQAaIw==",
+  "success": true,
   "projectFilePath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Tests\\AntlrCSharpTests.csproj",
   "expectedPackageFiles": [],
-  "logs": [
-    {
-      "code": "NU1104",
-      "level": "Error",
-      "message": "Unable to find project 'C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\AntlrCSharp\\AntlrCSharp.csproj'. Check that the project reference is valid and that the project file exists.",
-      "libraryId": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\AntlrCSharp\\AntlrCSharp.csproj",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
+  "logs": []
 }

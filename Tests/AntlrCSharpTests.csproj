@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AntlrCSharp\AntlrCSharp.csproj" />
+    <ProjectReference Include="..\Lexer_Parser\AntlrCSharp.csproj" />
   </ItemGroup>
 
 </Project>
