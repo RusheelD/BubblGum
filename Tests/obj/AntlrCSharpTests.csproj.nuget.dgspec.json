@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Antlr\\AntlrCSharp\\AntlrCSharp.csproj": {}
+    "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Tests\\AntlrCSharpTests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Antlr\\AntlrCSharp\\AntlrCSharp.csproj": {
+    "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Tests\\AntlrCSharpTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Antlr\\AntlrCSharp\\AntlrCSharp.csproj",
-        "projectName": "AntlrCSharp",
-        "projectPath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Antlr\\AntlrCSharp\\AntlrCSharp.csproj",
+        "projectUniqueName": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Tests\\AntlrCSharpTests.csproj",
+        "projectName": "AntlrCSharpTests",
+        "projectPath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Tests\\AntlrCSharpTests.csproj",
         "packagesPath": "C:\\Users\\ragha\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Antlr\\AntlrCSharp\\obj\\",
+        "outputPath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -31,7 +31,11 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\AntlrCSharp\\AntlrCSharp.csproj": {
+                "projectPath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\AntlrCSharp\\AntlrCSharp.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
