@@ -11,7 +11,7 @@ visibility: BOLD | SUBTLE | BLAND;
 
 function: function_header ((COLON single_statement) | scope_body);
 function_header: (RECIPE COLON) IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
-parameters: LEFT_PAREN ((IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)*)?) RIGHT_PAREN;
+parameters: LEFT_PAREN ((IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)*)? | (type IDENTIFIER ELIPSES)?) RIGHT_PAREN;
 outputs: LEFT_ANGLE_BRACKET
         ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*) | (type ELIPSES))
          RIGHT_ANGLE_BRACKET;
@@ -92,17 +92,17 @@ statement_list: (statement)*; // statements
 
 statement: single_statement | scope_body;
 single_statement: base_statement | print_statement | debug_statement | if_statement | loop;
-print_statement: (base_statement | expression) PRINT;
+print_statement: (base_statement | expression) PRINT PRINT?;
 debug_statement: (base_statement | expression) DEBUG;
 
 // anything that can be printed out or debugged
 base_statement: variable_declaration | variable_declaration_assignment | variable_assignment | variable_inc_dec | object_declaration_assignment | return_statement;
 return_statement: (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
-object_declaration_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER ASSIGN (FLAVORLESS | expression);
-variable_declaration_assignment: IMMUTABLE? type IDENTIFIER ASSIGN expression;
-variable_declaration: primitive IDENTIFIER;
-variable_assignment: expression ASSIGN expression;
+object_declaration_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN (FLAVORLESS | expression);
+variable_declaration_assignment: IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)* ASSIGN expression;
+variable_declaration: primitive IDENTIFIER (COMMA IDENTIFIER)*;
+variable_assignment: expression (COMMA expression)* ASSIGN expression;
 variable_inc_dec: expression (PLUS_COLON | MINUS_COLON) expression;
 
 if_statement: IF expression ((COLON single_statement) | scope_body) elif_statement* else_statement?;
@@ -133,6 +133,7 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               (primitive_pack | (primitive PACK)) LEFT_PAREN expression RIGHT_PAREN | // new array
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call
               expression LEFT_PAREN RIGHT_PAREN | // new object
+              INPUT LEFT_PAREN RIGHT_PAREN | // input method call
               (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
               expression (PLUS_PLUS | MINUS_MINUS) |
               (NOT | NOT_OP) expression |
@@ -183,7 +184,8 @@ BOLD: 'bold';           // public
 SUBTLE: 'subtle';       // protected
 BLAND: 'bland';         // private
 POP: 'pop';             // return (but better) (also a foreach loop)
-SIZE: 'size';           // array size      
+SIZE: 'size';           // array size 
+INPUT: 'input';         // input from stdin     
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
 
