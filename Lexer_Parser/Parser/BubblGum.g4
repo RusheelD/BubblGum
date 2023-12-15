@@ -1,4 +1,4 @@
-grammar BubblGum2;
+grammar BubblGum;
 
 program: (class | function | statement)* EOF;
 
