@@ -13,34 +13,28 @@ public class BubblGum
 
     // print compiler messages to output file if debugging, Console.Out if not debugging
     private const bool DEBUG_MODE = false;
-    private const string OUTPUT_FILE = "Output.txt";
 
+    private const string OUTPUT_FILE = "Output.txt";
     private const string ERROR_MSG = "Please specify a valid mode (-P) to parse file and a file to scan";
 
-    public static void Main(string[] args) 
+    public static void Main(string[] args)
     {
-        if (args.Length < 0 || args.Length > 2) {
+        if (args.Length < 0 || args.Length > 2)
+        {
             Console.Error.WriteLine(ERROR_MSG);
             return;
         }
 
-        if (args[0].Equals("-P"))
-            Execute(CompilerMode.Parser, args[1]);
-        else
-            Console.Error.WriteLine(ERROR_MSG);
-    }
-
-    public static void Execute(CompilerMode mode, string filePath)
-    { 
-        if (!File.Exists(filePath))
+        if (!File.Exists(args[1]))
         {
-            Console.Error.WriteLine($"File at path {Path.GetFullPath(filePath)} could not be found");
+            Console.Error.WriteLine($"File at path {Path.GetFullPath(args[1])} could not be found");
             return;
         }
 
         TextWriter outStream = (!DEBUG_MODE) ? Console.Out : new StreamWriter(OUTPUT_FILE, false);
-        if (mode == CompilerMode.Parser)
-            ExecuteParser(filePath, outStream);
+
+        if (args[0].Equals("-P"))
+            ExecuteParser(args[1], outStream);
         else
             Console.Error.WriteLine("Specified compiler mode not yet implemented");
     }
@@ -49,8 +43,8 @@ public class BubblGum
     // Returns whether parsing was successful (ie. 0 errors)
     public static bool ExecuteParser(string filePath, TextWriter outStream)
     {
-        string inputTxt = File.ReadAllText(filePath);
-        TextWriter originalOutStream = Console.Out;
+        var inputTxt = File.ReadAllText(filePath);
+        var originalOutStream = Console.Out;
         Console.SetOut(outStream);
 
         AntlrInputStream input = new AntlrInputStream(inputTxt);
@@ -65,10 +59,8 @@ public class BubblGum
             return false;
         }
 
-        //BubblGumParser.ProgramContext currNode = parser.program();
         BubblGumParser.ProgramContext rootNode = parser.program();
-
-        DFS(rootNode);        
+        DFS(rootNode);
 
         Console.SetOut(originalOutStream);
         return true;
@@ -78,17 +70,14 @@ public class BubblGum
     {
         var branches = new Stack<IParseTree>();
         for (int i = rootNode.children.Count - 1; i >= 0; i--)
-        {
             branches.Push(rootNode.children[i]);
-        }
 
         while (branches.Count > 0)
         {
             var tree = branches.Pop();
             for (int i = tree.ChildCount - 1; i >= 0; i--)
-            {
                 branches.Push(tree.GetChild(i));
-            }
+
             if (tree.ChildCount == 0)
                 Console.Out.Write(tree.GetText() + " ");
         }
@@ -98,29 +87,16 @@ public class BubblGum
     {
         var treesToExplore = new Queue<IParseTree>();
         for (int i = 0; i < rootNode.children.Count; i++)
-        {
-            //Console.Out.WriteLine(rootNode.children[i].GetText());
             treesToExplore.Enqueue(rootNode.children[i]);
-            //Console.Out.WriteLine(rootNode.children[i].GetChild(0).GetChild(0).ChildCount);
-        }
 
         while (treesToExplore.Count > 0)
         {
             var tree = treesToExplore.Dequeue();
             for (int i = 0; i < tree.ChildCount; i++)
-            {
                 treesToExplore.Enqueue(tree.GetChild(i));
-            }
 
             if (tree.ChildCount == 0)
                 Console.Out.Write(tree.GetText() + " ");
         }
     }
-}
-
-public enum CompilerMode
-{
-    Parser,
-    AST,
-    CodeGen
 }
