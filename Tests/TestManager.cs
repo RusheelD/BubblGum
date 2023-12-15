@@ -5,7 +5,7 @@ using System.IO;
 
 class Program
 {
-    public static void Main()
+    public static void Test()
     {
         BubblGum bG = new BubblGum();
         bG.Execute(CompilerMode.Parser, "./Tests/HelloWorld.txt");

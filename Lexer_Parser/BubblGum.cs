@@ -12,6 +12,12 @@ public class BubblGum
     private const bool DEBUG_MODE = false;
     private const string OUTPUT_FILE = "Output.txt";
 
+    public static void Main(String[] args)
+    {
+        BubblGum bG = new BubblGum();
+        bG.Execute(CompilerMode.Parser, "./Tests/HelloWorld.txt");
+    }
+
     public void Execute(CompilerMode mode, String filePath)
     { 
         if (!File.Exists(filePath))
