@@ -129,7 +129,7 @@ a :< b // check if a is a subclass of b, or a is the same type as b
 expression: LEFT_PAREN expression RIGHT_PAREN |
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
               expression THIN_ARROW SIZE | // array size access
-              expression get_member | // member access
+              expression THIN_ARROW expression | // member access
               (primitive_pack | (primitive PACK)) LEFT_PAREN expression RIGHT_PAREN | // new array
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call
               expression LEFT_PAREN RIGHT_PAREN | // new object
@@ -142,7 +142,7 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression (PLUS | MINUS) expression |
               expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
               expression (GT_EQ | LT_EQ | LEFT_ANGLE_BRACKET | RIGHT_ANGLE_BRACKET) expression |
-              expression (EQUALS | NOT_EQ_1 | NOT_EQ_2 | IS | POINTER_EQUAL) expression |
+              expression (EQUALS | NOT_EQ_1 | NOT_EQ_2 | IS | SUBCLASS_OF) expression |
               expression (AND | AND_OP) expression |
               expression (XOR | XOR_OP) expression |
               expression (OR | OR_OP) expression | // end of operator precedence
@@ -162,7 +162,6 @@ boolean: YUP | NOPE;
 
 //// identifier: any identifier you can find in code
 identifier: (IDENTIFIER | THIS);
-get_member: (THIN_ARROW IDENTIFIER)+;
 
 type: primitive | primitive PACK | primitive_pack | IDENTIFIER | IDENTIFIER PACK;
 primitive: FLAVOR | SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
@@ -250,7 +249,7 @@ PLUS_COLON: '+:';
 MINUS_COLON: '-:';
 THIN_ARROW: '->';
 THICK_ARROW: '=>';
-POINTER_EQUAL: ':<';
+SUBCLASS_OF: ':<';
 EQUALS: '=';
 AND_OP: '&';
 OR_OP: '|';
