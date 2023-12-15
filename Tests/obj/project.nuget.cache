@@ -1,15 +1,26 @@
 {
   "version": 2,
-  "dgSpecHash": "XyxG8hvDuM5S9UCFetx+cBhY22XLzkNhrACQoTaGugQMXg3LEb92TxR3ZSjvyLljWWdCnNhOZ7a2GSq+6Fn4nQ==",
+  "dgSpecHash": "DY7epOSrsItmaY1sf4LLe6sZjUUeFMpWE1HPSgNutgkp9eVyCFxkSF3YWX2e5o+GZLrzOeFR3m9TLRrFnSTw4A==",
   "success": false,
-  "projectFilePath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Tests\\AntlrCSharpTests.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\code\\github\\Bubblegum\\MainBBGM\\Tests\\AntlrCSharpTests.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\rushe\\.nuget\\packages\\coverlet.collector\\6.0.0\\coverlet.collector.6.0.0.nupkg.sha512",
+    "C:\\Users\\rushe\\.nuget\\packages\\microsoft.codecoverage\\17.6.0\\microsoft.codecoverage.17.6.0.nupkg.sha512",
+    "C:\\Users\\rushe\\.nuget\\packages\\microsoft.net.test.sdk\\17.6.0\\microsoft.net.test.sdk.17.6.0.nupkg.sha512",
+    "C:\\Users\\rushe\\.nuget\\packages\\microsoft.testplatform.objectmodel\\17.6.0\\microsoft.testplatform.objectmodel.17.6.0.nupkg.sha512",
+    "C:\\Users\\rushe\\.nuget\\packages\\microsoft.testplatform.testhost\\17.6.0\\microsoft.testplatform.testhost.17.6.0.nupkg.sha512",
+    "C:\\Users\\rushe\\.nuget\\packages\\mstest.testadapter\\3.0.4\\mstest.testadapter.3.0.4.nupkg.sha512",
+    "C:\\Users\\rushe\\.nuget\\packages\\mstest.testframework\\3.0.4\\mstest.testframework.3.0.4.nupkg.sha512",
+    "C:\\Users\\rushe\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\rushe\\.nuget\\packages\\nuget.frameworks\\5.11.0\\nuget.frameworks.5.11.0.nupkg.sha512",
+    "C:\\Users\\rushe\\.nuget\\packages\\system.reflection.metadata\\1.6.0\\system.reflection.metadata.1.6.0.nupkg.sha512"
+  ],
   "logs": [
     {
       "code": "NU1104",
       "level": "Error",
-      "message": "Unable to find project 'C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\AntlrCSharp\\AntlrCSharp.csproj'. Check that the project reference is valid and that the project file exists.",
-      "libraryId": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\AntlrCSharp\\AntlrCSharp.csproj",
+      "message": "Unable to find project 'C:\\code\\github\\Bubblegum\\MainBBGM\\AntlrCSharp\\AntlrCSharp.csproj'. Check that the project reference is valid and that the project file exists.",
+      "libraryId": "C:\\code\\github\\Bubblegum\\MainBBGM\\AntlrCSharp\\AntlrCSharp.csproj",
       "targetGraphs": [
         "net8.0"
       ]
