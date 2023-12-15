@@ -6,6 +6,7 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Atn;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
+using System.Xml.Serialization;
 
 public class BubblGum
 {
@@ -65,26 +66,55 @@ public class BubblGum
         }
 
         //BubblGumParser.ProgramContext currNode = parser.program();
-        BubblGumParser.ProgramContext rootNode = parser.program(); 
+        BubblGumParser.ProgramContext rootNode = parser.program();
+
+        DFS(rootNode);        
+
+        Console.SetOut(originalOutStream);
+        return true;
+    }
+
+    private static void DFS(BubblGumParser.ProgramContext rootNode)
+    {
+        var branches = new Stack<IParseTree>();
+        for (int i = rootNode.children.Count - 1; i >= 0; i--)
+        {
+            branches.Push(rootNode.children[i]);
+        }
+
+        while (branches.Count > 0)
+        {
+            var tree = branches.Pop();
+            for (int i = tree.ChildCount - 1; i >= 0; i--)
+            {
+                branches.Push(tree.GetChild(i));
+            }
+            if (tree.ChildCount == 0)
+                Console.Out.Write(tree.GetText() + " ");
+        }
+    }
+
+    private static void BFS(BubblGumParser.ProgramContext rootNode)
+    {
         var treesToExplore = new Queue<IParseTree>();
-        for (int i = 0; i < rootNode.children.Count; i++) {
+        for (int i = 0; i < rootNode.children.Count; i++)
+        {
             //Console.Out.WriteLine(rootNode.children[i].GetText());
             treesToExplore.Enqueue(rootNode.children[i]);
             //Console.Out.WriteLine(rootNode.children[i].GetChild(0).GetChild(0).ChildCount);
         }
 
-        while (treesToExplore.Count > 0) {
+        while (treesToExplore.Count > 0)
+        {
             var tree = treesToExplore.Dequeue();
-            for (int i = 0; i < tree.ChildCount; i++) {
+            for (int i = 0; i < tree.ChildCount; i++)
+            {
                 treesToExplore.Enqueue(tree.GetChild(i));
             }
 
             if (tree.ChildCount == 0)
                 Console.Out.Write(tree.GetText() + " ");
         }
-       
-        Console.SetOut(originalOutStream);
-        return true;
     }
 }
 
