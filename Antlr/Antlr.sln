@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrCSharp", "AntlrCSharp.csproj", "{4E0B3601-66C5-4AA6-837D-B08BB4B8BF0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrCSharp", "AntlrCSharp\\AntlrCSharp.csproj", "{4E0B3601-66C5-4AA6-837D-B08BB4B8BF0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrCSharpTests", "AntlrCSharpTests.csproj", "{D1602016-36A0-493B-A681-3A9B156C5748}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrCSharpTests", "AntlrCSharpTests\\AntlrCSharpTests.csproj", "{D1602016-36A0-493B-A681-3A9B156C5748}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
