@@ -9,16 +9,14 @@ using Antlr4.Runtime.Tree;
 
 public class BubblGum
 {
+
+    // print compiler messages to output file if debugging, Console.Out if not debugging
     private const bool DEBUG_MODE = false;
     private const string OUTPUT_FILE = "Output.txt";
 
-    public static void Main(String[] args)
-    {
-        BubblGum bG = new BubblGum();
-        bG.Execute(CompilerMode.Parser, "./Tests/HelloWorld.txt");
-    }
+   // public static void Main(String[] args) { /* invoke execute based off args provided */ }
 
-    public void Execute(CompilerMode mode, String filePath)
+    public static void Execute(CompilerMode mode, String filePath)
     { 
         if (!File.Exists(filePath))
         {
@@ -26,20 +24,16 @@ public class BubblGum
             return;
         }
 
-        // print compiler messages to output file if debugging, Console.Out if not debugging
-        TextWriter outStream = Console.Out;
-        if (DEBUG_MODE)
-           outStream = new StreamWriter(OUTPUT_FILE, false);
-
+        TextWriter outStream = (!DEBUG_MODE) ? Console.Out : new StreamWriter(OUTPUT_FILE, false);
         if (mode == CompilerMode.Parser)
-            executeParser(outStream, filePath);
+            ExecuteParser(filePath, outStream);
         else
             Console.Error.WriteLine("Specified compiler mode not yet implemented");
     }
 
     // Takes in an outstream to print compiler messages to, and a file to parse
     // Returns whether parsing was successful (ie. 0 errors)
-    private bool executeParser(TextWriter outStream, string filePath)
+    public static bool ExecuteParser(string filePath, TextWriter outStream)
     {
         string inputTxt = File.ReadAllText(filePath);
         TextWriter originalOutStream = Console.Out;
