@@ -60,7 +60,6 @@ public class BubblGum
             //Console.Out.WriteLine(rootNode.children[i].GetChild(0).GetChild(0).ChildCount);
         }
 
-
         while (treesToExplore.Count > 0) {
             var tree = treesToExplore.Dequeue();
             for (int i = 0; i < tree.ChildCount; i++) {
