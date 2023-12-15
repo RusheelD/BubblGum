@@ -14,9 +14,22 @@ public class BubblGum
     private const bool DEBUG_MODE = false;
     private const string OUTPUT_FILE = "Output.txt";
 
-   // public static void Main(String[] args) { /* invoke execute based off args provided */ }
+    private const string ERROR_MSG = "Please specify a valid mode (-P) to parse file and a file to scan";
 
-    public static void Execute(CompilerMode mode, String filePath)
+    public static void Main(string[] args) 
+    {
+        if (args.Length < 0 || args.Length > 2) {
+            Console.Error.WriteLine(ERROR_MSG);
+            return;
+        }
+
+        if (args[0].Equals("-P"))
+            Execute(CompilerMode.Parser, args[1]);
+        else
+            Console.Error.WriteLine(ERROR_MSG);
+    }
+
+    public static void Execute(CompilerMode mode, string filePath)
     { 
         if (!File.Exists(filePath))
         {
@@ -55,7 +68,7 @@ public class BubblGum
         BubblGumParser.ProgramContext rootNode = parser.program(); 
         var treesToExplore = new Queue<IParseTree>();
         for (int i = 0; i < rootNode.children.Count; i++) {
-            Console.Out.WriteLine(rootNode.children[i].GetText());
+            //Console.Out.WriteLine(rootNode.children[i].GetText());
             treesToExplore.Enqueue(rootNode.children[i]);
             //Console.Out.WriteLine(rootNode.children[i].GetChild(0).GetChild(0).ChildCount);
         }
@@ -65,7 +78,9 @@ public class BubblGum
             for (int i = 0; i < tree.ChildCount; i++) {
                 treesToExplore.Enqueue(tree.GetChild(i));
             }
-            Console.Out.WriteLine(tree.GetText());
+
+            if (tree.ChildCount == 0)
+                Console.Out.Write(tree.GetText() + " ");
         }
        
         Console.SetOut(originalOutStream);
