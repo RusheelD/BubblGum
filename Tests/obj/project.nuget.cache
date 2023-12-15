@@ -1,16 +1,10 @@
 {
   "version": 2,
-<<<<<<< HEAD
-  "dgSpecHash": "HK9F0iupGIf6xn/oQ7apX6OcyaVUhEqm3Q0fYxY4RAeC6wpxanZIe+kUjLskzeE2tvvm+qCitqM9jmTmZQAaIw==",
+  "dgSpecHash": "7LgklTwvLzMSEFBTU16D6JOE2RUISUJ87+vi8nOcQVlomvY3LGrTj8ssOn4p+sYMKfyKixvqZsZZYsLdXtUjPg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Tests\\AntlrCSharpTests.csproj",
-  "expectedPackageFiles": [],
-  "logs": []
-=======
-  "dgSpecHash": "DY7epOSrsItmaY1sf4LLe6sZjUUeFMpWE1HPSgNutgkp9eVyCFxkSF3YWX2e5o+GZLrzOeFR3m9TLRrFnSTw4A==",
-  "success": false,
   "projectFilePath": "C:\\code\\github\\Bubblegum\\MainBBGM\\Tests\\AntlrCSharpTests.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\rushe\\.nuget\\packages\\antlr4.runtime.standard\\4.13.1\\antlr4.runtime.standard.4.13.1.nupkg.sha512",
     "C:\\Users\\rushe\\.nuget\\packages\\coverlet.collector\\6.0.0\\coverlet.collector.6.0.0.nupkg.sha512",
     "C:\\Users\\rushe\\.nuget\\packages\\microsoft.codecoverage\\17.6.0\\microsoft.codecoverage.17.6.0.nupkg.sha512",
     "C:\\Users\\rushe\\.nuget\\packages\\microsoft.net.test.sdk\\17.6.0\\microsoft.net.test.sdk.17.6.0.nupkg.sha512",
@@ -22,16 +16,5 @@
     "C:\\Users\\rushe\\.nuget\\packages\\nuget.frameworks\\5.11.0\\nuget.frameworks.5.11.0.nupkg.sha512",
     "C:\\Users\\rushe\\.nuget\\packages\\system.reflection.metadata\\1.6.0\\system.reflection.metadata.1.6.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1104",
-      "level": "Error",
-      "message": "Unable to find project 'C:\\code\\github\\Bubblegum\\MainBBGM\\AntlrCSharp\\AntlrCSharp.csproj'. Check that the project reference is valid and that the project file exists.",
-      "libraryId": "C:\\code\\github\\Bubblegum\\MainBBGM\\AntlrCSharp\\AntlrCSharp.csproj",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
->>>>>>> 8c9437193f45a71d4c387b4fc9ee235cf3d4f62d
+  "logs": []
 }

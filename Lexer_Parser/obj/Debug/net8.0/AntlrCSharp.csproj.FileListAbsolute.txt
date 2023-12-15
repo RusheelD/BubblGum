@@ -15,3 +15,12 @@ C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\refint\AntlrCSharp.d
 C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.pdb
 C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\AntlrCSharp.genruntimeconfig.cache
 C:\code\github\Bubblegum\Antlr\AntlrCSharp\obj\Debug\net8.0\ref\AntlrCSharp.dll
+C:\code\github\Bubblegum\MainBBGM\Lexer_Parser\obj\Debug\net8.0\AntlrCSharp.csproj.AssemblyReference.cache
+C:\code\github\Bubblegum\MainBBGM\Lexer_Parser\obj\Debug\net8.0\AntlrCSharp.GeneratedMSBuildEditorConfig.editorconfig
+C:\code\github\Bubblegum\MainBBGM\Lexer_Parser\obj\Debug\net8.0\AntlrCSharp.AssemblyInfoInputs.cache
+C:\code\github\Bubblegum\MainBBGM\Lexer_Parser\obj\Debug\net8.0\AntlrCSharp.AssemblyInfo.cs
+C:\code\github\Bubblegum\MainBBGM\Lexer_Parser\obj\Debug\net8.0\AntlrCSharp.csproj.CoreCompileInputs.cache
+C:\code\github\Bubblegum\MainBBGM\Lexer_Parser\obj\Debug\net8.0\AntlrCSharp.sourcelink.json
+C:\code\github\Bubblegum\MainBBGM\Lexer_Parser\obj\Debug\net8.0\AntlrCSharp.dll
+C:\code\github\Bubblegum\MainBBGM\Lexer_Parser\obj\Debug\net8.0\refint\AntlrCSharp.dll
+C:\code\github\Bubblegum\MainBBGM\Lexer_Parser\obj\Debug\net8.0\AntlrCSharp.pdb

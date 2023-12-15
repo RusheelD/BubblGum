@@ -2,16 +2,19 @@
   "version": 3,
   "targets": {
     "net8.0": {
-<<<<<<< HEAD
-      "AntlrCSharp/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v8.0",
+      "Antlr4.Runtime.Standard/4.13.1": {
+        "type": "package",
         "compile": {
-          "bin/placeholder/AntlrCSharp.dll": {}
+          "lib/netstandard2.0/Antlr4.Runtime.Standard.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "bin/placeholder/AntlrCSharp.dll": {}
-=======
+          "lib/netstandard2.0/Antlr4.Runtime.Standard.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "coverlet.collector/6.0.0": {
         "type": "package",
         "build": {
@@ -402,18 +405,39 @@
           "lib/netstandard2.0/System.Reflection.Metadata.dll": {
             "related": ".xml"
           }
->>>>>>> 8c9437193f45a71d4c387b4fc9ee235cf3d4f62d
+        }
+      },
+      "AntlrCSharp/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Antlr4.Runtime.Standard": "4.13.1"
+        },
+        "compile": {
+          "bin/placeholder/AntlrCSharp.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/AntlrCSharp.dll": {}
         }
       }
     }
   },
   "libraries": {
-<<<<<<< HEAD
-    "AntlrCSharp/1.0.0": {
-      "type": "project",
-      "path": "../Lexer_Parser/AntlrCSharp.csproj",
-      "msbuildProject": "../Lexer_Parser/AntlrCSharp.csproj"
-=======
+    "Antlr4.Runtime.Standard/4.13.1": {
+      "sha512": "Da5+i4kFHUseJRZGcBG5fmZGpA/Ns180ibrQMxgZzjpQOnENVvSL5gi5HZ8Ncz8/AR2WsKbOg2lMBzjz0HUQcA==",
+      "type": "package",
+      "path": "antlr4.runtime.standard/4.13.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "antlr4.runtime.standard.4.13.1.nupkg.sha512",
+        "antlr4.runtime.standard.nuspec",
+        "lib/net45/Antlr4.Runtime.Standard.dll",
+        "lib/net45/Antlr4.Runtime.Standard.xml",
+        "lib/netstandard2.0/Antlr4.Runtime.Standard.dll",
+        "lib/netstandard2.0/Antlr4.Runtime.Standard.xml"
+      ]
+    },
     "coverlet.collector/6.0.0": {
       "sha512": "tW3lsNS+dAEII6YGUX/VMoJjBS1QvsxqJeqLaJXub08y1FSjasFPtQ4UBUsudE9PNrzLjooClMsPtY2cZLdXpQ==",
       "type": "package",
@@ -1075,20 +1099,20 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
->>>>>>> 8c9437193f45a71d4c387b4fc9ee235cf3d4f62d
+    },
+    "AntlrCSharp/1.0.0": {
+      "type": "project",
+      "path": "../Lexer_Parser/AntlrCSharp.csproj",
+      "msbuildProject": "../Lexer_Parser/AntlrCSharp.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-<<<<<<< HEAD
-      "AntlrCSharp >= 1.0.0"
-=======
-      "C:\\code\\github\\Bubblegum\\MainBBGM\\AntlrCSharp\\AntlrCSharp.csproj",
+      "AntlrCSharp >= 1.0.0",
       "MSTest.TestAdapter >= 3.0.4",
       "MSTest.TestFramework >= 3.0.4",
       "Microsoft.NET.Test.Sdk >= 17.6.0",
       "coverlet.collector >= 6.0.0"
->>>>>>> 8c9437193f45a71d4c387b4fc9ee235cf3d4f62d
     ]
   },
   "packageFolders": {
@@ -1126,13 +1150,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-<<<<<<< HEAD
-            "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Lexer_Parser\\AntlrCSharp.csproj": {
-              "projectPath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Lexer_Parser\\AntlrCSharp.csproj"
-=======
-            "C:\\code\\github\\Bubblegum\\MainBBGM\\AntlrCSharp\\AntlrCSharp.csproj": {
-              "projectPath": "C:\\code\\github\\Bubblegum\\MainBBGM\\AntlrCSharp\\AntlrCSharp.csproj"
->>>>>>> 8c9437193f45a71d4c387b4fc9ee235cf3d4f62d
+            "C:\\code\\github\\Bubblegum\\MainBBGM\\Lexer_Parser\\AntlrCSharp.csproj": {
+              "projectPath": "C:\\code\\github\\Bubblegum\\MainBBGM\\Lexer_Parser\\AntlrCSharp.csproj"
             }
           }
         }
@@ -1183,20 +1202,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
-<<<<<<< HEAD
   }
-=======
-  },
-  "logs": [
-    {
-      "code": "NU1104",
-      "level": "Error",
-      "message": "Unable to find project 'C:\\code\\github\\Bubblegum\\MainBBGM\\AntlrCSharp\\AntlrCSharp.csproj'. Check that the project reference is valid and that the project file exists.",
-      "libraryId": "C:\\code\\github\\Bubblegum\\MainBBGM\\AntlrCSharp\\AntlrCSharp.csproj",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
->>>>>>> 8c9437193f45a71d4c387b4fc9ee235cf3d4f62d
 }
