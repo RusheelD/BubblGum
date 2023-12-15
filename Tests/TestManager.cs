@@ -9,5 +9,6 @@ class Program
     {
         BubblGum bG = new BubblGum();
         bG.Execute(CompilerMode.Parser, "./Tests/HelloWorld.txt");
+
     }
 }
