@@ -40,23 +40,26 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ragha\\.nuget\\packages\\": {},
+    "C:\\Users\\rushe\\.nuget\\packages\\": {},
+    "C:\\Users\\rushe\\AppData\\Roaming\\Godot\\mono\\GodotNuGetFallbackFolder": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Lexer_Parser\\AntlrCSharp.csproj",
+      "projectUniqueName": "C:\\code\\github\\Bubblegum\\MainBBGM\\Lexer_Parser\\AntlrCSharp.csproj",
       "projectName": "AntlrCSharp",
-      "projectPath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Lexer_Parser\\AntlrCSharp.csproj",
-      "packagesPath": "C:\\Users\\ragha\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Lexer_Parser\\obj\\",
+      "projectPath": "C:\\code\\github\\Bubblegum\\MainBBGM\\Lexer_Parser\\AntlrCSharp.csproj",
+      "packagesPath": "C:\\Users\\rushe\\.nuget\\packages\\",
+      "outputPath": "C:\\code\\github\\Bubblegum\\MainBBGM\\Lexer_Parser\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
+        "C:\\Users\\rushe\\AppData\\Roaming\\Godot\\mono\\GodotNuGetFallbackFolder",
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\ragha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\rushe\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\rushe\\AppData\\Roaming\\NuGet\\config\\Godot.Offline.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -104,7 +107,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }
