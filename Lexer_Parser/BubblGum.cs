@@ -59,6 +59,9 @@ public class BubblGum
             return false;
         }
 
+      //  BubblGumParser.ExpressionContext context;
+       // int a = context.Start.Line;
+
         BubblGumParser.ProgramContext rootNode = parser.program();
         DFS(rootNode);
 
@@ -72,6 +75,7 @@ public class BubblGum
         for (int i = rootNode.children.Count - 1; i >= 0; i--)
             branches.Push(rootNode.children[i]);
 
+        int lineNum = 1;
         while (branches.Count > 0)
         {
             var tree = branches.Pop();
@@ -79,7 +83,16 @@ public class BubblGum
                 branches.Push(tree.GetChild(i));
 
             if (tree.ChildCount == 0)
-                Console.Out.Write(tree.GetText() + " ");
+            {
+                var token = (IToken)tree.Payload;
+                if (token.Line != lineNum)
+                {
+                    lineNum = token.Line;
+                    Console.Out.Write("\n" + token.Text + " ");
+                }
+                else
+                    Console.Write(token.Text + " ");
+            }
         }
     }
 
