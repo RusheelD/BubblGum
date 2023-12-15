@@ -18,6 +18,7 @@
 #pragma warning disable 1591
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
+#pragma warning disable 3021
 
 using System;
 using System.IO;

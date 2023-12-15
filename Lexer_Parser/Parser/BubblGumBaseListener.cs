@@ -18,14 +18,13 @@
 #pragma warning disable 1591
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
-
+#pragma warning disable 3021
 
 using Antlr4.Runtime.Misc;
 using IErrorNode = Antlr4.Runtime.Tree.IErrorNode;
 using ITerminalNode = Antlr4.Runtime.Tree.ITerminalNode;
 using IToken = Antlr4.Runtime.IToken;
 using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
-
 /// <summary>
 /// This class provides an empty implementation of <see cref="IBubblGumListener"/>,
 /// which can be extended to create a listener which only needs to handle a subset
