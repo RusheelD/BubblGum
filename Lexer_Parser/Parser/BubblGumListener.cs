@@ -362,16 +362,6 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitIdentifier([NotNull] BubblGumParser.IdentifierContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.get_member"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterGet_member([NotNull] BubblGumParser.Get_memberContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.get_member"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitGet_member([NotNull] BubblGumParser.Get_memberContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.type"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

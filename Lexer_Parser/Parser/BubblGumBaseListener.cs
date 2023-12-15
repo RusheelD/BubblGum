@@ -25,6 +25,7 @@ using IErrorNode = Antlr4.Runtime.Tree.IErrorNode;
 using ITerminalNode = Antlr4.Runtime.Tree.ITerminalNode;
 using IToken = Antlr4.Runtime.IToken;
 using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
+
 /// <summary>
 /// This class provides an empty implementation of <see cref="IBubblGumListener"/>,
 /// which can be extended to create a listener which only needs to handle a subset
@@ -430,18 +431,6 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitIdentifier([NotNull] BubblGumParser.IdentifierContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.get_member"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterGet_member([NotNull] BubblGumParser.Get_memberContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.get_member"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitGet_member([NotNull] BubblGumParser.Get_memberContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.type"/>.
 	/// <para>The default implementation does nothing.</para>
