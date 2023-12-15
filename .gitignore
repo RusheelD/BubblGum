@@ -1,4 +1,7 @@
 .vs/
+./Tests/obj/
+Tests/obj/
+/Tests/obj/
 obj/
 bin/
 **/obj/

@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "c8VKrwfZpHiviwItU1wOspeAni/WVzM3Ue8AT+L2LDljKCDUNVEmdyZaOB4AJXUIZ2dkZ3omu2CEgHNMhflX+Q==",
-  "success": true,
+  "dgSpecHash": "ImowTZv69qWHtQvDR2B/CtgYJJntL7QyA6vKEhoRv9GTtBi0PqmO5YRDL4g9Buvqu7U4G28o1J0d6HELehhJGw==",
+  "success": false,
   "projectFilePath": "C:\\Users\\ragha\\Documents\\Coding\\Other\\BubbleGum\\BubblGum\\Tests\\AntlrCSharpTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ragha\\.nuget\\packages\\antlr4.runtime.standard\\4.13.1\\antlr4.runtime.standard.4.13.1.nupkg.sha512",
-    "C:\\Users\\ragha\\.nuget\\packages\\coverlet.collector\\6.0.0\\coverlet.collector.6.0.0.nupkg.sha512",
     "C:\\Users\\ragha\\.nuget\\packages\\microsoft.codecoverage\\17.6.0\\microsoft.codecoverage.17.6.0.nupkg.sha512",
     "C:\\Users\\ragha\\.nuget\\packages\\microsoft.net.test.sdk\\17.6.0\\microsoft.net.test.sdk.17.6.0.nupkg.sha512",
     "C:\\Users\\ragha\\.nuget\\packages\\microsoft.testplatform.objectmodel\\17.6.0\\microsoft.testplatform.objectmodel.17.6.0.nupkg.sha512",
@@ -16,5 +15,15 @@
     "C:\\Users\\ragha\\.nuget\\packages\\nuget.frameworks\\5.11.0\\nuget.frameworks.5.11.0.nupkg.sha512",
     "C:\\Users\\ragha\\.nuget\\packages\\system.reflection.metadata\\1.6.0\\system.reflection.metadata.1.6.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1102",
+      "level": "Error",
+      "message": "Unable to find package coverlet.collector with version (>= 6.1.0)\r\n  - Found 15 version(s) in nuget.org [ Nearest version: 6.0.0 ]\r\n  - Found 1 version(s) in Microsoft Visual Studio Offline Packages [ Nearest version: 3.0.3 ]",
+      "libraryId": "coverlet.collector",
+      "targetGraphs": [
+        "net7.0"
+      ]
+    }
+  ]
 }
