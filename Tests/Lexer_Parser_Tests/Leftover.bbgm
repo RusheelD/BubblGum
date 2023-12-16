@@ -1,5 +1,5 @@
 ﻿
-/*
+#>
 
 if a:
     (3 * 4)!
@@ -59,19 +59,17 @@ a : repeatDown (c, d){
 sugar c :: 0
 pop flavors a in z => c +: a
 
-/*
+<#
  {}
- {statement}
-
+ {a + b !}
 {
 sugar a :: 2
 sugar b :: 2
 }
 {}
-*/
 
+#>
 
-/*
 IDENTIfIER is IDENTIfIER
 a is b
 a is Animal Animal
@@ -80,4 +78,4 @@ a = b // compare valeus (values of primitives or values at pointers)
 a is b // check if a and b are the same reference (same Object reference, same string Reference)
 a :< b // check if a is a subclass of b, or a is the same type as b
 
-*/
+<#

@@ -7,7 +7,7 @@ recipe: SomeFunc() flavorpack {
         flavor a :: flavorpack(SIZE)
         a[0] :: 17
         idx: repeatUp(0, 16):
-                a[idx] : idx
+                a[idx] :: idx
         pop a
 }
 

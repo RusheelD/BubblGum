@@ -1,9 +1,16 @@
+sugar a, sugar b :: 3
+$kcal a, sugar b, $kcal d :: 2
+sugar a, kcal d
+recipe: Eat ($sugar a) bob {
+    
+}
+
 Gum Apple: Fruit, Edible, Product {
 	sticky bold sugar weight :: 1!
 	sticky bold $kcal name :: "Apple"
 	
-	bold Color color :: Color.RED!
-	bold Taste taste :: Taste.SWEET!
+	bold Color color :: Color->RED !
+	bold Taste taste :: Taste-> SWEET !
 	bold yum eaten :: nope 
 
 	bold recipe: eat() {

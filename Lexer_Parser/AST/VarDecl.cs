@@ -11,7 +11,6 @@ namespace AntlrCSharp.AST
     {
         public TypeBI TypeInfo;
         public List<Identifier> Variables;
-     
 
         public VarDecl(TypeBI typeInfo, List<Identifier> variables, int lineNumber, int startCol)
         {

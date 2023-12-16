@@ -4,14 +4,15 @@ program: (class | function | statement)* EOF;
 
 class: STICKY? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
 class_member: STICKY? visibility? (function
-           | (variable_declaration (PRINT | DEBUG)?)
-           | (variable_declaration_assignment (PRINT | DEBUG)?)
-            | (object_declaration_assignment (PRINT | DEBUG)?));
+           | (primitive_declaration (PRINT | DEBUG)?)
+           | (flavorless_object_assignment (PRINT | DEBUG)?)
+           | (assignment (PRINT | DEBUG)?));
 visibility: BOLD | SUBTLE | BLAND;
 
 function: function_header ((COLON single_statement) | scope_body);
 function_header: (RECIPE COLON) IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
-parameters: LEFT_PAREN ((IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)*)? | (type IDENTIFIER ELIPSES)?) RIGHT_PAREN;
+parameters: LEFT_PAREN ((IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)*)?
+        | (IMMUTABLE? type IDENTIFIER ELIPSES)?) RIGHT_PAREN;
 outputs: LEFT_ANGLE_BRACKET
         ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*) | (type ELIPSES))
          RIGHT_ANGLE_BRACKET;
@@ -25,13 +26,18 @@ print_statement: (base_statement | expression) PRINT PRINT?;
 debug_statement: (base_statement | expression) DEBUG;
 
 // anything that can be printed out or debugged
-base_statement: variable_declaration | variable_declaration_assignment | variable_assignment | variable_inc_dec | object_declaration_assignment | return_statement;
+base_statement: primitive_declaration | assignment | flavorless_object_assignment | variable_inc_dec | return_statement;
 return_statement: (POP) | (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
-object_declaration_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN (FLAVORLESS | expression);
-variable_declaration_assignment: IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)* ASSIGN expression;
-variable_declaration: primitive IDENTIFIER (COMMA IDENTIFIER)*;
-variable_assignment: expression (COMMA expression)* ASSIGN expression;
+
+primitive_declaration: primitive IDENTIFIER (COMMA primitive IDENTIFIER)*;
+flavorless_object_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN FLAVORLESS;
+assignment: ((IMMUTABLE? type IDENTIFIER) | IDENTIFIER | expression) (COMMA (IMMUTABLE? type IDENTIFIER) | IDENTIFIER | expression)* ASSIGN expression;
+// supports anything on LHS (ex. sugar a, $Cow c, d, Life->HappinessCount :: exp)
+
+//object_declaration_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN (FLAVORLESS | expression);
+//variable_declaration_assignment: def_info (COMMA def_info)* ASSIGN expression;
+//variable_assignment: def_info | expression (COMMA (def_info | expression))* ASSIGN expression;
 variable_inc_dec: expression (PLUS_COLON | MINUS_COLON) expression;
 
 if_statement: IF expression ((COLON single_statement) | scope_body) elif_statement* else_statement?;
