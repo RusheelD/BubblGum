@@ -1,9 +1,3 @@
-sugar a, sugar b :: 3
-$kcal a, sugar b, $kcal d :: 2
-sugar a, kcal d
-recipe: Eat ($sugar a) bob {
-    
-}
 
 Gum Apple: Fruit, Edible, Product {
 	sticky bold sugar weight :: 1!
@@ -57,4 +51,11 @@ Gum Line2D {
 		pop point1
 		pop point2
 	}
+}
+
+sugar a, sugar b :: 3
+$kcal a, sugar b, $kcal d :: 2
+sugar a, kcal d
+recipe: Eat ($sugar a) bob {
+    
 }
