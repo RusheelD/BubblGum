@@ -13,11 +13,12 @@ namespace AntlrCSharp.AST
         public bool IsFlavorless;
 
         public VarDeclAssign(List<(bool, TypeBI, Identifier)> variables,
-            Exp value, bool isFlavorless, int lineNumber, int startCol)
+            Exp value, bool isFlavorLess, int lineNumber, int startCol)
         {
             Variables = variables;
+
             Value = value;
-            IsFlavorless = isFlavorless;
+            IsFlavorless = isFlavorLess;
 
             LineNumber = lineNumber;
             StartCol = startCol;

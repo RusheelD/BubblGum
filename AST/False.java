@@ -1,4 +1,4 @@
-package AST;
+bpackage AST;
 
 import AST.Visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory.Location;

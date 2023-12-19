@@ -1,8 +1,16 @@
-recipe: HelloWorld() <flavor, flavor b, flavor> {
+recipe: HelloWorld() <sugar, kcal b, carb> {
     pop "hello"
     pop "!" => 2
     pop "world" => b
 }
+recipe: SomeFunc() <sugar, [BubbleGum, Backpack]>  {
+        sugar a :: [sugar, int](4)
+        a[0] :: 17
+        idx: repeatUp(0, 16):
+                a[idx] :: idx
+        pop a
+}
+
 recipe: SomeFunc() flavorpack {
         flavor a :: flavorpack(SIZE)
         a[0] :: 17
@@ -11,13 +19,13 @@ recipe: SomeFunc() flavorpack {
         pop a
 }
 
-recipe: SomeFunc1() <flavor...> {
+recipe: SomeFunc1() <carb...> {
         pop 17
         a: repeatUp(0, 16):
                 pop a
 }
 
-recipe: SomeFunc2(flavor a...) <flavor...> {
+recipe: SomeFunc2(carb a...) <kcal...> {
         pop flavors x in a => {
             pop x*x!
         }

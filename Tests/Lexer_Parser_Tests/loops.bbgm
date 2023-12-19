@@ -10,7 +10,7 @@ a : repeatUp (c, d):
     a :: b
     c :: d
 
-a : repeatDown (c, d){
+a : repeatDown (c, d->size){
     a :: b
     c :: d
 }

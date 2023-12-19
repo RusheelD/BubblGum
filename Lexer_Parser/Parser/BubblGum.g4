@@ -5,17 +5,15 @@ program: (class | function | statement)* EOF;
 class: STICKY? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
 class_member: STICKY? visibility? (function
            | (primitive_declaration (PRINT | DEBUG)?)
-           | (flavorless_object_assignment (PRINT | DEBUG)?)
+           | (flavorless_assignment (PRINT | DEBUG)?)
            | (assignment (PRINT | DEBUG)?));
 visibility: BOLD | SUBTLE | BLAND;
 
-function: function_header ((COLON single_statement) | scope_body);
+function: function_header ((COLON single_statement) | scope_body); // in type checking: force single statement to be return statement?
 function_header: (RECIPE COLON) IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
 parameters: LEFT_PAREN ((IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)*)?
         | (IMMUTABLE? type IDENTIFIER ELIPSES)?) RIGHT_PAREN;
-outputs: LEFT_ANGLE_BRACKET
-        ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*) | (type ELIPSES))
-         RIGHT_ANGLE_BRACKET;
+outputs: LEFT_ANGLE_BRACKET ((type (IDENTIFIER)? ELIPSES? (COMMA type IDENTIFIER? ELIPSES?)*)) RIGHT_ANGLE_BRACKET;
 
 scope_body: LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET; // { statements }
 statement_list: (statement)*; // statements
@@ -26,14 +24,16 @@ print_statement: (base_statement | expression) PRINT PRINT?;
 debug_statement: (base_statement | expression) DEBUG;
 
 // anything that can be printed out or debugged
-base_statement: primitive_declaration | assignment | flavorless_object_assignment | variable_inc_dec | return_statement;
+base_statement: primitive_declaration | assignment | flavorless_assignment | variable_inc_dec | return_statement;
 return_statement: (POP) | (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
 
 primitive_declaration: primitive IDENTIFIER (COMMA primitive IDENTIFIER)*;
-flavorless_object_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN FLAVORLESS;
-assignment: ((IMMUTABLE? type IDENTIFIER) | IDENTIFIER | expression) (COMMA (IMMUTABLE? type IDENTIFIER) | IDENTIFIER | expression)* ASSIGN expression;
-// supports anything on LHS (ex. sugar a, $Cow c, d, Life->HappinessCount :: exp)
+flavorless_assignment: IMMUTABLE? (array | IDENTIFIER) IDENTIFIER (COMMA IMMUTABLE? (array | IDENTIFIER)  IDENTIFIER)* ASSIGN FLAVORLESS;
+assignment: ((IMMUTABLE? (type | FLAVOR | IDENTIFIER)? IDENTIFIER) | expression)
+    (COMMA ((IMMUTABLE? (type | FLAVOR | IDENTIFIER)? IDENTIFIER) | expression))*
+    ASSIGN expression;
+// supports anything on LHS (ex. $Cow c, sugar a, [sugar] b, flavor d, loneWolf, Life->HappinessCount, a[0] :: b )
 
 //object_declaration_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN (FLAVORLESS | expression);
 //variable_declaration_assignment: def_info (COMMA def_info)* ASSIGN expression;
@@ -46,7 +46,8 @@ else_statement: (ELSE ((COLON single_statement) | scope_body));
 
 loop: while_loop | repeat_loop | pop_loop;
 while_loop: WHILE expression ((COLON single_statement) | scope_body);
-repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (INTEGER_LITERAL | expression) COMMA (INTEGER_LITERAL | expression) RIGHT_PAREN ((COLON single_statement) | scope_body);
+repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (INTEGER_LITERAL | expression) COMMA
+             (INTEGER_LITERAL | expression) RIGHT_PAREN ((COLON single_statement) | scope_body);
 pop_loop: POP FLAVORS IDENTIFIER IN expression THICK_ARROW (single_statement | scope_body);
 
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
@@ -55,9 +56,11 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression THIN_ARROW SIZE | // array size access
               expression THIN_ARROW EMPTY | // object empty access
               expression THIN_ARROW expression | // member access
-              (primitive_pack | (primitive PACK)) LEFT_PAREN expression RIGHT_PAREN | // new array
+              expression LEFT_PAREN expression RIGHT_PAREN | // new array
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call
-              expression LEFT_PAREN RIGHT_PAREN | // new object
+              expression LEFT_PAREN RIGHT_PAREN | // new empty object
+              array | // new array object
+              LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
               INPUT LEFT_PAREN RIGHT_PAREN | // input method call
               (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
               expression (PLUS_PLUS | MINUS_MINUS) |
@@ -88,9 +91,12 @@ boolean: YUP | NOPE;
 //// identifier: any identifier you can find in code
 identifier: (IDENTIFIER | THIS);
 
-type: primitive | primitive PACK | primitive_pack | IDENTIFIER | IDENTIFIER PACK;
-primitive: FLAVOR | SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
-primitive_pack: FLAVORPACK | SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
+type: primitive | array | tuple | IDENTIFIER;
+array: primitive_pack | any_array; // for now, simplify syntax by eliminating primitive PACK and IDENTIFIER PACK. Consult Rusheel
+primitive: SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
+tuple: LEFT_ANGLE_BRACKET type IDENTIFIER? (COMMA type IDENTIFIER?)* RIGHT_ANGLE_BRACKET;
+primitive_pack: SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
+any_array: LEFT_SQUARE_BRACKET type IDENTIFIER? (COMMA type IDENTIFIER?)* RIGHT_SQUARE_BRACKET;
 
 /* ------------------------ TOKENS ------------------------*/
 // keywords
@@ -114,13 +120,12 @@ INPUT: 'input';         // input from stdin
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
 
-PACK: 'pack';
-FLAVORPACK: 'flavorpack';
-SUGARPACK: 'sugarpack'; 
-CARBPACK: 'carbpack';
-CALPACK: 'calpack';
-KCALPACK: 'kcalpack';
-YUMPACK: 'yumpack';
+PACK: 'Pack';
+SUGARPACK: 'sugarPack';
+CARBPACK: 'carbPack';
+CALPACK: 'calPack';
+KCALPACK: 'kcalPack';
+YUMPACK: 'yumPack';
 
 YUP: 'yup';
 NOPE: 'nope';

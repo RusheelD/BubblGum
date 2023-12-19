@@ -1,0 +1,4 @@
+# FAIL due to flavor in array
+recipe: HelloWorld() <[sugar, flavor, Cow] a> {
+
+}
