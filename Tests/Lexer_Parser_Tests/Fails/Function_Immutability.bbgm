@@ -1,0 +1,6 @@
+# Fail due to immutable outputs (not supported)
+recipe: HelloWorld() <$sugar, kcal b, carb> {
+    pop "hello"
+    pop "!" => 2
+    pop "world" => b
+}

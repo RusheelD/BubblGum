@@ -1,0 +1,4 @@
+# Fail due to input variable missing name
+recipe: HelloWorld(sugar) sugar {
+    pop "hello"
+}

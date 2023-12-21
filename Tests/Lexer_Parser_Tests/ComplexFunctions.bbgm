@@ -17,6 +17,9 @@ recipe: SomeFunc1(kcal d, kcal d..., sugar a...) <carb..., kcal...> {
                 pop a
 }
 
+# single line function
+recipe: SingleLine(kcal d) kcal : pop "woah" + d
+
 # flavorpack is now an object!
 Gum Line2D {
     recipe: SomeFunc() flavorpack {

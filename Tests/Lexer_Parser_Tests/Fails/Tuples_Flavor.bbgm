@@ -4,6 +4,6 @@ recipe: HelloWorld() <sugar, kcal b, carb, [sugar] a, kcal d, carb e...> {
 
     <sugar, sugar> Cow :: <4,4>
 
-    # FAIL due to flavor inside tuple (invalid)
+    # Fail due to invalid flavor type inside tuple
     <flavor, sugar> Cow :: <"woah",4, [bob](4)>
 }
