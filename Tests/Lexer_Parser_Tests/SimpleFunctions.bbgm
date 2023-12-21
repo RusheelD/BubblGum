@@ -16,7 +16,6 @@ recipe: SomeFunc() flavorpack {
         a[0] :: 17
         idx: repeatUp(0, 16):
                 a[idx] :: idx
-        pop a
 }
 
 recipe: SomeFunc1() <carb...> {

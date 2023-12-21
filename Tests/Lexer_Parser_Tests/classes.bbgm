@@ -1,4 +1,6 @@
 
+
+
 Gum Apple: Fruit, Edible, Product {
 	sticky bold sugar weight :: 1!
 	sticky bold $kcal name :: "Apple"
@@ -12,12 +14,7 @@ Gum Apple: Fruit, Edible, Product {
 	}
 }
 
-sticky Gum FruitManager {
-	sticky bold Apple Apple :: Apple()
-	sticky bold Banana Banana :: Banana()
-	sticky bold Strawberry Strawberry :: Strawberry()
-	sticky bold $sugar FruitCount :: 3
-}
+
 
 Gum Point2D {
 	bold carb x!

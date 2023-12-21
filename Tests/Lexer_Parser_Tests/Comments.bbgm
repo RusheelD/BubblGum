@@ -1,8 +1,16 @@
 ﻿
-#>
+# Invalid statements below, better not be detected if commented out!
+#a
+# asfjsdaf * !
 
+#Oh look a valid statement
+a + b !
+
+
+#>
+Everything below better be commented out or we get errors
 if a:
-    (3 * 4)!
+    (3 4)!
 
 if a = 2:
    b :: 3
@@ -18,7 +26,7 @@ if (b = 2) {
    a :: 3
 }elif a:
     b::3
-    a::3
+    a: 3
 
 
 if (b = 2) {
@@ -51,9 +59,9 @@ a : repeatUp (c, d):
     a :: b
     c :: d
 
-a : repeatDown (c, d){
+a : repetDown (c, d){
     a :: b
-    c :: d
+    c : d
 }
 
 sugar c :: 0

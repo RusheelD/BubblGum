@@ -5,14 +5,12 @@ program: (class | function | statement)* EOF;
 class: STICKY? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
 class_member: STICKY? visibility? (function
            | (primitive_declaration (PRINT | DEBUG)?)
-           | (flavorless_assignment (PRINT | DEBUG)?)
            | (assignment (PRINT | DEBUG)?));
 visibility: BOLD | SUBTLE | BLAND;
 
 function: function_header ((COLON single_statement) | scope_body); // in type checking: force single statement to be return statement?
 function_header: (RECIPE COLON) IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
-parameters: LEFT_PAREN ((IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)*)?
-        | (IMMUTABLE? type IDENTIFIER ELIPSES)?) RIGHT_PAREN;
+parameters: LEFT_PAREN (IMMUTABLE? type IDENTIFIER ELIPSES? (COMMA IMMUTABLE? type IDENTIFIER ELIPSES?)*)? RIGHT_PAREN;
 outputs: LEFT_ANGLE_BRACKET ((type (IDENTIFIER)? ELIPSES? (COMMA type IDENTIFIER? ELIPSES?)*)) RIGHT_ANGLE_BRACKET;
 
 scope_body: LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET; // { statements }
@@ -24,14 +22,13 @@ print_statement: (base_statement | expression) PRINT PRINT?;
 debug_statement: (base_statement | expression) DEBUG;
 
 // anything that can be printed out or debugged
-base_statement: primitive_declaration | assignment | flavorless_assignment | variable_inc_dec | return_statement;
+base_statement: primitive_declaration | assignment | variable_inc_dec | return_statement;
 return_statement: (POP) | (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
 
 primitive_declaration: primitive IDENTIFIER (COMMA primitive IDENTIFIER)*;
-flavorless_assignment: IMMUTABLE? (array | IDENTIFIER) IDENTIFIER (COMMA IMMUTABLE? (array | IDENTIFIER)  IDENTIFIER)* ASSIGN FLAVORLESS;
-assignment: ((IMMUTABLE? (type | FLAVOR | IDENTIFIER)? IDENTIFIER) | expression)
-    (COMMA ((IMMUTABLE? (type | FLAVOR | IDENTIFIER)? IDENTIFIER) | expression))*
+assignment: ((IMMUTABLE? (type | array | FLAVOR | IDENTIFIER)? IDENTIFIER) | expression)
+    (COMMA ((IMMUTABLE? (type | array | FLAVOR | IDENTIFIER)? IDENTIFIER) | expression))*
     ASSIGN expression;
 // supports anything on LHS (ex. $Cow c, sugar a, [sugar] b, flavor d, loneWolf, Life->HappinessCount, a[0] :: b )
 
@@ -56,10 +53,8 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression THIN_ARROW SIZE | // array size access
               expression THIN_ARROW EMPTY | // object empty access
               expression THIN_ARROW expression | // member access
-              expression LEFT_PAREN expression RIGHT_PAREN | // new array
-              expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call
-              expression LEFT_PAREN RIGHT_PAREN | // new empty object
-              array | // new array object
+              expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call or new object
+              array | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
               INPUT LEFT_PAREN RIGHT_PAREN | // input method call
               (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
@@ -79,7 +74,8 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               double |
               int |
               STRING_LITERAL |
-              CHAR_LITERAL;
+              CHAR_LITERAL |
+              FLAVORLESS;
 
 double : (PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL?;
 int : (PLUS | MINUS)? INTEGER_LITERAL;
