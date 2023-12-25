@@ -1,11 +1,17 @@
 grammar BubblGum;
 
-program: (class | function | statement)* EOF;
+program: (class | interface | function | struct | statement)* EOF;
 
 class: STICKY? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
+
+interface: STICKY? WRAPPER IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET interface_member* RIGHT_CURLY_BRACKET;
+
+interface_member: STICKY? visibility? (function_header | (primitive_declaration (PRINT | DEBUG)?));
+
 class_member: STICKY? visibility? (function
            | (primitive_declaration (PRINT | DEBUG)?)
            | (assignment (PRINT | DEBUG)?));
+
 visibility: BOLD | SUBTLE | BLAND;
 
 struct: CANDY COLON IDENTIFIER ((COLON single_statement) | scope_body);
@@ -55,7 +61,6 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call or new object
               array LEFT_PAREN expression RIGHT_PAREN | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
-              INPUT LEFT_PAREN RIGHT_PAREN | // input method call
               (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
               expression (PLUS_PLUS | MINUS_MINUS) |
               (NOT | NOT_OP) expression |
@@ -116,6 +121,7 @@ EMPTY: 'empty';         // Object's empty status
 INPUT: 'input';         // input from stdin     
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
+WRAPPER: 'Wrapper';     // interface
 
 PACK: 'pack';
 SUGARPACK: 'sugarpack';
