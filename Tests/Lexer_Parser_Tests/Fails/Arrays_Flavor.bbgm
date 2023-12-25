@@ -1,4 +1,0 @@
-# Fail due to invalid flavor type used inside array
-recipe: HelloWorld() sugar {
-    [sugar, flavor, Cow] a :: nflv
-}

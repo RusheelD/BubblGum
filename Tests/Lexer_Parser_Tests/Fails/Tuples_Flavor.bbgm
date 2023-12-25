@@ -1,9 +1,0 @@
-recipe: HelloWorld() <sugar, kcal b, carb, [sugar] a, kcal d, carb e...> {
-    <sugar milk, sugar lives> Cow :: 4
-    <sugar, sugar> Cow :: 4
-
-    <sugar, sugar> Cow :: <4,4>
-
-    # Fail due to invalid flavor type inside tuple
-    <flavor, sugar> Cow :: <"woah",4, [bob](4)>
-}

@@ -3,6 +3,12 @@
 recipe: HelloWorld() <[sugar, kcal, carb, kcarb, Cow], [sugar], [cow]> {}
 recipe: HelloWorld() [Yeet] {}
 
+# pack arrays
+sugarpack a :: sugarpack(4)
+Cow pack a :: Cow pack(4)
+Cow pack b :: [Cow](4)
+flavor a :: [Cow](4)
+
 # simplified syntax for tuple array
 recipe: HelloWorld() <[sugar, kcal, Cow] a> {}
 
@@ -29,4 +35,4 @@ flavor a :: [Cow, Bam](4)
 
 # Multi-dimensional arrays
 [[[Cow]]] a :: nflv
-[[[Cow]]] a :: [[Cow]]
+[[[Cow]]] a :: [[Cow]](4)

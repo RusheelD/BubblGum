@@ -47,6 +47,7 @@ pop_loop: POP FLAVORS IDENTIFIER IN expression THICK_ARROW (single_statement | s
 
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
 expression: LEFT_PAREN expression RIGHT_PAREN |
+              SWEETS THIN_ARROW expression | // global access
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
               expression THIN_ARROW SIZE | // array size access
               expression THIN_ARROW EMPTY | // object empty access
@@ -75,8 +76,6 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               CHAR_LITERAL |
               FLAVORLESS;
 
-
-
 double : (PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL?;
 int : (PLUS | MINUS)? INTEGER_LITERAL;
 boolean: YUP | NOPE;
@@ -90,13 +89,14 @@ identifier: (IDENTIFIER | THIS);
 type: primitive | array | tuple | IDENTIFIER;
 array: primitive_pack | any_array | identifier PACK;
 primitive: SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
-tuple: LEFT_ANGLE_BRACKET type IDENTIFIER? (COMMA type IDENTIFIER?)* RIGHT_ANGLE_BRACKET;
+tuple: LEFT_ANGLE_BRACKET (type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)* RIGHT_ANGLE_BRACKET;
 primitive_pack: SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
-any_array: LEFT_SQUARE_BRACKET type IDENTIFIER? (COMMA type IDENTIFIER?)* RIGHT_SQUARE_BRACKET;
+any_array: LEFT_SQUARE_BRACKET (type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)* RIGHT_SQUARE_BRACKET;
 
 /* ------------------------ TOKENS ------------------------*/
 // keywords
-THIS: 'gum';
+THIS: 'gum';            // this
+SWEETS: 'sweets';       // global namespace
 RECIPE: 'recipe';       // method
 CANDY: 'candy';         // struct
 GUM: 'Gum';             // class

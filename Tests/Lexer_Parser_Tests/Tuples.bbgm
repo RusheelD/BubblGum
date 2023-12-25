@@ -4,10 +4,7 @@ recipe: HelloWorld() <sugar, kcal b, carb, [sugar] a, kcal d, carb e...> {
     <sugar, sugar> Cow :: <4,4>
     <sugar, sugar> Cow :: <"woah",4, [bob](4)>
     <sugar a, sugar, kcal d, Cow e> Cow :: <"woah",4, [bob](4), "moo", "moo">
-
-    # RIGHT NOW, YOU CANNOT SET TUPLE ELEMENTS TO NULL IF THEY ARE AN OBJECT
-    # PROB SHOULD SET FLAVORLESS AS AN EXP, AND DO TYPE CHECKING IN SEMANTICS
-    # PHASE RATHER THAN PARSER
-
     <sugar, sugar> Cow :: <4,4>
+    <sugar, sugar> Cow :: nflv
+    <sugar, sugar> Cow :: flavorless
 }
