@@ -6,7 +6,9 @@ class: STICKY? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY
 
 interface: STICKY? WRAPPER IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET interface_member* RIGHT_CURLY_BRACKET;
 
-interface_member: STICKY? visibility? (function_header | (primitive_declaration (PRINT | DEBUG)?));
+interface_member: STICKY? visibility? (function_header 
+            | (primitive_declaration (PRINT | DEBUG)?) 
+            | (assignment (PRINT | DEBUG)?));
 
 class_member: STICKY? visibility? (function
            | (primitive_declaration (PRINT | DEBUG)?)
@@ -104,7 +106,7 @@ THIS: 'gum';            // this
 SWEETS: 'sweets';       // global namespace
 RECIPE: 'recipe';       // method
 CANDY: 'candy';         // struct
-GUM: 'Gum';             // class
+GUM: 'Gum';             // class 
 FLAVOR: 'flavor';       // var
 FLAVORS: 'flavors';     // keyword
 SUGAR: 'sugar';         // int
