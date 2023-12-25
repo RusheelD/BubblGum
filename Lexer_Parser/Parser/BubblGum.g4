@@ -39,8 +39,8 @@ return_statement: (POP) | (POP expression (THICK_ARROW expression)?) |
 
 primitive_declaration: (primitive IDENTIFIER (COMMA primitive IDENTIFIER)*) | 
                (primitive IDENTIFIER (COMMA IDENTIFIER)*);
-assignment: ((IMMUTABLE? (type | FLAVOR)? IDENTIFIER) | expression)
-    (COMMA ((IMMUTABLE? (type | FLAVOR)? IDENTIFIER) | expression))*
+assignment: (((IMMUTABLE? (type | FLAVOR))? IDENTIFIER) | expression)
+    (COMMA (((IMMUTABLE? (type | FLAVOR))? IDENTIFIER) | expression))*
     ASSIGN expression;
 // supports anything on LHS (ex. $Cow c, sugar a, [sugar] b, flavor d, loneWolf, Life->HappinessCount, a[0] :: b )
 

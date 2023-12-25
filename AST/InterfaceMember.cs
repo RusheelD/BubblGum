@@ -1,18 +1,14 @@
-﻿using System;
+﻿using Ast.enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AST
 {
-    public enum TypeBI
+    public interface InterfaceMember
     {
-       Sugar,
-       Carb,
-       Cal,
-       Kcal,
-       Yum,
-       PureSugar
     }
 }

@@ -10,7 +10,5 @@ namespace AST
 {
     public interface ClassMember
     {
-        public bool IsSticky { get; }
-        public Visbility Visbility { get; }
     }
 }

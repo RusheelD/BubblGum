@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Or : Exp
+    public class PackSize : Exp
     {
-        public Exp E1, E2;
+        public Exp E1;
 
-        public Or(Exp e1, Exp e2, int lineNumber, int startCol)
+        public PackSize(Exp e1, int lineNumber, int startCol)
         {
             E1 = e1;
-            E2 = e2;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Identifier : AstNode
+    public class Identifier : AstNode, AssignLHS
     {
         public string Value;
 

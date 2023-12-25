@@ -15,13 +15,18 @@ namespace AST
         public string Name;
         public List<string> InterfacesAndParentClasses;
 
+        // IsSticky, GetScope, SetScope, ClassMember
+        public List<(bool, Visbility, Visbility, ClassMember)> ClassMemberInfo;
+
         public Class(bool isSticky, Visbility visbility, string name, 
-            List<string> interfacesAndParentClasses, int lineNumber, int startCol)
+            List<string> interfacesAndParentClasses,
+            List<(bool, Visbility, Visbility, ClassMember)> classMemberInfo, int lineNumber, int startCol)
         {
             IsSticky = isSticky;
             Visbility = visbility;
             Name = name;
             InterfacesAndParentClasses = interfacesAndParentClasses;
+            ClassMemberInfo = classMemberInfo;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

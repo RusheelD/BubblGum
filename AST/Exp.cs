@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public abstract class Exp : AstNode
+    public abstract class Exp : AstNode, AssignLHS
     {
         public AnyType TypeInfo;
     }

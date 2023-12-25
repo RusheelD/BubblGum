@@ -10,8 +10,7 @@ namespace AST
     {
         public Exp Cond;
         public List<Statement> Statements;
-        public List<Exp> ElifConditions;
-        public List<List<Statement>> ElifStatements;
+        public List<(Exp, List<Statement>)> Elifs;
         public List<Statement> Else;
     }
 }

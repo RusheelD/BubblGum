@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Statement : AstNode
+    public enum TypePack
     {
-       
+        SugarPack,
+        CarbPack,
+        CalPack,
+        KcalPack,
+        YumPack,
+        PureSugarPack
     }
 }
