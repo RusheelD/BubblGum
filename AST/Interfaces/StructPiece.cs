@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public abstract class Exp : AstNode, AssignLHS, Printable
+    public interface StructPiece
     {
-        public AnyType Type;
+
     }
 }

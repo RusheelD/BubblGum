@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class PrimitiveDeclaration1 : AstNode, ClassMember, InterfaceMember
+    public class PrimitiveDeclaration1 : Statement, ClassMember, InterfaceMember, StructPiece
     {
         public TypeBI TypeInfo;
         public List<Identifier> Variables;

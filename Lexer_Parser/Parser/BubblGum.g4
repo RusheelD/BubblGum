@@ -61,7 +61,7 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               SWEETS THIN_ARROW expression | // global access
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
               expression THIN_ARROW SIZE | // array size access
-              expression THIN_ARROW EMPTY | // object empty access
+              expression THIN_ARROW EMPTY | // object empty check
               expression THIN_ARROW expression | // member access
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call or new object
               array LEFT_PAREN expression RIGHT_PAREN | // new array

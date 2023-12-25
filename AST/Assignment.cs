@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class Assignment : Statement, ClassMember, InterfaceMember
+    public class Assignment : Statement, ClassMember, InterfaceMember, StructPiece
     {
         public List<AssignLHS> Assignees;
         public Exp Result;

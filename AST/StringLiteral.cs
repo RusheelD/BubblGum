@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class StringLiteral : AstNode
+    public class StringLiteral : Exp
     {
         public string Value;
 

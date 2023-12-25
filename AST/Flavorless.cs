@@ -8,7 +8,6 @@ namespace AST
 {
     public class Flavorless : AstNode
     {
-
         public Flavorless(int lineNumber, int startCol)
         {
             LineNumber = lineNumber;

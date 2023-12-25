@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class PopLoop : Exp
+    public class PopLoop : Statement
     {
         public string VarName;
         public Exp Exp;
         public List<Statement> Statements;
 
-        public PopLoop(string varName, Exp exp, List<Statement> statements, int lineNumber, int startCol)
+        public PopLoop(string varName, Exp exp, List<Statement> statements, 
+            int lineNumber, int startCol)
         {
             VarName = varName;
             Exp = exp;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Interface : AstNode
+    public class Interface : AstNode, ProgramPiece
     {
         public bool IsSticky;
         public Visbility Visbility;

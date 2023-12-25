@@ -7,4 +7,6 @@ using System.Threading.Tasks;
 namespace AST
 {
    public abstract class AnyType { }
+
+   //public const string EMPTY = "";
 }

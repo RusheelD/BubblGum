@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Tuple : Exp
+    public class ObjectEmpty : Exp
     {
-        public List<Exp> Exps;
+        public Exp E1;
 
-        public Tuple(List<Exp> exps, int lineNumber, int startCol)
+        public ObjectEmpty(Exp e1, int lineNumber, int startCol)
         {
-            Exps = exps;
+            E1 = e1;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

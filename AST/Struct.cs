@@ -7,12 +7,18 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class Struct : AstNode
+    public class Struct : AstNode, ProgramPiece
     {
         public string Name;
-        public List<string> InterfacesAndParentClasses;
+        public List<Statement> Statements;
 
-        // IsSticky, GetScope, SetScope, ClassMember
-        public List<(bool, Visbility, Visbility, ClassMember)> ClassMemberInfo;
+        public Struct(string name, List<Statement> statements, int lineNumber, int startCol)
+        {
+            Name = name;
+            Statements = statements;
+
+            LineNumber = lineNumber;
+            StartCol = startCol;
+        }
     }
 }
