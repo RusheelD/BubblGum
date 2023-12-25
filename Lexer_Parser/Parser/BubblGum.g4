@@ -9,7 +9,7 @@ class_member: STICKY? visibility? (function
 visibility: BOLD | SUBTLE | BLAND;
 
 struct: CANDY COLON IDENTIFIER ((COLON single_statement) | scope_body);
-function: function_header ((COLON single_statement) | scope_body); // in type checking: force single statement to be return statement?
+function: function_header ((COLON single_statement) | scope_body);
 function_header: RECIPE COLON IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
 parameters: LEFT_PAREN (IMMUTABLE? type IDENTIFIER ELIPSES? (COMMA IMMUTABLE? type IDENTIFIER ELIPSES?)*)? RIGHT_PAREN;
 outputs: LEFT_ANGLE_BRACKET ((type (IDENTIFIER)? ELIPSES? (COMMA type IDENTIFIER? ELIPSES?)*)) RIGHT_ANGLE_BRACKET;
@@ -28,14 +28,11 @@ return_statement: (POP) | (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
 
 primitive_declaration: primitive IDENTIFIER (COMMA primitive IDENTIFIER)*;
-assignment: ((IMMUTABLE? (type | array | FLAVOR | IDENTIFIER)? IDENTIFIER) | expression)
-    (COMMA ((IMMUTABLE? (type | array | FLAVOR | IDENTIFIER)? IDENTIFIER) | expression))*
+assignment: ((IMMUTABLE? (type | FLAVOR)? IDENTIFIER) | expression)
+    (COMMA ((IMMUTABLE? (type | FLAVOR)? IDENTIFIER) | expression))*
     ASSIGN expression;
 // supports anything on LHS (ex. $Cow c, sugar a, [sugar] b, flavor d, loneWolf, Life->HappinessCount, a[0] :: b )
 
-//object_declaration_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN (FLAVORLESS | expression);
-//variable_declaration_assignment: def_info (COMMA def_info)* ASSIGN expression;
-//variable_assignment: def_info | expression (COMMA (def_info | expression))* ASSIGN expression;
 variable_inc_dec: expression (PLUS_COLON | MINUS_COLON) expression;
 
 if_statement: IF expression ((COLON single_statement) | scope_body) elif_statement* else_statement?;
@@ -55,7 +52,7 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression THIN_ARROW EMPTY | // object empty access
               expression THIN_ARROW expression | // member access
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call or new object
-              array | // new array
+              array LEFT_PAREN expression RIGHT_PAREN | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
               INPUT LEFT_PAREN RIGHT_PAREN | // input method call
               (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
@@ -78,6 +75,8 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               CHAR_LITERAL |
               FLAVORLESS;
 
+
+
 double : (PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL?;
 int : (PLUS | MINUS)? INTEGER_LITERAL;
 boolean: YUP | NOPE;
@@ -89,7 +88,7 @@ boolean: YUP | NOPE;
 identifier: (IDENTIFIER | THIS);
 
 type: primitive | array | tuple | IDENTIFIER;
-array: primitive_pack | any_array; // for now, simplify syntax by eliminating primitive PACK and IDENTIFIER PACK. Consult Rusheel
+array: primitive_pack | any_array | identifier PACK;
 primitive: SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
 tuple: LEFT_ANGLE_BRACKET type IDENTIFIER? (COMMA type IDENTIFIER?)* RIGHT_ANGLE_BRACKET;
 primitive_pack: SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
@@ -118,12 +117,12 @@ INPUT: 'input';         // input from stdin
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
 
-PACK: 'Pack';
-SUGARPACK: 'sugarPack';
-CARBPACK: 'carbPack';
-CALPACK: 'calPack';
-KCALPACK: 'kcalPack';
-YUMPACK: 'yumPack';
+PACK: 'pack';
+SUGARPACK: 'sugarpack';
+CARBPACK: 'carbpack';
+CALPACK: 'calpack';
+KCALPACK: 'kcalpack';
+YUMPACK: 'yumpack';
 
 YUP: 'yup';
 NOPE: 'nope';
