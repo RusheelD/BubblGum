@@ -2,9 +2,11 @@ grammar BubblGum;
 
 program: (class | interface | function | struct | statement)* EOF;
 
-class: STICKY? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
+class: STICKY? visibility? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? 
+    LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
 
-interface: STICKY? WRAPPER IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET interface_member* RIGHT_CURLY_BRACKET;
+interface: STICKY? visibility? WRAPPER IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? 
+    LEFT_CURLY_BRACKET interface_member* RIGHT_CURLY_BRACKET;
 
 interface_member: STICKY? visibility? (function_header 
             | (primitive_declaration (PRINT | DEBUG)?) 
@@ -35,7 +37,8 @@ base_statement: primitive_declaration | assignment | variable_inc_dec | return_s
 return_statement: (POP) | (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
 
-primitive_declaration: primitive IDENTIFIER (COMMA primitive IDENTIFIER)*;
+primitive_declaration: (primitive IDENTIFIER (COMMA primitive IDENTIFIER)*) | 
+               (primitive IDENTIFIER (COMMA IDENTIFIER)*);
 assignment: ((IMMUTABLE? (type | FLAVOR)? IDENTIFIER) | expression)
     (COMMA ((IMMUTABLE? (type | FLAVOR)? IDENTIFIER) | expression))*
     ASSIGN expression;

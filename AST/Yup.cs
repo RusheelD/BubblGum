@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Divide : Exp
+    public class Yup : Exp
     {
-        public Exp E1, E2;
-
-        public Divide(Exp e1, Exp e2, int lineNumber, int startCol)
+        public Yup(int lineNumber, int startCol)
         {
-            E1 = e1;
-            E2 = e2;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

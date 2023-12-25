@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class NonObjectType : AnyType
+    public class PrimitiveType : AnyType
     {
+        public String VarName;
         public TypeBI Type;
 
-        public NonObjectType(TypeBI type)
+        public PrimitiveType(String varName, TypeBI type)
         {
+            VarName = varName;
             Type = type;
         }
     }

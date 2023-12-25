@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-   public enum Visbility
-   {
-       Bold,
-       Subtle,
-       Bland
-   }
+    public class FlavorType : AnyType
+    {
+       
+    }
 }

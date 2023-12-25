@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class SingleIf : Statement
+    public class MultiIf : Statement
     {
         public Exp Cond;
         public List<Statement> Statements;
+        public List<Exp> ElifConditions;
+        public List<List<Statement>> ElifStatements;
+        public List<Statement> Else;
     }
 }

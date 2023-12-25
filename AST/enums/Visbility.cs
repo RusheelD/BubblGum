@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class SingleIf : Statement
+    public enum Visbility
     {
-        public Exp Cond;
-        public List<Statement> Statements;
+        Bold,
+        Subtle,
+        Bland
     }
 }
