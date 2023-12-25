@@ -7,15 +7,6 @@ Platform-dependent:
 - On MacOS and Linux, run `pip install-bubblgum` in a terminal
 - On Windows, run `npm install-bubblgum` in powershell or gitbas
   
-## Development
-The compiler is broken down into the following parts. It was written primarily in C#, alongside Assembly and ANTLR:
-- **Lexical and Syntax Analysis :** These parts of the compiler were written using [ANTLR4](https://github.com/antlr/antlr4), a powerful parser generator. Input is broken down into tokens, and a parse tree is generated based off grammar rules. We then convert the Parse Tree into a condensed Abstract Syntax Tree (AST) for the next stage.
-- **Semantic Analysis:** Type checking and other semantic analysis.
-- **[Intermediate Code Generation:](https://www.youtube.com/watch?v=dQw4w9WgXcQ)** Converts the code into an intermediate representation.
-- **[Code Optimization:](https://www.youtube.com/watch?v=dQw4w9WgXcQ)** Optimizes the intermediate code for memory and efficiency.
-- **Code Generation:** Translates the optimized code into assembly based off target platform.
-- **Assembly Linking and Execution:** Combines assembly code files into an executable. Runs it on the target machine.
-
 ## Useful Information
 ### Library Support:
 To write programs in BubblGum, we offer numerous libraries: Mathf, LinearAlg, DataStructures (ex. PriorityQueues, Dictionaries), Physics3D, and more. Despite its low library support, BubblGum is the perfect coding language to have fun writing small, weekend projects with its concise candy-inspired syntax. Again, it's optimized for null safety and speed.
@@ -29,5 +20,13 @@ TO-DO note: Link to separate md for documentation, but provide some brief syntax
 ### Speed Tests
 TO-DO
 
+## Development
+The compiler is broken down into the following parts. It was written primarily in C#, alongside Assembly and ANTLR:
+- **Lexical and Syntax Analysis :** These parts of the compiler were written using [ANTLR4](https://github.com/antlr/antlr4), a powerful parser generator. Input is broken down into tokens, and a parse tree is generated based off grammar rules. We then convert the Parse Tree into a condensed Abstract Syntax Tree (AST) for the next stage.
+- **Semantic Analysis:** Type checking and other semantic analysis.
+- **[Intermediate Code Generation:](https://www.youtube.com/watch?v=dQw4w9WgXcQ)** Converts the code into an intermediate representation.
+- **[Code Optimization:](https://www.youtube.com/watch?v=dQw4w9WgXcQ)** Optimizes the intermediate code for memory and efficiency.
+- **Code Generation:** Translates the optimized code into assembly based off target platform.
+- **Assembly Linking and Execution:** Combines assembly code files into an executable. Runs it on the target machine.
+
 ## Code Generation Optimizations
-TO-DO
