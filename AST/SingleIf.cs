@@ -10,5 +10,11 @@ namespace AST
     {
         public Exp Cond;
         public List<Statement> Statements;
+
+        public SingleIf(Exp cond,  List<Statement> statements)
+        {
+            Cond = cond;
+            Statements = statements;
+        }
     }
 }
