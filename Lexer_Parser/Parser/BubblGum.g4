@@ -18,7 +18,7 @@ class_member: STICKY? visibility? (function
 
 visibility: BOLD | SUBTLE | BLAND;
 
-struct: CANDY COLON IDENTIFIER ((COLON single_statement) | scope_body);
+struct: CANDY COLON IDENTIFIER LEFT_CURLY_BRACKET (primitive_declaration | assignment)* RIGHT_CURLY_BRACKET;
 function: function_header ((COLON single_statement) | scope_body);
 function_header: RECIPE COLON IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
 parameters: LEFT_PAREN (IMMUTABLE? type IDENTIFIER ELIPSES? (COMMA IMMUTABLE? type IDENTIFIER ELIPSES?)*)? RIGHT_PAREN;
