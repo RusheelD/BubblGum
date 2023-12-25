@@ -1,5 +1,4 @@
-﻿using Ast.enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,19 +7,15 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class FunctionHeader : AstNode, InterfaceMember
+    public class Function : AstNode, ClassMember
     {
-        public string Name;
-        public List<(bool, AnyType, string, bool)> Params; // isImmutable, type, name, isEllipses
-        public List<(AnyType, string, bool)> Outputs; // Type, VarName, HasElipses
-        public const string EMPTY = "";
+        public FunctionHeader Header;
+        public List<Statement> Statements;
 
-        public FunctionHeader(string name, List<(bool, AnyType, string, bool)> Params,
-            List<(AnyType, string, bool)> outputs, int lineNumber, int startCol)
+        public Function(FunctionHeader header, List<Statement> statements, int lineNumber, int startCol)
         {
-            Name = name;
-            this.Params = Params;
-            Outputs = outputs;
+            Header = header;
+            Statements = statements;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

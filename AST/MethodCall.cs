@@ -10,5 +10,11 @@ namespace AST
     {
         public Exp Lhs;
         public List<Exp> Args;
+
+        public MethodCall(Exp lhs, List<Exp> args)
+        {
+            Lhs = lhs;
+            Args = args;
+        }
     }
 }
