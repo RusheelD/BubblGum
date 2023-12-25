@@ -71,6 +71,16 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitVisibility([NotNull] BubblGumParser.VisibilityContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.struct"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterStruct([NotNull] BubblGumParser.StructContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.struct"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitStruct([NotNull] BubblGumParser.StructContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.function"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -191,45 +201,25 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitReturn_statement([NotNull] BubblGumParser.Return_statementContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.object_declaration_assignment"/>.
+	/// Enter a parse tree produced by <see cref="BubblGumParser.primitive_declaration"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterObject_declaration_assignment([NotNull] BubblGumParser.Object_declaration_assignmentContext context);
+	void EnterPrimitive_declaration([NotNull] BubblGumParser.Primitive_declarationContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.object_declaration_assignment"/>.
+	/// Exit a parse tree produced by <see cref="BubblGumParser.primitive_declaration"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitObject_declaration_assignment([NotNull] BubblGumParser.Object_declaration_assignmentContext context);
+	void ExitPrimitive_declaration([NotNull] BubblGumParser.Primitive_declarationContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.variable_declaration_assignment"/>.
+	/// Enter a parse tree produced by <see cref="BubblGumParser.assignment"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterVariable_declaration_assignment([NotNull] BubblGumParser.Variable_declaration_assignmentContext context);
+	void EnterAssignment([NotNull] BubblGumParser.AssignmentContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.variable_declaration_assignment"/>.
+	/// Exit a parse tree produced by <see cref="BubblGumParser.assignment"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitVariable_declaration_assignment([NotNull] BubblGumParser.Variable_declaration_assignmentContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.variable_declaration"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterVariable_declaration([NotNull] BubblGumParser.Variable_declarationContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.variable_declaration"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitVariable_declaration([NotNull] BubblGumParser.Variable_declarationContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.variable_assignment"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterVariable_assignment([NotNull] BubblGumParser.Variable_assignmentContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.variable_assignment"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitVariable_assignment([NotNull] BubblGumParser.Variable_assignmentContext context);
+	void ExitAssignment([NotNull] BubblGumParser.AssignmentContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.variable_inc_dec"/>.
 	/// </summary>
@@ -371,6 +361,16 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitType([NotNull] BubblGumParser.TypeContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.array"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArray([NotNull] BubblGumParser.ArrayContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.array"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArray([NotNull] BubblGumParser.ArrayContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.primitive"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -381,6 +381,16 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitPrimitive([NotNull] BubblGumParser.PrimitiveContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.tuple"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterTuple([NotNull] BubblGumParser.TupleContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.tuple"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitTuple([NotNull] BubblGumParser.TupleContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.primitive_pack"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -390,4 +400,14 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitPrimitive_pack([NotNull] BubblGumParser.Primitive_packContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.any_array"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterAny_array([NotNull] BubblGumParser.Any_arrayContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.any_array"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitAny_array([NotNull] BubblGumParser.Any_arrayContext context);
 }
