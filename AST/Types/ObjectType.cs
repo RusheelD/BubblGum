@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-   public class ArrayType : AnyType {
-       
+   public class ObjectType : AnyType {
+        public String Name;
+        public bool IsPack;
+
+        public ObjectType(String name, bool isPack) {
+            Name = name;
+            IsPack = isPack;
+        }
    }
 }
