@@ -4,7 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AntlrCSharp.AST
+namespace AST
 {
-   public abstract class AnyType { }
+   public enum Visbility
+   {
+       Bold,
+       Subtle,
+       Bland
+   }
 }

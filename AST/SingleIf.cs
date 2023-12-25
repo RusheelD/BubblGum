@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Divide : Exp
+    public class If : Statement
     {
         public Exp E1, E2;
 
