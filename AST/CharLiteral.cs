@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class StringLiteral : AstNode
+    public class CharLiteral : AstNode
     {
-        public string Value;
+        public char Value;
 
-        public StringLiteral(string value, int lineNumber, int startCol)
+        public CharLiteral(char value, int lineNumber, int startCol)
         {
             Value = value;
             LineNumber = lineNumber;
