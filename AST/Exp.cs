@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AntlrCSharp.AST
+namespace AST
 {
     public abstract class Exp : AstNode
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Antlr4.Runtime.Atn.SemanticContext;
 
-namespace AntlrCSharp.AST
+namespace   AST
 {
     public class VarDecl : Statement
     {
