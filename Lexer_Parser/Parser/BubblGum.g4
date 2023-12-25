@@ -55,7 +55,7 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression THIN_ARROW EMPTY | // object empty access
               expression THIN_ARROW expression | // member access
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call or new object
-              dd | // new array
+              array | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
               INPUT LEFT_PAREN RIGHT_PAREN | // input method call
               (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
