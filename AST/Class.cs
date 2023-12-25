@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace AntlrCSharp.AST
 {
-    public class MethodCall : Exp
+    public class Class : AstNode
     {
-        public Exp Lhs;
-        public List<Exp> Args;
+        public bool IsSticky;
+        public string Name;
+        public List<string> InterfacesAndParentClasses;
     }
 }
