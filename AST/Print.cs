@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Program : AstNode
+    public class Print : Statement
     {
-        public List<ProgramPiece> Pieces;
+        public Printable Thing;
 
-        public Program(List<ProgramPiece> pieces,
+        public Print(Printable thing,
            int lineNumber, int startCol)
         {
-            Pieces = pieces;
+            Thing = thing;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public abstract class Statement : AstNode, Printable
+    public interface Printable
     {
-       
+
     }
 }
