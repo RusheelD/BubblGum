@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class Class : AstNode
+    public class Class : AstNode, ProgramPiece
     {
         public bool IsSticky;
         public Visbility Visbility;

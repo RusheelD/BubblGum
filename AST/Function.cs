@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class Function : AstNode, ClassMember
+    public class Function : AstNode, ClassMember, ProgramPiece
     {
         public FunctionHeader Header;
         public List<Statement> Statements;

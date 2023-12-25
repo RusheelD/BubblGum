@@ -9,13 +9,13 @@ namespace AST
     public class PopVar : Statement
     {
         public Exp Var;
-        public bool ShouldOutput;
+        public bool UseOutput;
         public Exp Output;
 
-        public PopVar(Exp var, bool shouldOutput, Exp output, int lineNumber, int startCol)
+        public PopVar(Exp var, bool useOutput, Exp output, int lineNumber, int startCol)
         {
             Var = var;
-            ShouldOutput = shouldOutput;
+            UseOutput = useOutput;
             Output = output;
 
             LineNumber = lineNumber;
