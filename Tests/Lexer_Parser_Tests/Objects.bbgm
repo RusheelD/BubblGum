@@ -2,3 +2,4 @@ Cow a :: cow()
 flavor a :: cow()
 Cow a :: cow(8, milk, "woah")
 Cow a :: bob->joe->cow(420)
+Dave->wife->lemonCookie :: 2 !

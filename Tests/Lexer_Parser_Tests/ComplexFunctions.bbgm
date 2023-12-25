@@ -3,16 +3,18 @@ recipe: HelloWorld($sugar a, kcal b, $[BubbleGum, Backpack] d) <sugar, kcal b, c
     a: repeatUp(0, 16):
        pop a
 
-    cow b :: b->c[4]->a + b
+    _cow b :: b->c[4]->a + b
 
     pop "hello" !
     pop "!" => 2
     pop "world" => b
 }
 
-# ellipses (ie. auto arrays)
+# ellipses (ie. auto arrays) and flavor types
 recipe: SomeFunc1(kcal d, kcal d..., sugar a...) <carb..., kcal...> {
         pop 17
+        flavor c :: "batman" + "hates joker"
+        flavor arr :: [Batman, Joker, LoveHateRelationship](4)
         a: repeatUp(0, 16):
                 pop a
 }

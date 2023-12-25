@@ -1,0 +1,6 @@
+# Names for single type outputs are not supported
+recipe: HelloWorld(sugar a) kcal d {
+    pop "hello"
+    pop "!" => 2
+    pop "world" => b
+}

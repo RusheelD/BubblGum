@@ -10,7 +10,6 @@ recipe: HelloWorld() <[sugar, kcal, Cow] a> {}
 recipe: HelloWorld() <[<sugar, sugar, Cow>] a> {}
 
 # array of arrays and tuples (recursive)
-[[[Cow]]] a :: nflv
 recipe: HelloWorld() <[sugar, [[Cow, sugar]]] a> {}
 recipe: HelloWorld() <[sugar, [<carb, joe, [Cow, sugar] a>], Cow] a> {}
 
@@ -21,3 +20,13 @@ recipe: HelloWorld() <[sugar b, [<carb e, joe, [Cow, sugar f] a>], Cow] a> {}
 
 #Should add support for arr[0]->Item0, arr[0]->Item1, in the parser. Note that logic wise,
 #arr[0] will become a tuple so this functionality only needs to be added to Tuples in the logic stage
+
+# Array assignment
+[Cow, Bam] a :: nflv
+[Cow, Bam] a :: flavorless
+[Cow, Bam] a :: [Cow, Bam](4)
+flavor a :: [Cow, Bam](4)
+
+# Multi-dimensional arrays
+[[[Cow]]] a :: nflv
+[[[Cow]]] a :: [[Cow]]

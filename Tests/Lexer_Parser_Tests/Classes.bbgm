@@ -1,9 +1,7 @@
-
-
-
 Gum Apple: Fruit, Edible, Product {
-	sticky bold sugar weight :: 1!
-	sticky bold $kcal name :: "Apple"
+	sticky bold sugar weight :: 1
+	sticky bold $kcal name :: "Apple" !
+	sticky bold $[Bob,Joe] complicate :: nflv ?
 	
 	bold Color color :: Color->RED !
 	bold Taste taste :: Taste-> SWEET !
@@ -13,8 +11,6 @@ Gum Apple: Fruit, Edible, Product {
 		eaten :: yup
 	}
 }
-
-
 
 Gum Point2D {
 	bold carb x!
@@ -30,8 +26,8 @@ Gum Point2D {
 }
 
 Gum Line2D {
-	bold Point2D point1 :: flavorless
-	bold Point2D point2 :: flavorless
+	bold Point2D point1 :: flavorless !
+	bold Point2D point2 :: flavorless ?
 
 	bold recipe: Line2D(carb x1, carb x2, carb y1, carb y2) {
 		point1 :: Point2D(x1, y1)
@@ -48,11 +44,4 @@ Gum Line2D {
 		pop point1
 		pop point2
 	}
-}
-
-sugar a, sugar b :: 3
-$kcal a, sugar b, $kcal d :: 2
-sugar a, kcal d
-recipe: Eat ($sugar a) bob {
-    
 }
