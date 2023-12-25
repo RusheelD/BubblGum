@@ -8,17 +8,13 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class IncDec : Statement
+    public class Not : Exp
     {
-        public Exp E1, E2;
-        public bool ShouldIncrement; // decrement if false
+        public Exp E1;
 
-        public IncDec(Exp e1, Exp e2, bool shouldIncrement, int lineNumber, int startCol)
+        public Not(Exp e1, int lineNumber, int startCol)
         {
             E1 = e1;
-            E2 = e2;
-            ShouldIncrement = shouldIncrement;
-
             LineNumber = lineNumber;
             StartCol = startCol;
         }
