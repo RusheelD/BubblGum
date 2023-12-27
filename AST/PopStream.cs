@@ -12,7 +12,8 @@ namespace AST
         public bool HasOutputIdx;
         public Exp OutputIdx;
 
-        public PopStream(Exp var, bool hasOutputIdx, Exp outputIdx, int lineNumber, int startCol)
+        public PopStream(Exp var, bool hasOutputIdx, Exp outputIdx, 
+            int lineNumber, int startCol)
         {
             Var = var;
             HasOutputIdx = hasOutputIdx;
