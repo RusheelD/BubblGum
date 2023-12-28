@@ -15,4 +15,8 @@
     <Folder Include="Symbol_Tables\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lexer_Parser\AntlrCSharp.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -3,6 +3,6 @@
 # Hello World program in C#/Java style
 Gum Class1 {
     recipe: Main(kcal args) {
-       "Hello World" !
+       ("Hello World") !
     }
 }

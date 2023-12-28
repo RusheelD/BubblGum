@@ -29,8 +29,8 @@ statement_list: (statement)*; // statements
 
 statement: single_statement | scope_body;
 single_statement: base_statement | print_statement | debug_statement | if_statement | loop;
-print_statement: (base_statement | expression) PRINT PRINT?;
-debug_statement: (base_statement | expression) DEBUG;
+print_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN PRINT PRINT?;
+debug_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN DEBUG DEBUG?;
 
 // anything that can be printed out or debugged
 base_statement: primitive_declaration | assignment | variable_inc_dec | return_statement;

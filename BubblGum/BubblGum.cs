@@ -66,23 +66,6 @@ public class BubblGum
         var createAST = new CreateAST();
         createAST.Visit(rootNode);
 
-        /*
-         *    var payload = tree.Payload;
-            Console.WriteLine(tree.Payload.GetType());
-
-            if (payload is BubblGumParser.ExpressionContext)
-            {
-                var p = (BubblGumParser.ExpressionContext)payload;
-                //if (p.expression() != null && p.expression().Count() > 0)
-                   
-                if (p.PLUS() != null)
-                {
-                    Console.WriteLine($"{p.expression().Count()}");
-                }
-            }
-
-         */
-
         Console.SetOut(originalOutStream);
         return true;
     }
