@@ -44,6 +44,15 @@ assignment: (((IMMUTABLE? (type | FLAVOR))? IDENTIFIER) | expression)
     ASSIGN expression;
 // supports anything on LHS (ex. $Cow c, sugar a, [sugar] b, flavor d, loneWolf, Life->HappinessCount, a[0] :: b )
 
+/*
+assignment: (imut_var_definition | mut_definition | IDENTIFIER | expression)
+    (COMMA (imut_var_definition | mut_definition | IDENTIFIER | expression))*
+    ASSIGN expression;
+
+imut_var_definition: IMMUTABLE (type | FLAVOR) IDENTIFIER ;
+mut_definition: (type | FLAVOR) IDENTIFIER ;
+*/
+
 variable_inc_dec: expression (PLUS_COLON | MINUS_COLON) expression;
 
 if_statement: IF expression ((COLON single_statement) | scope_body) elif_statement* else_statement?;

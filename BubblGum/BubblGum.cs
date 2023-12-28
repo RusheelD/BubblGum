@@ -64,10 +64,25 @@ public class BubblGum
         // DFS(rootNode);
 
         var createAST = new CreateAST();
-        createAST.Visit(rootNode);
+        Program program = createAST.Visit(rootNode);
+        DFS(program);
 
         Console.SetOut(originalOutStream);
         return true;
+    }
+
+
+    private static void DFS(Program program)
+    {
+        var nodes = new Stack<AstNode>();
+        for (int i = program.Pieces.Count - 1; i >= 0; i--)
+            nodes.Push((AstNode)program.Pieces[i]);
+
+        while (nodes.Count > 0)
+        {
+            var node = nodes.Pop();
+            Console.WriteLine($"{node.GetType()}");
+        }
     }
 
     private static void DFS(BubblGumParser.ProgramContext rootNode)

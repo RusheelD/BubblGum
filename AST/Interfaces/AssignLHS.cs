@@ -12,3 +12,8 @@ namespace AST
         
     }
 }
+
+// Assign LHS:
+// identifier
+// (immutable anytype) identifier
+// expression

@@ -1,2 +1,7 @@
 ﻿sugar a :: 2 + 4.0 * 6 / 3
-(sugar a :: 2 + 4.0 * 6 / 3) !
+{
+	(sugar a :: 2 + 4.0 * 6 / 3) !
+	sugar b, $kcal c :: 3
+	sugar c :: 2
+	c :: 3
+}

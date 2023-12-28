@@ -23,7 +23,7 @@ namespace AST
     }
 }
 
-// Interface AssignmentLHS
+// Assign LHS:
 // identifier
-// (bool anytype) identifier
+// (immutable anytype) identifier
 // expression
