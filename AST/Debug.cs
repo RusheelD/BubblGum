@@ -9,11 +9,13 @@ namespace AST
     public class Debug : Statement
     {
         public Printable Thing;
+        public bool UseNewLine;
 
-        public Debug(Printable thing,
+        public Debug(Printable thing, bool useNewLine,
            int lineNumber, int startCol)
         {
             Thing = thing;
+            UseNewLine = useNewLine;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

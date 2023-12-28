@@ -9,11 +9,14 @@ namespace AST
     public class Print : Statement
     {
         public Printable Thing;
+        public bool UseNewLine;
 
-        public Print(Printable thing,
+        public Print(Printable thing, bool useNewLine,
            int lineNumber, int startCol)
         {
             Thing = thing;
+            UseNewLine = useNewLine;
+
             LineNumber = lineNumber;
             StartCol = startCol;
         }
