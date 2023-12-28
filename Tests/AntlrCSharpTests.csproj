@@ -18,6 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AST\Ast.csproj" />
+    <ProjectReference Include="..\BubblGum\BubblGum.csproj" />
     <ProjectReference Include="..\Lexer_Parser\AntlrCSharp.csproj" />
   </ItemGroup>
 

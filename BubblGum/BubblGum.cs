@@ -7,6 +7,7 @@ using Antlr4.Runtime.Atn;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using System.Xml.Serialization;
+using AST;
 
 public class BubblGum
 {
@@ -17,9 +18,9 @@ public class BubblGum
     private const string OUTPUT_FILE = "Output.txt";
     private const string ERROR_MSG = "Please specify a valid mode (-P) to parse file and a file to scan";
 
-    public static void Main(string[] args)
+    public static void Execute(string[] args)
     {
-        if (args.Length < 0 || args.Length > 2)
+        if (args.Length != 2)
         {
             Console.Error.WriteLine(ERROR_MSG);
             return;
@@ -27,7 +28,7 @@ public class BubblGum
 
         if (!File.Exists(args[1]))
         {
-            Console.Error.WriteLine($"File at path {Path.GetFullPath(args[1])} could not be found");
+            Console.Error.WriteLine($"File at path {args[1]} could not be found");
             return;
         }
 
@@ -59,11 +60,28 @@ public class BubblGum
             return false;
         }
 
-      //  BubblGumParser.ExpressionContext context;
-       // int a = context.Start.Line;
-
         BubblGumParser.ProgramContext rootNode = parser.program();
-        DFS(rootNode);
+        // DFS(rootNode);
+
+        var createAST = new CreateAST();
+        createAST.Visit(rootNode);
+
+        /*
+         *    var payload = tree.Payload;
+            Console.WriteLine(tree.Payload.GetType());
+
+            if (payload is BubblGumParser.ExpressionContext)
+            {
+                var p = (BubblGumParser.ExpressionContext)payload;
+                //if (p.expression() != null && p.expression().Count() > 0)
+                   
+                if (p.PLUS() != null)
+                {
+                    Console.WriteLine($"{p.expression().Count()}");
+                }
+            }
+
+         */
 
         Console.SetOut(originalOutStream);
         return true;
@@ -85,13 +103,24 @@ public class BubblGum
             if (tree.ChildCount == 0)
             {
                 var token = (IToken)tree.Payload;
+
+                // EOF
+                if (token.Type == -1)
+                    break;
+
                 if (token.Line != lineNum)
                 {
                     lineNum = token.Line;
                     Console.Out.Write("\n" + token.Text + " ");
+                    Console.Out.Write(token.Line + " " + token.Column + " " +
+                        BubblGumLexer.ruleNames[token.Type-1] + "\n");
                 }
                 else
+                {
                     Console.Write(token.Text + " ");
+                    Console.Out.Write(token.Line + " " + token.Column + " " + 
+                        BubblGumLexer.ruleNames[token.Type-1] + "\n");
+                }
             }
         }
     }

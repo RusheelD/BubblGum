@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+    <ProjectReference Include="..\Lexer_Parser\AntlrCSharp.csproj" />
+    <ProjectReference Include="..\AST\Ast.csproj" />
   </ItemGroup>
 
 </Project>
