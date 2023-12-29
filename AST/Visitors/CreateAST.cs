@@ -219,8 +219,8 @@ namespace AST
 
         private (TupleType, int, int) visit(TupleContext n)
         {
-            int arrayLineNum = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Line;
-            int arrayCol = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Column;
+            int tupleLineNum = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Line;
+            int tupleCol = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Column;
 
             int state = 0;
             AnyType type = new FlavorType();
@@ -261,7 +261,7 @@ namespace AST
                 }
             }
 
-            return (new TupleType(typeNamePairs), arrayLineNum, arrayCol);
+            return (new TupleType(typeNamePairs), tupleLineNum, tupleCol);
 
         }
 
@@ -284,7 +284,7 @@ namespace AST
                 case PURE:
                     return (new PrimitiveType(TypeBI.PureSugar), token.Line, token.Column);
                 default:
-                    return (null, 0, 0);
+                    throw new Exception("Invalid type detected");
             }
         }
 
@@ -307,7 +307,7 @@ namespace AST
                 case PURE:
                     return (new PackType(TypePack.PureSugarPack), token.Line, token.Column);
                 default:
-                    return (null, 0, 0);
+                    throw new Exception("Invalid type detected");
             }
         }
 
@@ -438,24 +438,6 @@ namespace AST
 
             if (child is PrimitiveContext)
                 return visit(child);
-            else
-                throw new Exception("Invalid type detected");
-        }
-
-        private (AnyType, int, int) visit(PrimitiveContext n)
-        {
-            IToken token = (IToken)n.children[0].Payload;
-
-            if (token.Type == SUGAR)
-                return (new PrimitiveType(TypeBI.Sugar), token.Line, token.Column);
-            else if (token.Type == CARB)
-                return (new PrimitiveType(TypeBI.Carb), token.Line, token.Column);
-            else if (token.Type == CAL)
-                return (new PrimitiveType(TypeBI.Cal), token.Line, token.Column);
-            else if (token.Type == KCAL)
-                return (new PrimitiveType(TypeBI.Kcal), token.Line, token.Column);
-            else if (token.Type == PURE)
-                return (new PrimitiveType(TypeBI.PureSugar), token.Line, token.Column);
             else
                 throw new Exception("Invalid type detected");
         }
