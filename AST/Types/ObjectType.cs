@@ -14,5 +14,7 @@ namespace AST
             Name = name;
             IsPack = isPack;
         }
-   }
+
+        public override void Accept(TypeVisitor v) => v.Visit(this);
+    }
 }

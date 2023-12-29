@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-   public abstract class AnyType { }
+   public abstract class AnyType {
+
+        public abstract void Accept(TypeVisitor v);
+   }
 
    //public const string EMPTY = "";
 }

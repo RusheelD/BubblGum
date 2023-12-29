@@ -10,7 +10,7 @@ using static BubblGumParser;
 
 namespace AST
 {
-    public class PrintAST : Visitor
+    public class PrintAST : Visitor, TypeVisitor
     {
         // program + program pieces
 
@@ -47,14 +47,19 @@ namespace AST
 
         // assignment-related statments
 
-        public void Visit(AssignDeclLHS n)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Visit(Assignment n)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < n.Assignees.Count; i++)
+                n.Assignees[i].Accept(this);
+
+            n.Result.Accept(this);
+        }
+
+        public void Visit(AssignDeclLHS n)
+        {
+            Console.Write(n.IsImmutable ? "$" : "");
+            n.Type.Accept(this);
+            Console.Write(" " + n.VarName);
         }
 
         public void Visit(PrimitiveDeclaration1 n)
@@ -152,37 +157,37 @@ namespace AST
 
         public void Visit(Bool n)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(n.Value);
         }
 
         public void Visit(CharLiteral n)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(n.Value);
         }
 
         public void Visit(Flavorless n)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("flavorless");
         }
 
         public void Visit(Identifier n)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(n.Value);
         }
 
         public void Visit(Double n)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(n.Value);
         }
 
         public void Visit(Integer n)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(n.Value);
         }
 
         public void Visit(StringLiteral n)
         {
-            throw new NotImplementedException();
+
         }
 
 
@@ -190,17 +195,23 @@ namespace AST
 
         public void Visit(NotEquals n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write(" ~= ");
+            n.E2.Accept(this);
         }
 
         public void Visit(Equals n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write(" = ");
+            n.E2.Accept(this);
         }
 
         public void Visit(GreaterThan n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write(" > ");
+            n.E2.Accept(this);
         }
 
         public void Visit(GreaterThanEquals n)
@@ -330,6 +341,45 @@ namespace AST
         public void Visit(PackSize n)
         {
             throw new NotImplementedException();
+        }
+
+
+        // types
+        public void Visit(SingularArrayType n)
+        {
+            Console.Write("[");
+            n.Type.Accept(this);
+            Console.Write("]");
+        }
+
+        public void Visit(ArrayType n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(FlavorType n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(ObjectType n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(PackType n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(PrimitiveType n)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Visit(TupleType n)
+        {
+            
         }
     }
 }

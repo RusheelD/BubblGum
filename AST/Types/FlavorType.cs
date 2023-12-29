@@ -8,6 +8,6 @@ namespace AST
 {
     public class FlavorType : AnyType
     {
-       
+        public override void Accept(TypeVisitor v) => v.Visit(this);
     }
 }

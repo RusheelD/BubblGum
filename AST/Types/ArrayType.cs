@@ -12,5 +12,7 @@ namespace AST
         public ArrayType(TupleType tupleType) {
             TupleType = tupleType;
         }
-   }
+
+        public override void Accept(TypeVisitor v) => v.Visit(this);
+    }
 }

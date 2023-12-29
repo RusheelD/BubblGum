@@ -14,5 +14,7 @@ namespace AST
         {
             Type = type;
         }
+
+        public override void Accept(TypeVisitor v) => v.Visit(this);
     }
 }
