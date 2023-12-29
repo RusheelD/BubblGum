@@ -14,11 +14,11 @@ namespace AST
         public List<string> ParentInterfaces;
 
         // IsSticky, GetScope, SetScope, InterfaceMember
-        public List<(bool, Visbility, Visbility, InterfaceMember)> InterfaceMemberInfo;
+        public List<(bool, Visbility, Visbility, AstNode)> InterfaceMemberInfo;
 
         public Interface(bool isSticky, Visbility visbility, string name,
             List<string> parentInterfaces, 
-            List<(bool, Visbility, Visbility, InterfaceMember)> interfaceMemberInfo,
+            List<(bool, Visbility, Visbility, AstNode)> interfaceMemberInfo,
             int lineNumber, int startCol)
         {
             IsSticky = isSticky;

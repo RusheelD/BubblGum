@@ -20,6 +20,6 @@ namespace AST
             StartCol = startCol;
         }
 
-        public override void Accept(Visitor v) => v.Visit(this);
+        public override void Accept(Visitor v) { }
     }
 }

@@ -8,6 +8,6 @@ namespace AST
 {
     public abstract class Statement : AstNode, Printable, ProgramPiece
     {
-       
+
     }
 }

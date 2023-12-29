@@ -20,7 +20,7 @@ namespace AST
         public void Visit(Struct n);
         public void Visit(Interface n);
 
-        // assignment-related statments
+        // assignment and declaration statments
         public void Visit(AssignDeclLHS n);
         public void Visit(Assignment n);
         public void Visit(PrimitiveDeclaration1 n);
@@ -68,7 +68,7 @@ namespace AST
         public void Visit(And n);
         public void Visit(Or n);
 
-        // arithmetic
+        // arithmetic expressions
         public void Visit(Plus n);
         public void Visit(Minus n);
         public void Visit(Multiply n);

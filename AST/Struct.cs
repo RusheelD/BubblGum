@@ -10,9 +10,9 @@ namespace AST
     public class Struct : AstNode, ProgramPiece
     {
         public string Name;
-        public List<Statement> Statements;
+        public List<AstNode> Statements; // confirm it is struct pieces at runtime
 
-        public Struct(string name, List<Statement> statements, int lineNumber, int startCol)
+        public Struct(string name, List<AstNode> statements, int lineNumber, int startCol)
         {
             Name = name;
             Statements = statements;

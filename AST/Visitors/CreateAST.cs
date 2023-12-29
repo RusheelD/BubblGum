@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -18,7 +19,7 @@ namespace AST
         {
             Console.WriteLine($"{n.children.Count}");
 
-            var programPieces = new List<ProgramPiece>();
+            var programPieces = new List<AstNode>();
             for (int i = 0; i < n.children.Count-1; i++)
             {
                 AstNode node = visit((dynamic)n.children[i]);
@@ -26,7 +27,7 @@ namespace AST
                 if (node is StatementList)
                     programPieces.AddRange(((StatementList)node).Statements);
                 else if (node is ProgramPiece)
-                    programPieces.Add((ProgramPiece)node);
+                    programPieces.Add(node);
                 else
                     Console.Error.WriteLine($"node of type {node.GetType()} isn't handled");
             }
@@ -69,7 +70,7 @@ namespace AST
                 if (node is StatementList)
                     statements.AddRange(((StatementList)node).Statements);
                 else
-                    statements.Add((Statement)node);
+                    statements.Add(node);
             }
 
             return new StatementList(statements, 0, 0);
@@ -82,7 +83,7 @@ namespace AST
 
         private Assignment visit(AssignmentContext n)
         {
-            var lhs = new List<AssignLHS>();
+            var lhs = new List<AstNode>();
             var lastChild = n.children[n.children.Count - 1];
             Exp result = visit((ExpressionContext)lastChild);
 
@@ -176,8 +177,8 @@ namespace AST
                 }
             }
 
-            int assignLineNum = ((AstNode)lhs[0]).LineNumber;
-            int assignCol = ((AstNode)lhs[0]).StartCol;
+            int assignLineNum = lhs[0].LineNumber;
+            int assignCol = lhs[0].StartCol;
             return new Assignment(lhs, result, assignLineNum, assignCol);
         }
 
@@ -188,11 +189,9 @@ namespace AST
             var token = (IToken)n.LEFT_PAREN().Payload;
             int lineNum = token.Line;
             int col = token.Column;
-            bool useNewLine = (n.PRINT().Length == 1);
+            bool useNewLine = n.PRINT().Length == 1;
            
-            Printable thing = visit(child);
-
-            return new Print(thing, useNewLine, lineNum, col);
+            return new Print(visit(child), useNewLine, lineNum, col);
         }
 
         private Debug visit(Debug_statementContext n)
@@ -202,11 +201,9 @@ namespace AST
             var token = (IToken)n.LEFT_PAREN().Payload;
             int lineNum = token.Line;
             int col = token.Column;
-            bool useNewLine = (n.DEBUG().Length == 1);
+            bool useNewLine = n.DEBUG().Length == 1;
 
-            Printable thing = visit(child);
-
-            return new Debug(thing, useNewLine, lineNum, col);
+            return new Debug(visit(child), useNewLine, lineNum, col);
         }
 
         private (AnyType, int, int) visit(ArrayContext n)
@@ -371,26 +368,131 @@ namespace AST
                     return (new SingularArrayType(type), arrayLineNum, arrayCol);
                 }
                 else if (child.Payload is IToken)
-                {
-                    IToken token = (IToken)child.Payload;
-                    if (token.Type == FLAVOR)
-                        return (new SingularArrayType(new FlavorType()), arrayLineNum, arrayCol);
-                    else
-                        return (null, 0, 0);
-                }
+                    return (new SingularArrayType(new FlavorType()), arrayLineNum, arrayCol);
                 else
-                    return (null, 0, 0);
+                    throw new Exception("Invalid type detected");
             }
         }
 
         private Exp visit(ExpressionContext n)
         {
-            return null;
+            if (n.children.Count == 1)
+            {
+                var loneChild = n.children[0];
+                if (loneChild is IntContext)
+                {
+                    return visit((IntContext)loneChild);
+                }
+                else if (loneChild is DoubleContext)
+                {
+                    return visit((DoubleContext)loneChild);
+                }
+                else
+                    throw new Exception("Invalid type detected");
+            }
+
+            dynamic child = n.children[1];
+            if (child.Payload is IToken)
+            {
+                IToken token = (IToken)child.Payload;
+                if (token.Type == PLUS)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Plus(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == MINUS)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Minus(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == MULTIPLY)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Multiply(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == DIVIDE)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Divide(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else
+                    throw new Exception("Invalid type detected");
+            }
+            else
+                throw new Exception("Invalid type detected");
         }
 
         private (AnyType, int, int) visit(TypeContext n)
         {
-            return (null, 0, 0);
+            dynamic child = n.children[0];
+
+            if (child.Payload is IToken)
+            {
+                IToken token = (IToken)child.Payload;
+                return (new ObjectType(token.Text, false), token.Line, token.Column);
+            }
+
+            if (child is PrimitiveContext)
+                return visit(child);
+            else
+                throw new Exception("Invalid type detected");
+        }
+
+        private (AnyType, int, int) visit(PrimitiveContext n)
+        {
+            IToken token = (IToken)n.children[0].Payload;
+
+            if (token.Type == SUGAR)
+                return (new PrimitiveType(TypeBI.Sugar), token.Line, token.Column);
+            else if (token.Type == CARB)
+                return (new PrimitiveType(TypeBI.Carb), token.Line, token.Column);
+            else if (token.Type == CAL)
+                return (new PrimitiveType(TypeBI.Cal), token.Line, token.Column);
+            else if (token.Type == KCAL)
+                return (new PrimitiveType(TypeBI.Kcal), token.Line, token.Column);
+            else if (token.Type == PURE)
+                return (new PrimitiveType(TypeBI.PureSugar), token.Line, token.Column);
+            else
+                throw new Exception("Invalid type detected");
+        }
+
+        // what about integer overflow??
+        private Integer visit(IntContext n)
+        {
+            int integer, lineNum, col;
+            IToken token = (IToken)n.children[0].Payload;
+            lineNum = token.Line;
+            col = token.Column;
+
+            integer = int.Parse(n.INTEGER_LITERAL().GetText());
+            if (n.MINUS() != null)
+                integer *= -1;
+
+            return new Integer(integer, lineNum, col);
+        }
+
+        private Double visit(DoubleContext n)
+        {
+            IToken token = (IToken)n.children[0].Payload;
+            int lineNum = token.Line;
+            int col = token.Column;
+
+            bool negative = n.MINUS() != null;
+            double number;
+
+            if (n.INTEGER_LITERAL().Length == 2)
+            {
+                number = double.Parse(n.INTEGER_LITERAL()[0].GetText() + "." + 
+                    n.INTEGER_LITERAL()[1].GetText());
+            }
+            else
+                number = int.Parse(n.INTEGER_LITERAL()[0].GetText());
+
+            return new Double(number * (negative ? -1 : 1), lineNum, col);
         }
     }
 }

@@ -16,7 +16,7 @@ public class BubblGum
     // print compiler messages to output file if debugging, Console.Out if not debugging
     private const bool DEBUG_MODE = false;
 
-    private const string OUTPUT_FILE = "Output.txt";
+    private const string OUTPUT_FILE = "./Main/Output.txt";
     private const string ERROR_MSG = "Please specify a valid mode (-P) to parse file and a file to scan";
 
     public static void Execute(string[] args)
@@ -61,21 +61,24 @@ public class BubblGum
             return false;
         }
 
-        BubblGumParser.ProgramContext rootNode = parser.program();
-        // DFS(rootNode);
+        BubblGumParser.ProgramContext programContext = parser.program();
 
         var createAST = new CreateAST();
-        Program program = createAST.Visit(rootNode);
-        
+        Program program = createAST.Visit(programContext);
+
+        var printAST = new PrintAST();
+        printAST.Visit(program);
+
+        Console.Out.Close();
         Console.SetOut(originalOutStream);
         return true;
     }
 
-    private static void PrintProgramPieces(Program program)
+    private static void printProgramPieces(Program program)
     {
-        var nodes = new Stack<AstNode>();
+        var nodes = new Stack<Statement>();
         for (int i = program.Pieces.Count - 1; i >= 0; i--)
-            nodes.Push((AstNode)program.Pieces[i]);
+            nodes.Push((Statement)program.Pieces[i]);
 
         while (nodes.Count > 0)
         {
@@ -84,7 +87,7 @@ public class BubblGum
         }
     }
 
-    private static void DFS(BubblGumParser.ProgramContext rootNode)
+    private static void dfs(BubblGumParser.ProgramContext rootNode)
     {
         var branches = new Stack<IParseTree>();
         for (int i = rootNode.children.Count - 1; i >= 0; i--)
@@ -122,7 +125,7 @@ public class BubblGum
         }
     }
 
-    private static void BFS(BubblGumParser.ProgramContext rootNode)
+    private static void bfs(BubblGumParser.ProgramContext rootNode)
     {
         var treesToExplore = new Queue<IParseTree>();
         for (int i = 0; i < rootNode.children.Count; i++)
