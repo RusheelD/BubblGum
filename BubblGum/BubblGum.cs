@@ -8,6 +8,7 @@ using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using System.Xml.Serialization;
 using AST;
+using System.Diagnostics;
 
 public class BubblGum
 {
@@ -65,14 +66,62 @@ public class BubblGum
 
         var createAST = new CreateAST();
         Program program = createAST.Visit(rootNode);
-        DFS(program);
+        PrintProgramPieces(program);
+
+        // test setup
+        var ints = new Integer[100];
+        var doubles = new AST.Double[100];
+        for (int i = 0; i < 100; i++)
+        {
+            ints[i] = new Integer(i, i, i);
+            doubles[i] = new AST.Double(i*0.5f, i, i);
+        }
+
+        Plus startExp = new Plus(createExp(20, ints, doubles), createExp(20, ints, doubles), 12, 13);
+        var printAST = new PrintAST();
+
+        Stopwatch timer = new Stopwatch();
+        timer.Start();
+        Console.WriteLine($"{timer.ElapsedMilliseconds}");
+        printAST.Visit(startExp);
+        Console.WriteLine($"{timer.ElapsedMilliseconds}");
+        timer.Stop();
 
         Console.SetOut(originalOutStream);
         return true;
     }
 
+    private static Exp createExp(int i, Integer[] ints, AST.Double[] doubles)
+    {
+        Random r = new Random();
+        if (i == 0)
+            return r.Next(2) == 0 ? ints[r.Next(100)] : doubles[r.Next(100)];
 
-    private static void DFS(Program program)
+        int j = r.Next(4);
+
+        if (j == 0)
+        {
+            return new Plus(createExp(i - 1, ints, doubles), createExp(i - 1, ints, doubles), 
+                r.Next(100), r.Next(100));
+        }
+        else if (j == 1)
+        {
+            return new Minus(createExp(i - 1, ints, doubles), createExp(i - 1, ints, doubles),
+                r.Next(100), r.Next(100));
+        }
+        else if (j == 2)
+        {
+            return new Multiply(createExp(i - 1, ints, doubles), createExp(i - 1, ints, doubles),
+                r.Next(100), r.Next(100));
+        }
+        else
+        {
+            return new Divide(createExp(i - 1, ints, doubles), createExp(i - 1, ints, doubles),
+                r.Next(100), r.Next(100));
+        }
+    }
+
+    private static void PrintProgramPieces(Program program)
     {
         var nodes = new Stack<AstNode>();
         for (int i = program.Pieces.Count - 1; i >= 0; i--)

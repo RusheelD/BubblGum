@@ -9,5 +9,7 @@ namespace AST
     public abstract class Exp : AstNode, AssignLHS, Printable
     {
         public AnyType Type;
+
+        public virtual void Accept(Visitor v) { }
     }
 }

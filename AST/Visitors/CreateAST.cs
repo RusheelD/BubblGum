@@ -34,6 +34,7 @@ namespace AST
             return new Program(programPieces, 0, 0);
        }
 
+        // may return statement or statement list
         private Statement visit(StatementContext n) => visit((dynamic)n.children[0]);
 
         private void visit(ClassContext n)
@@ -63,14 +64,12 @@ namespace AST
             List<Statement> statements = new List<Statement>();
             for (int i = 0; i < n.children.Count; i++)
             {
-                AstNode node = visit((StatementContext)n.children[i]);
+                Statement node = visit((StatementContext)n.children[i]);
 
                 if (node is StatementList)
                     statements.AddRange(((StatementList)node).Statements);
-                else if (node is Statement)
-                    statements.Add((Statement)node);
                 else
-                    Console.Error.WriteLine($"node of type {node.GetType()} isn't handled");
+                    statements.Add((Statement)node);
             }
 
             return new StatementList(statements, 0, 0);
@@ -113,7 +112,7 @@ namespace AST
                         lhs.Add(visit((ExpressionContext)child));
                         state = 0;
                     }
-                    else if (child.ChildCount == 0)
+                    else if (child.Payload is IToken)
                     {
                         IToken token = (IToken)child.Payload;
                         lineNum = token.Line;
@@ -144,7 +143,7 @@ namespace AST
                         type = visit((TypeContext)child).Item1;
                         state = 2;
                     }
-                    else if (child.ChildCount == 0)
+                    else if (child.Payload is IToken)
                     {
                         IToken token = (IToken)child.Payload;
                         if (token.Type == FLAVOR)
@@ -162,7 +161,7 @@ namespace AST
 
                 else if (state == 2)
                 {
-                    if (child.ChildCount == 0)
+                    if (child.Payload is IToken)
                     {
                         IToken token = (IToken)child.Payload;
                         if (token.Type == IDENTIFIER)
@@ -174,7 +173,9 @@ namespace AST
                 }
             }
 
-            return new Assignment(lhs, result, 0, 0);
+            int assignLineNum = ((AstNode)lhs[0]).LineNumber;
+            int assignCol = ((AstNode)lhs[0]).StartCol;
+            return new Assignment(lhs, result, assignLineNum, assignCol);
         }
 
         private Print visit(Print_statementContext n)
@@ -189,6 +190,20 @@ namespace AST
             Printable thing = visit(child);
 
             return new Print(thing, useNewLine, lineNum, col);
+        }
+
+        private Debug visit(Debug_statementContext n)
+        {
+            dynamic child = n.children[1];
+
+            var token = (IToken)n.LEFT_PAREN().Payload;
+            int lineNum = token.Line;
+            int col = token.Column;
+            bool useNewLine = (n.DEBUG().Length == 1);
+
+            Printable thing = visit(child);
+
+            return new Debug(thing, useNewLine, lineNum, col);
         }
 
         private Exp visit(ExpressionContext n)

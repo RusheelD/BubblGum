@@ -16,5 +16,7 @@ namespace AST
             LineNumber = lineNumber;
             StartCol = startCol;
         }
+
+        public override void Accept(Visitor v) => v.Visit(this);
     }
 }
