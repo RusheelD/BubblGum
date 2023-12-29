@@ -116,12 +116,21 @@ namespace AST
             n.Thing.Accept(this);
             nestedPrints--;
             Console.Write(") !");
+            if (!n.UseNewLine)
+                Console.Write("!");    
             endStatement();
         }
 
         public void Visit(Debug n)
         {
-            throw new NotImplementedException();
+            Console.Write("(");
+            nestedPrints++;
+            n.Thing.Accept(this);
+            nestedPrints--;
+            Console.Write(") ?");
+            if (!n.UseNewLine)
+                Console.Write("?");
+            endStatement();
         }
 
         public void Visit(SingleIf n)

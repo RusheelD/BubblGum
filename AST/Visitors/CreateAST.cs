@@ -3,6 +3,7 @@ using Antlr4.Runtime.Tree;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -209,9 +210,15 @@ namespace AST
         private (AnyType, int, int) visit(ArrayContext n)
         {
             dynamic child = n.children[0];
-            if(child is Primitive_packContext || child is Any_arrayContext)
+            if (child is Primitive_packContext) 
             {
-                return visit(child);
+                (AnyType t, int l, int c) = visit((Primitive_packContext)child);
+                return (t, l, c);
+            }
+            else if (child is Any_arrayContext)
+            {
+                (AnyType t, int l, int c) = visit((Any_arrayContext)child);
+                return (t, l, c);
             }
             var token = (IToken)child.Payload;
             return (new ObjectType(token.Text, true), token.Line, token.Column);
@@ -387,6 +394,34 @@ namespace AST
                 {
                     return visit((DoubleContext)loneChild);
                 }
+                else if (loneChild is BooleanContext)
+                {
+                    return visit((BooleanContext)loneChild);
+                }
+                else if (loneChild is IdentifierContext)
+                {
+                    return visit((IdentifierContext)loneChild);
+                }
+                else if (loneChild.Payload is IToken)
+                {
+                    var loneToken = (IToken)loneChild.Payload;
+                    string text = loneToken.Text;
+                    (int line, int col) = (loneToken.Line, loneToken.Column);
+                    if (loneToken.Type == FLAVORLESS)
+                    {
+                        return new Flavorless(line, col);
+                    }
+                    else if (loneToken.Type == STRING_LITERAL)
+                    {
+                        return new StringLiteral(text.Substring(1, text.Length - 2), line, col);
+                    }
+                    else if (loneToken.Type == CHAR_LITERAL && text.Length == 3)
+                    {
+                        return new CharLiteral(text.Substring(1, 1).ToCharArray()[0], line, col);
+                    }
+                    else
+                        throw new Exception("Invalid type detected");
+                }
                 else
                     throw new Exception("Invalid type detected");
             }
@@ -437,9 +472,34 @@ namespace AST
             }
 
             if (child is PrimitiveContext)
-                return visit(child);
+            {
+                (AnyType t, int l, int c) = visit((PrimitiveContext)child);
+                return (t, l, c);
+            }
             else
-                throw new Exception("Invalid type detected");
+                return visit(child);
+        }
+
+        private IdentifierExp visit(IdentifierContext n)
+        {
+            int lineNum, col;
+            IToken token = (IToken)n.children[0].Payload;
+            lineNum = token.Line;
+            col = token.Column;
+            return new IdentifierExp(token.Text, lineNum, col);
+        }
+
+        private Bool visit(BooleanContext n)
+        {
+            int lineNum, col;
+            bool value;
+            IToken token = (IToken)n.children[0].Payload;
+            lineNum = token.Line;
+            col = token.Column;
+
+            value = token.Type == YUP;
+
+            return new Bool(value, lineNum, col);
         }
 
         // what about integer overflow??

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Flavorless : AstNode
+    public class Flavorless : Exp
     {
         public Flavorless(int lineNumber, int startCol)
         {
