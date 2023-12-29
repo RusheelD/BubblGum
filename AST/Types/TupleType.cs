@@ -8,10 +8,8 @@ namespace AST
 {
    public class TupleType : AnyType {
         public List<(AnyType, string)> TypeNamePairs;
-        public string VarName;
 
-        public TupleType(string varName, List<(AnyType, string)> typeNamePairs) {
-            VarName = varName;
+        public TupleType(List<(AnyType, string)> typeNamePairs) {
             TypeNamePairs = typeNamePairs;
         }
    }

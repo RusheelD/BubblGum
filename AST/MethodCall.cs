@@ -16,5 +16,7 @@ namespace AST
             Lhs = lhs;
             Args = args;
         }
+
+        public override void Accept(Visitor v) => v.Visit(this);
     }
 }

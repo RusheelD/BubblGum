@@ -98,6 +98,9 @@ namespace AST
             {
                 var child = n.children[i];
 
+                if (child.Payload is IToken && ((IToken)child.Payload).Type == COMMA)
+                    continue;
+
                 if (state == 0)
                 {
                     isImmutable = false;
@@ -153,7 +156,7 @@ namespace AST
                         }
                         else if (token.Type == IDENTIFIER)
                         {
-                            lhs.Add(new Identifier(token.Text, lineNum, col));
+                            lhs.Add(new AssignDeclLHS(isImmutable, type, token.Text, lineNum, col));
                             state = 0;
                         }
                     }
@@ -206,33 +209,73 @@ namespace AST
             return new Debug(thing, useNewLine, lineNum, col);
         }
 
-        private ArrayType visit(Any_arrayContext n)
+        private (AnyType, int, int) visit(Any_arrayContext n)
         {
-            /*
-             * LEFT_SQUARE_BRACKET ((type | FLAVOR) | ((type | FLAVOR) IDENTIFIER? 
-             *  (COMMA (type | FLAVOR) IDENTIFIER?)+))
-                 RIGHT_SQUARE_BRACKET;
-             */
+            int arrayLineNum = ((IToken)n.LEFT_SQUARE_BRACKET().Payload).Line;
+            int arrayCol = ((IToken)n.LEFT_SQUARE_BRACKET().Payload).Column;
+
+            int state = 0;
+            AnyType type = new FlavorType();
 
             if (n.COMMA().Count() > 0)
             {
+                var typeNamePairs = new List<(AnyType, string)>();
+                for (int i = 1; i < n.children.Count - 1; i++)
+                {
+                    var child = n.children[i];
 
+                    if (state == 0)
+                    {
+                        if (child is TypeContext)
+                        {
+                            type = visit((TypeContext)child).Item1;
+                            state = 1;
+                        }
+                        else if (child.Payload is IToken)
+                        {
+                            IToken token = (IToken)child.Payload;
+                            if (token.Type == FLAVOR)
+                            {
+                                type = new FlavorType();
+                                state = 1;
+                            }
+                        }
+                    }
+                    else if (state == 1)
+                    {
+                        if (child.Payload is IToken)
+                        {
+                            IToken token = (IToken)child.Payload;
+                            state = 0;
+                            if (token.Type == IDENTIFIER)
+                                typeNamePairs.Add((type, token.Text));
+                            else if (token.Type == COMMA)
+                                typeNamePairs.Add((type, ""));
+                        }
+                    }
+                }
+
+                return (new ArrayType(new TupleType(typeNamePairs)), arrayLineNum, arrayCol);
             }
             else
             {
-                
+                var child = n.children[1];
+                if (child is TypeContext)
+                {
+                    type = visit((TypeContext)child).Item1;
+                    return (new SingularArrayType(type), arrayLineNum, arrayCol);
+                }
+                else if (child.Payload is IToken)
+                {
+                    IToken token = (IToken)child.Payload;
+                    if (token.Type == FLAVOR)
+                        return (new SingularArrayType(new FlavorType()), arrayLineNum, arrayCol);
+                    else
+                        return (null, 0, 0);
+                }
+                else
+                    return (null, 0, 0);
             }
-            var types = new List<AnyType>();
-            dynamic child = n.children[1];
-
-            var token = (IToken)n.LEFT_PAREN().Payload;
-            int lineNum = token.Line;
-            int col = token.Column;
-            bool useNewLine = (n.DEBUG().Length == 1);
-
-            Printable thing = visit(child);
-
-            return new Debug(thing, useNewLine, lineNum, col);
         }
 
         private Exp visit(ExpressionContext n)

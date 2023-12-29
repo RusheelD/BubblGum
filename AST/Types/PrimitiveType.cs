@@ -8,12 +8,10 @@ namespace AST
 {
     public class PrimitiveType : AnyType
     {
-        public String VarName;
         public TypeBI Type;
 
-        public PrimitiveType(String varName, TypeBI type)
+        public PrimitiveType(TypeBI type)
         {
-            VarName = varName;
             Type = type;
         }
     }

@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 namespace AST
 {
    public class SingularArrayType : AnyType {
-        public String VarName;
         public AnyType Type;
 
-        public SingularArrayType(String varName, AnyType type) {
-            VarName = varName;
+        public SingularArrayType(AnyType type) {
             Type = type;
         }
    }

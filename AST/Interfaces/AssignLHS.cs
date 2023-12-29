@@ -9,7 +9,7 @@ namespace AST
 {
     public interface AssignLHS
     {
-        
+        public void Accept(Visitor v);
     }
 }
 

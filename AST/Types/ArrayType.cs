@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 namespace AST
 {
    public class ArrayType : AnyType {
-        public String VarName;
-        public List<AnyType> Types;
+        public TupleType TupleType;
 
-        public ArrayType(String varName, List<AnyType> types) {
-            VarName = varName;
-            Types = types;
+        public ArrayType(TupleType tupleType) {
+            TupleType = tupleType;
         }
    }
 }

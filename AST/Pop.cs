@@ -8,6 +8,6 @@ namespace AST
 {
     public class Pop : Statement
     {
-
+        public override void Accept(Visitor v) => v.Visit(this);
     }
 }

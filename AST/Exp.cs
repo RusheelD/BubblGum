@@ -10,6 +10,5 @@ namespace AST
     {
         public AnyType Type;
 
-        public virtual void Accept(Visitor v) { }
     }
 }

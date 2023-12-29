@@ -10,5 +10,7 @@ namespace AST
     {
         public int LineNumber;
         public int StartCol;
+
+        public virtual void Accept(Visitor v) { }
     }
 }

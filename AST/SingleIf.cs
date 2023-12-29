@@ -16,5 +16,7 @@ namespace AST
             Cond = cond;
             Statements = statements;
         }
+
+        public override void Accept(Visitor v) => v.Visit(this);
     }
 }
