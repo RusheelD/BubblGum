@@ -101,7 +101,8 @@ array: primitive_pack | any_array | identifier PACK;
 primitive: SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
 tuple: LEFT_ANGLE_BRACKET (type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)* RIGHT_ANGLE_BRACKET;
 primitive_pack: SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
-any_array: LEFT_SQUARE_BRACKET (type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)* RIGHT_SQUARE_BRACKET;
+any_array: LEFT_SQUARE_BRACKET ((type | FLAVOR) | ((type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)+))
+          RIGHT_SQUARE_BRACKET;
 
 /* ------------------------ TOKENS ------------------------*/
 // keywords

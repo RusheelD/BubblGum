@@ -206,6 +206,35 @@ namespace AST
             return new Debug(thing, useNewLine, lineNum, col);
         }
 
+        private ArrayType visit(Any_arrayContext n)
+        {
+            /*
+             * LEFT_SQUARE_BRACKET ((type | FLAVOR) | ((type | FLAVOR) IDENTIFIER? 
+             *  (COMMA (type | FLAVOR) IDENTIFIER?)+))
+                 RIGHT_SQUARE_BRACKET;
+             */
+
+            if (n.COMMA().Count() > 0)
+            {
+
+            }
+            else
+            {
+                
+            }
+            var types = new List<AnyType>();
+            dynamic child = n.children[1];
+
+            var token = (IToken)n.LEFT_PAREN().Payload;
+            int lineNum = token.Line;
+            int col = token.Column;
+            bool useNewLine = (n.DEBUG().Length == 1);
+
+            Printable thing = visit(child);
+
+            return new Debug(thing, useNewLine, lineNum, col);
+        }
+
         private Exp visit(ExpressionContext n)
         {
             return null;
