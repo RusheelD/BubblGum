@@ -97,7 +97,7 @@ boolean: YUP | NOPE;
 identifier: (IDENTIFIER | THIS);
 
 type: primitive | array | tuple | IDENTIFIER;
-array: primitive_pack | any_array | identifier PACK;
+array: primitive_pack | any_array | IDENTIFIER PACK;
 primitive: SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
 tuple: LEFT_ANGLE_BRACKET (type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)* RIGHT_ANGLE_BRACKET;
 primitive_pack: SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);

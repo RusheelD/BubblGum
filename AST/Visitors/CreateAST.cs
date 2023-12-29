@@ -209,6 +209,111 @@ namespace AST
             return new Debug(thing, useNewLine, lineNum, col);
         }
 
+        private (AnyType, int, int) visit(ArrayContext n)
+        {
+            dynamic child = n.children[0];
+            if(child is Primitive_packContext || child is Any_arrayContext)
+            {
+                return visit(child);
+            }
+            var token = (IToken)child.Payload;
+            return (new ObjectType(token.Text, true), token.Line, token.Column);
+        }
+
+        private (TupleType, int, int) visit(TupleContext n)
+        {
+            int arrayLineNum = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Line;
+            int arrayCol = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Column;
+
+            int state = 0;
+            AnyType type = new FlavorType();
+
+            var typeNamePairs = new List<(AnyType, string)>();
+            for (int i = 1; i < n.children.Count - 1; i++)
+            {
+                var child = n.children[i];
+
+                if (state == 0)
+                {
+                    if (child is TypeContext)
+                    {
+                        type = visit((TypeContext)child).Item1;
+                        state = 1;
+                    }
+                    else if (child.Payload is IToken)
+                    {
+                        IToken token = (IToken)child.Payload;
+                        if (token.Type == FLAVOR)
+                        {
+                            type = new FlavorType();
+                            state = 1;
+                        }
+                    }
+                }
+                else if (state == 1)
+                {
+                    if (child.Payload is IToken)
+                    {
+                        IToken token = (IToken)child.Payload;
+                        state = 0;
+                        if (token.Type == IDENTIFIER)
+                            typeNamePairs.Add((type, token.Text));
+                        else if (token.Type == COMMA)
+                            typeNamePairs.Add((type, ""));
+                    }
+                }
+            }
+
+            return (new TupleType(typeNamePairs), arrayLineNum, arrayCol);
+
+        }
+
+        private (PrimitiveType, int, int) visit(PrimitiveContext n)
+        {
+            dynamic child = n.children[0];
+            var token = (IToken)child.Payload;
+            switch (token.Type)
+            {
+                case SUGAR:
+                    return (new PrimitiveType(TypeBI.Sugar), token.Line, token.Column);
+                case CARB:
+                    return (new PrimitiveType(TypeBI.Carb), token.Line, token.Column);
+                case CAL:
+                    return (new PrimitiveType(TypeBI.Cal), token.Line, token.Column);
+                case KCAL:
+                    return (new PrimitiveType(TypeBI.Kcal), token.Line, token.Column);
+                case YUM:
+                    return (new PrimitiveType(TypeBI.Yum), token.Line, token.Column);
+                case PURE:
+                    return (new PrimitiveType(TypeBI.PureSugar), token.Line, token.Column);
+                default:
+                    return (null, 0, 0);
+            }
+        }
+
+        private (PackType, int, int) visit(Primitive_packContext n)
+        {
+            dynamic child = n.children[0];
+            var token = (IToken)child.Payload;
+            switch (token.Type)
+            {
+                case SUGARPACK:
+                    return (new PackType(TypePack.SugarPack), token.Line, token.Column);
+                case CARBPACK:
+                    return (new PackType(TypePack.CarbPack), token.Line, token.Column);
+                case CALPACK:
+                    return (new PackType(TypePack.CalPack), token.Line, token.Column);
+                case KCALPACK:
+                    return (new PackType(TypePack.KcalPack), token.Line, token.Column);
+                case YUMPACK:
+                    return (new PackType(TypePack.YumPack), token.Line, token.Column);
+                case PURE:
+                    return (new PackType(TypePack.PureSugarPack), token.Line, token.Column);
+                default:
+                    return (null, 0, 0);
+            }
+        }
+
         private (AnyType, int, int) visit(Any_arrayContext n)
         {
             int arrayLineNum = ((IToken)n.LEFT_SQUARE_BRACKET().Payload).Line;
