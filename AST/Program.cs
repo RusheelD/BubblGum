@@ -8,9 +8,9 @@ namespace AST
 {
     public class Program : AstNode
     {
-        public List<ProgramPiece> Pieces;
+        public List<AstNode> Pieces; // confirm it is a program piece
 
-        public Program(List<ProgramPiece> pieces,
+        public Program(List<AstNode> pieces,
            int lineNumber, int startCol)
         {
             Pieces = pieces;

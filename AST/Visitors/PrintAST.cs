@@ -12,11 +12,14 @@ namespace AST
 {
     public class PrintAST : Visitor, TypeVisitor
     {
+        private int nestedPrints = 0;
+        private bool printTupleWithBrackets;
         // program + program pieces
 
         public void Visit(Program n)
         {
-            throw new NotImplementedException();
+            foreach (var piece in n.Pieces)
+                piece.Accept(this);
         }
 
         public void Visit(Class n)
@@ -49,10 +52,18 @@ namespace AST
 
         public void Visit(Assignment n)
         {
-            for (int i = 0; i < n.Assignees.Count; i++)
-                n.Assignees[i].Accept(this);
+            n.Assignees[0].Accept(this);
 
+            for (int i = 1; i < n.Assignees.Count; i++)
+            {
+                Console.Write(", ");
+                n.Assignees[i].Accept(this);
+            }
+
+            Console.Write(" :: ");
             n.Result.Accept(this);
+
+            endStatement();
         }
 
         public void Visit(AssignDeclLHS n)
@@ -100,7 +111,12 @@ namespace AST
 
         public void Visit(Print n)
         {
-            throw new NotImplementedException();
+            Console.Write("(");
+            nestedPrints++;
+            n.Thing.Accept(this);
+            nestedPrints--;
+            Console.Write(") !");
+            endStatement();
         }
 
         public void Visit(Debug n)
@@ -157,37 +173,37 @@ namespace AST
 
         public void Visit(Bool n)
         {
-            Console.WriteLine(n.Value);
+            Console.Write(n.Value ? "yup" : "nope");
         }
 
         public void Visit(CharLiteral n)
         {
-            Console.WriteLine(n.Value);
+            Console.Write(n.Value);
         }
 
         public void Visit(Flavorless n)
         {
-            Console.WriteLine("flavorless");
+            Console.Write("flavorless");
         }
 
         public void Visit(Identifier n)
         {
-            Console.WriteLine(n.Value);
+            Console.Write(n.Value);
         }
 
         public void Visit(Double n)
         {
-            Console.WriteLine(n.Value);
+            Console.Write($"{n.Value:0.0#}");
         }
 
         public void Visit(Integer n)
         {
-            Console.WriteLine(n.Value);
+            Console.Write(n.Value);
         }
 
         public void Visit(StringLiteral n)
         {
-
+            Console.Write(n.Value);
         }
 
 
@@ -216,17 +232,23 @@ namespace AST
 
         public void Visit(GreaterThanEquals n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write(" >= ");
+            n.E2.Accept(this);
         }
 
         public void Visit(LessThan n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write(" < ");
+            n.E2.Accept(this);
         }
 
         public void Visit(LessThanEquals n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write(" <= ");
+            n.E2.Accept(this);
         }
 
 
@@ -234,17 +256,22 @@ namespace AST
 
         public void Visit(Not n)
         {
-            throw new NotImplementedException();
+            Console.Write("~");
+            n.E1.Accept(this);
         }
 
         public void Visit(And n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write(" & ");
+            n.E2.Accept(this);
         }
 
         public void Visit(Or n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write(" | ");
+            n.E2.Accept(this);
         }
 
 
@@ -297,17 +324,16 @@ namespace AST
 
         public void Visit(LeftShift n)
         {
-            throw new NotImplementedException();
+
         }
 
         public void Visit(RightShift n)
         {
-            throw new NotImplementedException();
         }
 
         public void Visit(Xor n)
         {
-            throw new NotImplementedException();
+
         }
 
 
@@ -354,32 +380,63 @@ namespace AST
 
         public void Visit(ArrayType n)
         {
-            throw new NotImplementedException();
+            Console.Write("[");
+            n.TupleType.Accept(this);
+            Console.Write("]");
         }
 
         public void Visit(FlavorType n)
         {
-            throw new NotImplementedException();
+            Console.Write("flavor");
         }
 
         public void Visit(ObjectType n)
         {
-            throw new NotImplementedException();
+            Console.Write(n.Name + " ");
+
+            if (n.IsPack)
+                Console.Write(" pack");
         }
 
         public void Visit(PackType n)
         {
-            throw new NotImplementedException();
+            Console.Write(n.Type.ToString().ToLower());
         }
 
         public void Visit(PrimitiveType n)
         {
-            throw new NotImplementedException();
+            Console.Write(n.Type.ToString().ToLower());
         }
 
         public void Visit(TupleType n)
         {
-            
+            Console.Write("(");
+
+            AnyType type = n.TypeNamePairs[0].Item1;
+            type.Accept(this);
+
+            string name = n.TypeNamePairs[1].Item2;
+            if (!name.Equals(""))
+                Console.Write(" " + name);
+
+            for (int i = 1; i < n.TypeNamePairs.Count; i++)
+            {
+                Console.Write(", ");
+
+                type = n.TypeNamePairs[i].Item1;
+                type.Accept(this);
+
+                name = n.TypeNamePairs[i].Item2;
+                if (!name.Equals(""))
+                    Console.Write(" " + name);
+            }
+            Console.Write(")");
+        }
+
+        private void endStatement()
+        {
+            if (nestedPrints == 0)
+                Console.WriteLine();
         }
     }
 }

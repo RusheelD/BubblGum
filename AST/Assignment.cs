@@ -9,10 +9,10 @@ namespace AST
 {
     public class Assignment : Statement, ClassMember, InterfaceMember, StructPiece
     {
-        public List<AssignLHS> Assignees;
+        public List<AstNode> Assignees; // only add AssignLHS at runtime
         public Exp Result;
 
-        public Assignment(List<AssignLHS> assignees, Exp result,
+        public Assignment(List<AstNode> assignees, Exp result,
             int lineNumber, int startCol)
         {
             Assignees = assignees;

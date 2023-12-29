@@ -8,10 +8,10 @@ namespace AST
 {
     public class Print : Statement
     {
-        public Printable Thing;
+        public AstNode Thing;
         public bool UseNewLine;
 
-        public Print(Printable thing, bool useNewLine,
+        public Print(AstNode thing, bool useNewLine,
            int lineNumber, int startCol)
         {
             Thing = thing;

@@ -8,10 +8,10 @@ namespace AST
 {
     public class Debug : Statement
     {
-        public Printable Thing;
+        public AstNode Thing; // only add Printable at runtime
         public bool UseNewLine;
 
-        public Debug(Printable thing, bool useNewLine,
+        public Debug(AstNode thing, bool useNewLine,
            int lineNumber, int startCol)
         {
             Thing = thing;
