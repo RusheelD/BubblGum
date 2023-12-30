@@ -66,8 +66,6 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call or new object
               array LEFT_PAREN expression RIGHT_PAREN | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
-              (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
-              expression (PLUS_PLUS | MINUS_MINUS) |
               (NOT | NOT_OP) expression |
               expression (POWER | MODULO) expression |
               expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
@@ -183,8 +181,6 @@ LEFT_SHIFT: '<:';
 RIGHT_SHIFT: ':>';
 NOT_EQ_1 : '<>';
 NOT_EQ_2 : '~=';
-PLUS_PLUS: '++';
-MINUS_MINUS: '--';
 PLUS_COLON: '+:';
 MINUS_COLON: '-:';
 THIN_ARROW: '->';
