@@ -70,9 +70,9 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression (PLUS_PLUS | MINUS_MINUS) |
               (NOT | NOT_OP) expression |
               expression (POWER | MODULO) expression |
+              expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
               expression (MULTIPLY | DIVIDE) expression|
               expression (PLUS | MINUS) expression |
-              expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
               expression (GT_EQ | LT_EQ | LEFT_ANGLE_BRACKET | RIGHT_ANGLE_BRACKET) expression |
               expression (EQUALS | NOT_EQ_1 | NOT_EQ_2 | IS | SUBCLASS_OF) expression |
               expression (AND | AND_OP) expression |

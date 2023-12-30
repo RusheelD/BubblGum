@@ -333,16 +333,23 @@ namespace AST
 
         public void Visit(LeftShift n)
         {
-
+            n.E1.Accept(this);
+            Console.Write(" <: ");
+            n.E2.Accept(this);
         }
 
         public void Visit(RightShift n)
         {
+            n.E1.Accept(this);
+            Console.Write(" :> ");
+            n.E2.Accept(this);
         }
 
         public void Visit(Xor n)
         {
-
+            n.E1.Accept(this);
+            Console.Write(" ^ ");
+            n.E2.Accept(this);
         }
 
 

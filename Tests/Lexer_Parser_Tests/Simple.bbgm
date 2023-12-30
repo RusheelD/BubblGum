@@ -12,7 +12,12 @@
 	e :: nflv
 
 	[sugar, kcal] a :: nflv
-	[<sugar, <sugar, bob>>] a :: nflv
+	[<sugar, <kcal d, sugar a, [sugar, <kcal a, flavor b>]>>] a :: nflv
 	<sugar, kcal> b :: nflv
+
+	(a <: (2 | 4)) !
 	sugarpack a :: flavorless
+
+    #kcal a :: 2 * 3 - 34 + 2 * (3 <: 3) - 21 % 6 ** 3 + 4 :> 4 :> 2
+	#kcal b :: 3 ^ 4 | 5 and 6 or 2 xor bobafet_johnson
 }

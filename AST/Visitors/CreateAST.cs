@@ -279,6 +279,84 @@ namespace AST
                     Exp e2 = visit((dynamic)n.children[2]);
                     return new Divide(e1, e2, e1.LineNumber, e1.StartCol);
                 }
+                else if (token.Type == LEFT_SHIFT)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new LeftShift(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == RIGHT_SHIFT)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new RightShift(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == POWER)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Power(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == MODULO)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Modulo(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == AND | token.Type == AND_OP)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new And(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == OR | token.Type == OR_OP)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Or(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == XOR | token.Type == XOR_OP)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Xor(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == EQUALS)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Equals(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == NOT_EQ_1 | token.Type == NOT_EQ_2)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new NotEquals(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == GT_EQ)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new GreaterThanEquals(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == LT_EQ)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new LessThanEquals(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == RIGHT_ANGLE_BRACKET)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new GreaterThan(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == LEFT_ANGLE_BRACKET)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new LessThan(e1, e2, e1.LineNumber, e1.StartCol);
+                }
                 else
                     throw new Exception("Invalid type detected");
             }
