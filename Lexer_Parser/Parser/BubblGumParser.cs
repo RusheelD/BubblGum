@@ -3075,12 +3075,12 @@ public partial class BubblGumParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode FLAVORLESS() { return GetToken(BubblGumParser.FLAVORLESS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode POWER() { return GetToken(BubblGumParser.POWER, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MODULO() { return GetToken(BubblGumParser.MODULO, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LEFT_SHIFT() { return GetToken(BubblGumParser.LEFT_SHIFT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RIGHT_SHIFT() { return GetToken(BubblGumParser.RIGHT_SHIFT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MULTIPLY() { return GetToken(BubblGumParser.MULTIPLY, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DIVIDE() { return GetToken(BubblGumParser.DIVIDE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS() { return GetToken(BubblGumParser.PLUS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS() { return GetToken(BubblGumParser.MINUS, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LEFT_SHIFT() { return GetToken(BubblGumParser.LEFT_SHIFT, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RIGHT_SHIFT() { return GetToken(BubblGumParser.RIGHT_SHIFT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GT_EQ() { return GetToken(BubblGumParser.GT_EQ, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LT_EQ() { return GetToken(BubblGumParser.LT_EQ, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQUALS() { return GetToken(BubblGumParser.EQUALS, 0); }
@@ -3318,7 +3318,7 @@ public partial class BubblGumParser : Parser {
 						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
 						State = 502;
 						_la = TokenStream.LA(1);
-						if ( !(_la==MULTIPLY || _la==DIVIDE) ) {
+						if ( !(_la==LEFT_SHIFT || _la==RIGHT_SHIFT) ) {
 						ErrorHandler.RecoverInline(this);
 						}
 						else {
@@ -3337,7 +3337,7 @@ public partial class BubblGumParser : Parser {
 						if (!(Precpred(Context, 14))) throw new FailedPredicateException(this, "Precpred(Context, 14)");
 						State = 505;
 						_la = TokenStream.LA(1);
-						if ( !(_la==PLUS || _la==MINUS) ) {
+						if ( !(_la==MULTIPLY || _la==DIVIDE) ) {
 						ErrorHandler.RecoverInline(this);
 						}
 						else {
@@ -3356,7 +3356,7 @@ public partial class BubblGumParser : Parser {
 						if (!(Precpred(Context, 13))) throw new FailedPredicateException(this, "Precpred(Context, 13)");
 						State = 508;
 						_la = TokenStream.LA(1);
-						if ( !(_la==LEFT_SHIFT || _la==RIGHT_SHIFT) ) {
+						if ( !(_la==PLUS || _la==MINUS) ) {
 						ErrorHandler.RecoverInline(this);
 						}
 						else {
@@ -4614,7 +4614,7 @@ public partial class BubblGumParser : Parser {
 		1,58,40,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,
 		46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,0,17,1,0,60,61,1,0,
 		13,15,1,0,74,75,1,0,40,41,1,0,72,73,2,0,43,43,82,82,2,0,86,86,89,89,1,
-		0,87,88,1,0,84,85,1,0,68,69,2,0,53,54,66,67,3,0,45,45,70,71,78,79,2,0,
+		0,68,69,1,0,87,88,1,0,84,85,2,0,53,54,66,67,3,0,45,45,70,71,78,79,2,0,
 		31,31,80,80,2,0,33,33,83,83,2,0,32,32,81,81,1,0,29,30,2,0,1,1,90,90,762,
 		0,87,1,0,0,0,2,93,1,0,0,0,4,121,1,0,0,0,6,149,1,0,0,0,8,166,1,0,0,0,10,
 		182,1,0,0,0,12,184,1,0,0,0,14,197,1,0,0,0,16,203,1,0,0,0,18,211,1,0,0,
@@ -4762,9 +4762,9 @@ public partial class BubblGumParser : Parser {
 		0,554,510,1,0,0,0,554,513,1,0,0,0,554,516,1,0,0,0,554,519,1,0,0,0,554,
 		522,1,0,0,0,554,525,1,0,0,0,554,530,1,0,0,0,554,533,1,0,0,0,554,536,1,
 		0,0,0,554,552,1,0,0,0,555,558,1,0,0,0,556,554,1,0,0,0,556,557,1,0,0,0,
-		557,59,1,0,0,0,558,556,1,0,0,0,559,561,7,8,0,0,560,559,1,0,0,0,560,561,
+		557,59,1,0,0,0,558,556,1,0,0,0,559,561,7,9,0,0,560,559,1,0,0,0,560,561,
 		1,0,0,0,561,562,1,0,0,0,562,563,5,92,0,0,563,565,5,59,0,0,564,566,5,92,
-		0,0,565,564,1,0,0,0,565,566,1,0,0,0,566,61,1,0,0,0,567,569,7,8,0,0,568,
+		0,0,565,564,1,0,0,0,565,566,1,0,0,0,566,61,1,0,0,0,567,569,7,9,0,0,568,
 		567,1,0,0,0,568,569,1,0,0,0,569,570,1,0,0,0,570,571,5,92,0,0,571,63,1,
 		0,0,0,572,573,7,15,0,0,573,65,1,0,0,0,574,575,7,16,0,0,575,67,1,0,0,0,
 		576,581,3,72,36,0,577,581,3,70,35,0,578,581,3,74,37,0,579,581,5,90,0,0,
