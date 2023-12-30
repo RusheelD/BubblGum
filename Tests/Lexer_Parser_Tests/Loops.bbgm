@@ -7,6 +7,10 @@ while t {
     e::f
 }
 
+a : repeatUp (0, d) {
+    b :: 2 * a + 1
+}
+
 a : repeatUp (c, d):
     a :: b
     c :: d

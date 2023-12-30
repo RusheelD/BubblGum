@@ -11,13 +11,16 @@ namespace AST
         public string VarName;
         public bool IsUp;
         public Exp Start, End;
+        public List<Statement> Statements;
 
-        public RepeatLoop(string varName, bool isUp, Exp start, Exp end, int lineNumber, int startCol)
+        public RepeatLoop(string varName, bool isUp, Exp start, Exp end,
+             List<Statement> statements, int lineNumber, int startCol)
         {
             VarName = varName;
             IsUp = isUp;
             Start = start;
             End = end;
+            Statements = statements;
 
             LineNumber = lineNumber;
             StartCol = startCol;

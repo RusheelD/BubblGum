@@ -145,12 +145,25 @@ namespace AST
 
         public void Visit(IncDec n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write(n.ShouldIncrement ? " +: " : " -: ");
+            n.E2.Accept(this);
         }
 
         public void Visit(RepeatLoop n)
         {
-            throw new NotImplementedException();
+            Console.Write(n.VarName + ": ");
+            Console.Write(n.IsUp ? " repeatUp( " : " repeatDown( ");
+            n.Start.Accept(this);
+            Console.Write(", ");
+            n.End.Accept(this);
+            Console.WriteLine(") {");
+
+            foreach (Statement s in n.Statements)
+                s.Accept(this);
+
+            Console.Write("}");
+            endStatement();
         }
 
         public void Visit(While n)
@@ -282,7 +295,6 @@ namespace AST
             Console.Write(" | ");
             n.E2.Accept(this);
         }
-
 
         // arithmetic expressions
 

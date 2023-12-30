@@ -437,14 +437,6 @@ namespace AST
                         }
                         return new NewTuple(exps, token0.Line, token0.Column);
                     }
-                    else if (token0.Type == PLUS_PLUS)
-                    {
-
-                    }
-                    else if (token0.Type == MINUS_MINUS)
-                    {
-
-                    }
                     else if (token0.Type == NOT | token0.Type == NOT_OP)
                     {
 
@@ -520,6 +512,7 @@ namespace AST
             dynamic child = n.children[0];
             if (child is Primitive_packContext | child is Any_arrayContext)
                 return visit(child);
+
 
             var token = (IToken)child.Payload;
             return (new ObjectType(token.Text, true), token.Line, token.Column);
