@@ -93,9 +93,15 @@ namespace AST
 
         public void Visit(PopLoop n)
         {
-            Console.Write($"pop flavors {n.VarName} in ");
+            Console.Write($"pop flavors {n.VarName} in (");
             n.Exp.Accept(this);
-            Console.Write(" ")
+            Console.WriteLine(") => {");
+
+            foreach(Statement s in n.Statements)
+                s.Accept(this);
+
+            Console.Write("}");
+            endStatement();
 
         }
 
@@ -171,7 +177,15 @@ namespace AST
 
         public void Visit(While n)
         {
-            throw new NotImplementedException();
+            Console.Write("while (");
+            n.Cond.Accept(this);
+            Console.WriteLine(") {");
+
+            foreach (Statement s in n.Statements)
+                s.Accept(this);
+
+            Console.Write("}");
+            endStatement();
         }
 
 
