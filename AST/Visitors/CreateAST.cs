@@ -251,10 +251,11 @@ namespace AST
                     throw new Exception("Invalid type detected");
             }
 
-            dynamic child = n.children[1];
-            if (child.Payload is IToken)
+            dynamic child1 = n.children[1];
+
+            if (child1.Payload is IToken)
             {
-                IToken token = (IToken)child.Payload;
+                IToken token = (IToken)child1.Payload;
                 if (token.Type == PLUS)
                 {
                     Exp e1 = visit((dynamic)n.children[0]);
@@ -357,11 +358,101 @@ namespace AST
                     Exp e2 = visit((dynamic)n.children[2]);
                     return new LessThan(e1, e2, e1.LineNumber, e1.StartCol);
                 }
+                else if (token.Type == THIN_ARROW)
+                {
+                    dynamic child0 = n.children[0];
+                    dynamic child2 = n.children[2];
+
+                    if (child0.Payload is IToken)
+                    {
+                        IToken token0 = (IToken)child0.Payload;
+                        return new GlobalAccess(visit(child2), token0.Line, token0.Column);
+                    }
+                    else if (child2 is ExpressionContext)
+                    {
+                        Exp e1 = visit(child0);
+                        return new MemberAccess(e1, visit(child2), e1.LineNumber, e1.StartCol);
+                    }
+                    else if (child2 is IToken)
+                    {
+                        IToken token2 = (IToken)child2.Payload;
+                        Exp e1 = visit(child0);
+                        if (token2.Type == SIZE)
+                            return new PackSize(e1, e1.LineNumber, e1.StartCol);
+                        else if (token2.Type == EMPTY)
+                            return new ObjectEmpty(e1, e1.LineNumber, e1.StartCol);
+                    }
+                }
+                else if (token.Type == LEFT_PAREN)
+                {
+                    dynamic child0 = n.children[0];
+
+                    if (child0 is ExpressionContext)
+                    {
+                        Exp lhs = visit((ExpressionContext)child0);
+                        var args = new List<Exp>();
+                        for (int i = 2; i < n.children.Count; i++)
+                        {
+                            dynamic childi = n.children[i];
+                            if (childi is ExpressionContext)
+                                args.Add(visit(childi));
+                        }
+
+                        return new MethodCall(lhs, args, lhs.LineNumber, lhs.StartCol);
+                    }
+                    else if (child0 is ArrayContext)
+                    {
+                        (AnyType type, int line, int col) = visit((ArrayContext)child0);
+                        Exp e1 = visit((ExpressionContext)n.children[2]);
+                        return new NewPack(type, e1, line, col);
+                    }
+                }
+                else if (token.Type == LEFT_SQUARE_BRACKET)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new PackAccess(e1, e2, e1.LineNumber, e1.StartCol);
+                }
                 else
                     throw new Exception("Invalid type detected");
             }
+            else if (child1 is ExpressionContext)
+            {
+                dynamic child0 = n.children[0];
+
+                if (child0 is IToken)
+                {
+                    IToken token0 = (IToken)child0.Payload;
+
+                    if (token0.Type == LEFT_PAREN)
+                        return visit(child1);
+                    else if (token0.Type == LEFT_ANGLE_BRACKET)
+                    {
+                        var exps = new List<Exp>();
+                        for (int i = 1; i < n.children.Count; i++)
+                        {
+                            dynamic childi = n.children[i];
+                            if (childi is ExpressionContext)
+                                exps.Add(visit(childi));
+                        }
+                        return new NewTuple(exps, token0.Line, token0.Column);
+                    }
+                    else if (token0.Type == PLUS_PLUS)
+                    {
+
+                    }
+                    else if (token0.Type == MINUS_MINUS)
+                    {
+
+                    }
+                    else if (token0.Type == NOT | token0.Type == NOT_OP)
+                    {
+
+                    }
+                }
+            }
             else
-                throw new Exception("Invalid type detected");
+                throw new Exception($"Invalid type {child1.GetType()} detected");
         }
 
         private IdentifierExp visit(IdentifierContext n)

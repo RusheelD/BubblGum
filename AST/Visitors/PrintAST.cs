@@ -367,7 +367,7 @@ namespace AST
 
         public void Visit(IdentifierExp n)
         {
-            throw new NotImplementedException();
+            Console.Write(n.Value);
         }
 
         public void Visit(ObjectEmpty n)

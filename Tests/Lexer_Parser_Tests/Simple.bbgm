@@ -1,6 +1,6 @@
 ﻿sugar a :: 2 + 4.20 * 6 / 3
 {
-	(sugar a      :: 2 + 4.0 * 6 / 3) !!
+	(sugar a      :: 2 + 4.0 * 6 & 4 / 3) !!
 	sugar b, $kcal        c :: 3.69
 	sugar         c :: 2
 	c :: 
@@ -18,6 +18,6 @@
 	(a <: (2 | 4)) !
 	sugarpack a :: flavorless
 
-    #kcal a :: 2 * 3 - 34 + 2 * (3 <: 3) - 21 % 6 ** 3 + 4 :> 4 :> 2
-	#kcal b :: 3 ^ 4 | 5 and 6 or 2 xor bobafet_johnson
+    kcal a :: 2 * 3 - 34 + 2 * (3 <: 3) - 21 % 6 ** 3 + 4 :> 4 :> 2
+	kcal b :: 3 ^ 4 | 5 and 6 or 2 xor bobafet_johnson
 }
