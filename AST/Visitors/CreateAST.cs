@@ -464,6 +464,75 @@ namespace AST
             return new IdentifierExp(token.Text, lineNum, col);
         }
 
+        private Statement visit(LoopContext n)
+        {
+            return visit((dynamic)n.children[0]);
+        }
+        private Statement visit(While_loopContext n)
+        {
+            Exp condition;
+            List<Statement> statements = new List<Statement>();
+            int lineNumber, startCol;
+
+            IToken identifier = (IToken)n.children[0].Payload;
+            lineNumber = identifier.Line;
+            startCol = identifier.Column;
+            condition = visit((dynamic)n.children[1]);
+            Statement stat = visit((dynamic)n.children[n.ChildCount - 1]);
+            if (stat is StatementList)
+                statements.AddRange(((StatementList)stat).Statements);
+            else
+                statements.Add(stat);
+
+            return new While(condition, statements, lineNumber, startCol);
+        }
+        private Statement visit(Repeat_loopContext n)
+        {
+            string varName;
+            bool isUp;
+            Exp start, end;
+            List<Statement> statements = new List<Statement>();
+            int lineNumber, startCol;
+
+            IToken identifier = (IToken)n.children[0].Payload;
+            IToken repeat = (IToken)n.children[2].Payload;
+
+            varName = identifier.Text;
+            lineNumber = identifier.Line; 
+            startCol = identifier.Column;
+            isUp = repeat.Type == REPEAT_UP;
+            start = visit((dynamic)n.children[4]);
+            end = visit((dynamic)n.children[6]);
+            Statement stat = visit((dynamic)n.children[n.ChildCount - 1]);
+            if (stat is StatementList)
+                statements.AddRange(((StatementList)stat).Statements);
+            else
+                statements.Add(stat);
+
+            return new RepeatLoop(varName, isUp, start, end, statements, lineNumber, startCol);
+        }
+        private Statement visit(Pop_loopContext n)
+        {
+            string varName;
+            Exp exp;
+            List<Statement> statements = new List<Statement>();
+            int lineNumber, startCol;
+
+            IToken identifier = (IToken)n.children[2].Payload;
+
+            varName = identifier.Text;
+            lineNumber = identifier.Line;
+            startCol = identifier.Column;
+            exp = visit((dynamic)n.children[4]);
+            Statement stat = visit((dynamic)n.children[n.ChildCount - 1]);
+            if (stat is StatementList)
+                statements.AddRange(((StatementList)stat).Statements);
+            else
+                statements.Add(stat);
+
+            return new PopLoop(varName, exp, statements, lineNumber, startCol);
+        }
+
         private Bool visit(BooleanContext n)
         {
             IToken token = (IToken)n.children[0].Payload;
