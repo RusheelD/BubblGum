@@ -31,4 +31,16 @@
 	   a :: b
 	   c :: d * e
 	}
+
+	
+pop flavors a in z => c +: a
+
+pop flavors dist in loc => {
+    d : repeatDown (c, d) {
+        d!
+    }
+    d : repeatUp (d, c):
+        1/d!
+}
+
 }

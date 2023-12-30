@@ -259,7 +259,6 @@ namespace AST
             return new IncDec(e1, e2, shouldIncrement, e1.LineNumber, e1.StartCol);
         }
 
-
         private Exp visit(ExpressionContext n)
         {
             if (n.children.Count == 1)

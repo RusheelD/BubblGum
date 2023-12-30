@@ -93,7 +93,10 @@ namespace AST
 
         public void Visit(PopLoop n)
         {
-            throw new NotImplementedException();
+            Console.Write($"pop flavors {n.VarName} in ");
+            n.Exp.Accept(this);
+            Console.Write(" ")
+
         }
 
         public void Visit(PopStream n)
