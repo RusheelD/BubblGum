@@ -8,5 +8,11 @@
 	
 	3
 	d :: yup
-	e :: nflv;
+	d :: nope
+	e :: nflv
+
+	[sugar, kcal] a :: nflv
+	[<sugar, <sugar, bob>>] a :: nflv
+	<sugar, kcal> b :: nflv
+	sugarpack a :: flavorless
 }

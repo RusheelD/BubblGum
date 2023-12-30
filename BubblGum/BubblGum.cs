@@ -48,20 +48,21 @@ public class BubblGum
         var inputTxt = File.ReadAllText(filePath);
         var originalOutStream = Console.Out;
         Console.SetOut(outStream);
-
+           
+        #pragma warning disable
         AntlrInputStream input = new AntlrInputStream(inputTxt);
         BubblGumLexer lexer = new BubblGumLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BubblGumParser parser = new BubblGumParser(tokens);
+        BubblGumParser.ProgramContext programContext = parser.program();
+        #pragma warning restore
 
         if (parser.NumberOfSyntaxErrors > 0)
         {
-            Console.Out.WriteLine("Parsing failed due to syntax errors.");
             Console.SetOut(originalOutStream);
+            Console.WriteLine("Parsing failed due to syntax errors.");
             return false;
         }
-
-        BubblGumParser.ProgramContext programContext = parser.program();
 
         var createAST = new CreateAST();
         Program program = createAST.Visit(programContext);

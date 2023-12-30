@@ -179,8 +179,8 @@ IMMUTABLE: '$';
 // OPERATORS
 GT_EQ : '>=';
 LT_EQ : '<=';
-LEFT_SHIFT: '<<';
-RIGHT_SHIFT: '>>';
+LEFT_SHIFT: '<:';
+RIGHT_SHIFT: ':>';
 NOT_EQ_1 : '<>';
 NOT_EQ_2 : '~=';
 PLUS_PLUS: '++';

@@ -18,8 +18,6 @@ namespace AST
 
        public Program Visit(ProgramContext n)
         {
-            Console.WriteLine($"{n.children.Count}");
-
             var programPieces = new List<AstNode>();
             for (int i = 0; i < n.children.Count-1; i++)
             {
@@ -207,179 +205,6 @@ namespace AST
             return new Debug(visit(child), useNewLine, lineNum, col);
         }
 
-        private (AnyType, int, int) visit(ArrayContext n)
-        {
-            dynamic child = n.children[0];
-            if (child is Primitive_packContext) 
-            {
-                (AnyType t, int l, int c) = visit((Primitive_packContext)child);
-                return (t, l, c);
-            }
-            else if (child is Any_arrayContext)
-            {
-                (AnyType t, int l, int c) = visit((Any_arrayContext)child);
-                return (t, l, c);
-            }
-            var token = (IToken)child.Payload;
-            return (new ObjectType(token.Text, true), token.Line, token.Column);
-        }
-
-        private (TupleType, int, int) visit(TupleContext n)
-        {
-            int tupleLineNum = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Line;
-            int tupleCol = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Column;
-
-            int state = 0;
-            AnyType type = new FlavorType();
-
-            var typeNamePairs = new List<(AnyType, string)>();
-            for (int i = 1; i < n.children.Count - 1; i++)
-            {
-                var child = n.children[i];
-
-                if (state == 0)
-                {
-                    if (child is TypeContext)
-                    {
-                        type = visit((TypeContext)child).Item1;
-                        state = 1;
-                    }
-                    else if (child.Payload is IToken)
-                    {
-                        IToken token = (IToken)child.Payload;
-                        if (token.Type == FLAVOR)
-                        {
-                            type = new FlavorType();
-                            state = 1;
-                        }
-                    }
-                }
-                else if (state == 1)
-                {
-                    if (child.Payload is IToken)
-                    {
-                        IToken token = (IToken)child.Payload;
-                        state = 0;
-                        if (token.Type == IDENTIFIER)
-                            typeNamePairs.Add((type, token.Text));
-                        else if (token.Type == COMMA)
-                            typeNamePairs.Add((type, ""));
-                    }
-                }
-            }
-
-            return (new TupleType(typeNamePairs), tupleLineNum, tupleCol);
-
-        }
-
-        private (PrimitiveType, int, int) visit(PrimitiveContext n)
-        {
-            dynamic child = n.children[0];
-            var token = (IToken)child.Payload;
-            switch (token.Type)
-            {
-                case SUGAR:
-                    return (new PrimitiveType(TypeBI.Sugar), token.Line, token.Column);
-                case CARB:
-                    return (new PrimitiveType(TypeBI.Carb), token.Line, token.Column);
-                case CAL:
-                    return (new PrimitiveType(TypeBI.Cal), token.Line, token.Column);
-                case KCAL:
-                    return (new PrimitiveType(TypeBI.Kcal), token.Line, token.Column);
-                case YUM:
-                    return (new PrimitiveType(TypeBI.Yum), token.Line, token.Column);
-                case PURE:
-                    return (new PrimitiveType(TypeBI.PureSugar), token.Line, token.Column);
-                default:
-                    throw new Exception("Invalid type detected");
-            }
-        }
-
-        private (PackType, int, int) visit(Primitive_packContext n)
-        {
-            dynamic child = n.children[0];
-            var token = (IToken)child.Payload;
-            switch (token.Type)
-            {
-                case SUGARPACK:
-                    return (new PackType(TypePack.SugarPack), token.Line, token.Column);
-                case CARBPACK:
-                    return (new PackType(TypePack.CarbPack), token.Line, token.Column);
-                case CALPACK:
-                    return (new PackType(TypePack.CalPack), token.Line, token.Column);
-                case KCALPACK:
-                    return (new PackType(TypePack.KcalPack), token.Line, token.Column);
-                case YUMPACK:
-                    return (new PackType(TypePack.YumPack), token.Line, token.Column);
-                case PURE:
-                    return (new PackType(TypePack.PureSugarPack), token.Line, token.Column);
-                default:
-                    throw new Exception("Invalid type detected");
-            }
-        }
-
-        private (AnyType, int, int) visit(Any_arrayContext n)
-        {
-            int arrayLineNum = ((IToken)n.LEFT_SQUARE_BRACKET().Payload).Line;
-            int arrayCol = ((IToken)n.LEFT_SQUARE_BRACKET().Payload).Column;
-
-            int state = 0;
-            AnyType type = new FlavorType();
-
-            if (n.COMMA().Count() > 0)
-            {
-                var typeNamePairs = new List<(AnyType, string)>();
-                for (int i = 1; i < n.children.Count - 1; i++)
-                {
-                    var child = n.children[i];
-
-                    if (state == 0)
-                    {
-                        if (child is TypeContext)
-                        {
-                            type = visit((TypeContext)child).Item1;
-                            state = 1;
-                        }
-                        else if (child.Payload is IToken)
-                        {
-                            IToken token = (IToken)child.Payload;
-                            if (token.Type == FLAVOR)
-                            {
-                                type = new FlavorType();
-                                state = 1;
-                            }
-                        }
-                    }
-                    else if (state == 1)
-                    {
-                        if (child.Payload is IToken)
-                        {
-                            IToken token = (IToken)child.Payload;
-                            state = 0;
-                            if (token.Type == IDENTIFIER)
-                                typeNamePairs.Add((type, token.Text));
-                            else if (token.Type == COMMA)
-                                typeNamePairs.Add((type, ""));
-                        }
-                    }
-                }
-
-                return (new ArrayType(new TupleType(typeNamePairs)), arrayLineNum, arrayCol);
-            }
-            else
-            {
-                var child = n.children[1];
-                if (child is TypeContext)
-                {
-                    type = visit((TypeContext)child).Item1;
-                    return (new SingularArrayType(type), arrayLineNum, arrayCol);
-                }
-                else if (child.Payload is IToken)
-                    return (new SingularArrayType(new FlavorType()), arrayLineNum, arrayCol);
-                else
-                    throw new Exception("Invalid type detected");
-            }
-        }
 
         private Exp visit(ExpressionContext n)
         {
@@ -417,7 +242,7 @@ namespace AST
                     }
                     else if (loneToken.Type == CHAR_LITERAL && text.Length == 3)
                     {
-                        return new CharLiteral(text.Substring(1, 1).ToCharArray()[0], line, col);
+                        return new CharLiteral(text[1], line, col);
                     }
                     else
                         throw new Exception("Invalid type detected");
@@ -461,25 +286,6 @@ namespace AST
                 throw new Exception("Invalid type detected");
         }
 
-        private (AnyType, int, int) visit(TypeContext n)
-        {
-            dynamic child = n.children[0];
-
-            if (child.Payload is IToken)
-            {
-                IToken token = (IToken)child.Payload;
-                return (new ObjectType(token.Text, false), token.Line, token.Column);
-            }
-
-            if (child is PrimitiveContext)
-            {
-                (AnyType t, int l, int c) = visit((PrimitiveContext)child);
-                return (t, l, c);
-            }
-            else
-                return visit(child);
-        }
-
         private IdentifierExp visit(IdentifierContext n)
         {
             int lineNum, col;
@@ -491,37 +297,27 @@ namespace AST
 
         private Bool visit(BooleanContext n)
         {
-            int lineNum, col;
-            bool value;
             IToken token = (IToken)n.children[0].Payload;
-            lineNum = token.Line;
-            col = token.Column;
+            bool value = token.Type == YUP;
 
-            value = token.Type == YUP;
-
-            return new Bool(value, lineNum, col);
+            return new Bool(value, token.Line, token.Column);
         }
 
         // what about integer overflow??
         private Integer visit(IntContext n)
         {
-            int integer, lineNum, col;
             IToken token = (IToken)n.children[0].Payload;
-            lineNum = token.Line;
-            col = token.Column;
 
-            integer = int.Parse(n.INTEGER_LITERAL().GetText());
+            int integer = int.Parse(n.INTEGER_LITERAL().GetText());
             if (n.MINUS() != null)
                 integer *= -1;
 
-            return new Integer(integer, lineNum, col);
+            return new Integer(integer, token.Line, token.Column);
         }
 
         private Double visit(DoubleContext n)
         {
             IToken token = (IToken)n.children[0].Payload;
-            int lineNum = token.Line;
-            int col = token.Column;
 
             bool negative = n.MINUS() != null;
             double number;
@@ -534,7 +330,188 @@ namespace AST
             else
                 number = int.Parse(n.INTEGER_LITERAL()[0].GetText());
 
-            return new Double(number * (negative ? -1 : 1), lineNum, col);
+            return new Double(number * (negative ? -1 : 1), token.Line, token.Column);
+        }
+
+        private (AnyType, int, int) visit(TypeContext n)
+        {
+            dynamic child = n.children[0];
+
+            if (child.Payload is IToken)
+            {
+                IToken token = (IToken)child.Payload;
+                return (new ObjectType(token.Text, false), token.Line, token.Column);
+            }
+
+            return visit(child);
+        }
+
+        private (AnyType, int, int) visit(ArrayContext n)
+        {
+            dynamic child = n.children[0];
+            if (child is Primitive_packContext | child is Any_arrayContext)
+                return visit(child);
+
+            var token = (IToken)child.Payload;
+            return (new ObjectType(token.Text, true), token.Line, token.Column);
+        }
+
+
+        private (AnyType, int, int) visit(TupleContext n)
+        {
+            int tupleLineNum = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Line;
+            int tupleCol = ((IToken)n.LEFT_ANGLE_BRACKET().Payload).Column;
+
+            int state = 0;
+            AnyType type = new FlavorType();
+
+            var typeNamePairs = new List<(AnyType, string)>();
+            for (int i = 1; i < n.children.Count; i++)
+            {
+                var child = n.children[i];
+
+                if (state == 0)
+                {
+                    if (child is TypeContext)
+                    {
+                        type = visit((TypeContext)child).Item1;
+                        state = 1;
+                    }
+                    else if (child.Payload is IToken)
+                    {
+                        IToken token = (IToken)child.Payload;
+                        if (token.Type == FLAVOR)
+                        {
+                            type = new FlavorType();
+                            state = 1;
+                        }
+                    }
+                }
+                else if (state == 1)
+                {
+                    if (child.Payload is IToken)
+                    {
+                        IToken token = (IToken)child.Payload;
+                        state = 0;
+                        if (token.Type == IDENTIFIER)
+                            typeNamePairs.Add((type, token.Text));
+                        else if (token.Type == COMMA | token.Type == RIGHT_ANGLE_BRACKET)
+                            typeNamePairs.Add((type, ""));
+                    }
+                }
+            }
+
+            return (new TupleType(typeNamePairs), tupleLineNum, tupleCol);
+
+        }
+
+        private (AnyType, int, int) visit(Any_arrayContext n)
+        {
+            int arrayLineNum = ((IToken)n.LEFT_SQUARE_BRACKET().Payload).Line;
+            int arrayCol = ((IToken)n.LEFT_SQUARE_BRACKET().Payload).Column;
+            
+            int state = 0;
+            AnyType type = new FlavorType();
+
+            if (n.COMMA().Count() > 0)
+            {
+                var typeNamePairs = new List<(AnyType, string)>();
+                for (int i = 1; i < n.children.Count; i++)
+                {
+                    var child = n.children[i];
+
+                    if (state == 0)
+                    {
+                        if (child is TypeContext)
+                        {
+                            type = visit((TypeContext)child).Item1;
+                            state = 1;
+                        }
+                        else if (child.Payload is IToken)
+                        {
+                            IToken token = (IToken)child.Payload;
+                            if (token.Type == FLAVOR)
+                            {
+                                type = new FlavorType();
+                                state = 1;
+                            }
+                        }
+                    }
+                    else if (state == 1)
+                    {
+                        if (child.Payload is IToken)
+                        {
+                            IToken token = (IToken)child.Payload;
+                            state = 0;
+                            if (token.Type == IDENTIFIER)
+                                typeNamePairs.Add((type, token.Text));
+                            else if (token.Type == COMMA | token.Type == RIGHT_SQUARE_BRACKET)
+                                typeNamePairs.Add((type, ""));
+                        }
+                    }
+                }
+
+                return (new ArrayType(new TupleType(typeNamePairs)), arrayLineNum, arrayCol);
+            }
+            else
+            {
+                var child = n.children[1];
+                if (child is TypeContext)
+                {
+                    type = visit((TypeContext)child).Item1;
+                    return (new SingularArrayType(type), arrayLineNum, arrayCol);
+                }
+                else if (child.Payload is IToken)
+                    return (new SingularArrayType(new FlavorType()), arrayLineNum, arrayCol);
+                else
+                    throw new Exception("Invalid type detected");
+            }
+        }
+
+        private (AnyType, int, int) visit(PrimitiveContext n)
+        {
+            dynamic child = n.children[0];
+            var token = (IToken)child.Payload;
+            switch (token.Type)
+            {
+                case SUGAR:
+                    return (new PrimitiveType(TypeBI.Sugar), token.Line, token.Column);
+                case CARB:
+                    return (new PrimitiveType(TypeBI.Carb), token.Line, token.Column);
+                case CAL:
+                    return (new PrimitiveType(TypeBI.Cal), token.Line, token.Column);
+                case KCAL:
+                    return (new PrimitiveType(TypeBI.Kcal), token.Line, token.Column);
+                case YUM:
+                    return (new PrimitiveType(TypeBI.Yum), token.Line, token.Column);
+                case PURE:
+                    return (new PrimitiveType(TypeBI.PureSugar), token.Line, token.Column);
+                default:
+                    throw new Exception("Invalid type detected");
+            }
+        }
+
+        private (AnyType, int, int) visit(Primitive_packContext n)
+        {
+            dynamic child = n.children[0];
+            var token = (IToken)child.Payload;
+            switch (token.Type)
+            {
+                case SUGARPACK:
+                    return (new PackType(TypePack.SugarPack), token.Line, token.Column);
+                case CARBPACK:
+                    return (new PackType(TypePack.CarbPack), token.Line, token.Column);
+                case CALPACK:
+                    return (new PackType(TypePack.CalPack), token.Line, token.Column);
+                case KCALPACK:
+                    return (new PackType(TypePack.KcalPack), token.Line, token.Column);
+                case YUMPACK:
+                    return (new PackType(TypePack.YumPack), token.Line, token.Column);
+                case PURE:
+                    return (new PackType(TypePack.PureSugarPack), token.Line, token.Column);
+                default:
+                    throw new Exception("Invalid type detected");
+            }
         }
     }
 }

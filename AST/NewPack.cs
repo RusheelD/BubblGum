@@ -10,12 +10,12 @@ namespace AST
 {
     public class NewPack : Exp
     {
-        public AnyType Type;
+        public AnyType PackType;
         public Exp Exp;
 
         public NewPack(AnyType type, Exp exp, int lineNumber, int startCol)
         {
-            Type = type;
+            PackType = type;
             Exp = exp;
             LineNumber = lineNumber;
             StartCol = startCol;

@@ -419,12 +419,12 @@ namespace AST
 
         public void Visit(TupleType n)
         {
-            Console.Write("(");
+            Console.Write("<");
 
             AnyType type = n.TypeNamePairs[0].Item1;
             type.Accept(this);
 
-            string name = n.TypeNamePairs[1].Item2;
+            string name = n.TypeNamePairs[0].Item2;
             if (!name.Equals(""))
                 Console.Write(" " + name);
 
@@ -439,7 +439,7 @@ namespace AST
                 if (!name.Equals(""))
                     Console.Write(" " + name);
             }
-            Console.Write(")");
+            Console.Write(">");
         }
 
         private void endStatement()
