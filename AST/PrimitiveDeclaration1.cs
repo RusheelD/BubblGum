@@ -10,9 +10,9 @@ namespace AST
     public class PrimitiveDeclaration1 : Statement, ClassMember, InterfaceMember, StructPiece
     {
         public TypeBI TypeInfo;
-        public List<Identifier> Variables;
+        public List<string> Variables;
 
-        public PrimitiveDeclaration1(TypeBI typeInfo, List<Identifier> variables, 
+        public PrimitiveDeclaration1(TypeBI typeInfo, List<string> variables, 
             int lineNumber, int startCol)
         {
             TypeInfo = typeInfo;

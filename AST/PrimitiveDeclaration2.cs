@@ -9,9 +9,9 @@ namespace AST
 {
     public class PrimitiveDeclaration2 : Statement, ClassMember, InterfaceMember, StructPiece
     {
-        public List<(TypeBI, Identifier)> TypeVarPair;
+        public List<(TypeBI, string)> TypeVarPair;
 
-        public PrimitiveDeclaration2(List<(TypeBI, Identifier)> typeVarPair, 
+        public PrimitiveDeclaration2(List<(TypeBI, string)> typeVarPair, 
             int lineNumber, int startCol)
         {
             TypeVarPair = typeVarPair;

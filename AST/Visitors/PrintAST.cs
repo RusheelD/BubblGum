@@ -153,7 +153,7 @@ namespace AST
         public void Visit(RepeatLoop n)
         {
             Console.Write(n.VarName + ": ");
-            Console.Write(n.IsUp ? " repeatUp( " : " repeatDown( ");
+            Console.Write(n.IsUp ? " repeatUp(" : " repeatDown(");
             n.Start.Accept(this);
             Console.Write(", ");
             n.End.Accept(this);

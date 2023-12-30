@@ -80,6 +80,52 @@ namespace AST
 
         private Statement visit(Base_statementContext n) => visit((dynamic)n.children[0]);
 
+        private Statement visit(Primitive_declarationContext n)
+        {
+            (AnyType type, int line, int col) = visit((PrimitiveContext)n.children[0]);
+
+            if (n.primitive().Length == 1)
+            {
+                TypeBI primitiveType = ((PrimitiveType)type).Type;
+                var variables = new List<string>();
+
+                for (int i = 3; i < n.children.Count; i++)
+                {
+                    dynamic childi = n.children[i];
+                    if (childi is IToken)
+                    {
+                        IToken tokeni = (IToken)childi.Payload;
+                        if (tokeni.Type == IDENTIFIER)
+                            variables.Add(tokeni.Text);
+                    }
+                }
+
+                return new PrimitiveDeclaration1(primitiveType, variables, line, col);
+            }
+            else
+            {
+                var variables = new List<(TypeBI, string)>();
+                TypeBI primitiveType = 0;
+                for (int i = 0; i < n.children.Count; i++)
+                {
+                    dynamic childi = n.children[i];
+                    if (childi is PrimitiveContext)
+                    {
+                        AnyType typei = visit((PrimitiveContext)n.children[i]).Item1;
+                        primitiveType = ((PrimitiveType)typei).Type;
+                    }
+                    else if (childi is IToken)
+                    {
+                        IToken tokeni = (IToken)childi.Payload;
+                        if (tokeni.Type == IDENTIFIER)
+                            variables.Add((primitiveType, tokeni.Text));
+                    }
+                }
+
+                return new PrimitiveDeclaration2(variables, line, col);
+            }
+        }
+
         private Assignment visit(AssignmentContext n)
         {
             var lhs = new List<AstNode>();
@@ -203,6 +249,14 @@ namespace AST
             bool useNewLine = n.DEBUG().Length == 1;
 
             return new Debug(visit(child), useNewLine, lineNum, col);
+        }
+
+        private Statement visit(Variable_inc_decContext n)
+        {
+            bool shouldIncrement = n.PLUS_COLON() != null;
+            Exp e1 = visit((dynamic)n.children[0]);
+            Exp e2 = visit((dynamic)n.children[2]);
+            return new IncDec(e1, e2, shouldIncrement, e1.LineNumber, e1.StartCol);
         }
 
 
