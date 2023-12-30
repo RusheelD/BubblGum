@@ -517,6 +517,109 @@ namespace AST
             return new IdentifierExp(token.Text, lineNum, col);
         }
 
+        private Statement visit(Return_statementContext n)
+        {
+            IToken pop = (IToken)n.children[0].Payload;
+            if(n.ChildCount == 1)
+            {
+                return new Pop(pop.Line, pop.Column);
+            }
+
+            Exp var = visit((dynamic)n.children[1]);
+
+            if(n.POPSTREAM() != null)
+            {
+                IToken lastToken = (IToken)(n.children[n.ChildCount - 1].Payload);
+                if (lastToken.Type == POPSTREAM)
+                {
+                    return new PopStream(var, false, new Integer(0, lastToken.Line, lastToken.Column), pop.Line, pop.Column);
+                } else if (lastToken.Type == RIGHT_PAREN)
+                {
+                    Exp outputIdx = visit((dynamic)n.children[n.ChildCount - 2]);
+                    return new PopStream(var, true, outputIdx, pop.Line, pop.Column);
+                }
+            }
+
+            if(n.THICK_ARROW() != null)
+            {
+                Exp outputIdx = visit((dynamic)n.children[n.ChildCount - 1]);
+                return new PopVar(var, true, outputIdx, pop.Line, pop.Column);
+            }
+
+            return new PopVar(var, false, new Integer(0, var.LineNumber, var.StartCol), pop.Line, pop.Column);
+        }
+
+        private Statement visit(If_statementContext n)
+        {
+            dynamic child = n.children[n.ChildCount - 1];
+            Exp cond = visit((dynamic)n.children[1]);
+            IToken If = (IToken)n.children[0].Payload;
+            var statements = new List<Statement>();
+
+            if(child is Single_statementContext || child is Scope_bodyContext)
+            {
+                Statement statement = visit(child);
+                if (statement is StatementList)
+                    statements.AddRange(((StatementList)statement).Statements);
+                else
+                    statements.Add(statement);
+                return new SingleIf(cond, statements, If.Line, If.Column);
+            } else
+            {
+                var elifs = new List<(Exp, List<Statement>)>();
+                var Else = new List<Statement>();
+
+                for (int i = 2; i < n.ChildCount; i++)
+                {
+                    dynamic childi = n.children[i];
+
+                    if (childi is Single_statementContext || childi is Scope_bodyContext)
+                    {
+                        Statement statement = visit(childi);
+                        if (statement is StatementList)
+                            statements.AddRange(((StatementList)statement).Statements);
+                        else
+                            statements.Add(statement);
+                    }
+                    else if(childi is Elif_statementContext)
+                        elifs.Add(visit(childi));
+                    else if(childi is Else_statementContext)
+                        Else.AddRange(visit(childi));
+                    else
+                        throw new Exception($"Invalid type {childi.GetType()} detected");
+                }
+
+                return new MultiIf(cond, statements, elifs, Else, If.Line, If.Column);
+            }
+
+            
+        }
+        private (Exp, List<Statement>) visit(Elif_statementContext n)
+        {
+            dynamic child = n.children[n.ChildCount - 1];
+            Exp cond = visit((dynamic)n.children[1]);
+            var statements = new List<Statement>();
+
+            Statement statement = visit(child);
+            if (statement is StatementList)
+                statements.AddRange(((StatementList)statement).Statements);
+            else
+                statements.Add(statement);
+            return (cond, statements);
+        }
+        private List<Statement> visit(Else_statementContext n)
+        {
+            dynamic child = n.children[n.ChildCount - 1];
+            var statements = new List<Statement>();
+
+            Statement statement = visit(child);
+            if (statement is StatementList)
+                statements.AddRange(((StatementList)statement).Statements);
+            else
+                statements.Add(statement);
+            return statements;
+        }
+
         private Statement visit(LoopContext n)
         {
             return visit((dynamic)n.children[0]);
@@ -571,11 +674,12 @@ namespace AST
             List<Statement> statements = new List<Statement>();
             int lineNumber, startCol;
 
+            IToken pop = (IToken)n.children[0].Payload;
             IToken identifier = (IToken)n.children[2].Payload;
 
             varName = identifier.Text;
-            lineNumber = identifier.Line;
-            startCol = identifier.Column;
+            lineNumber = pop.Line;
+            startCol = pop.Column;
             exp = visit((dynamic)n.children[4]);
             Statement stat = visit((dynamic)n.children[n.ChildCount - 1]);
             if (stat is StatementList)

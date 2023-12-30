@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Antlr4.Runtime.Tree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,11 @@ namespace AST
 {
     public class Pop : Statement
     {
+        public Pop(int lineNumber, int startCol)
+        {
+            LineNumber = lineNumber;
+            StartCol = startCol;
+        }
         public override void Accept(Visitor v) => v.Visit(this);
     }
 }

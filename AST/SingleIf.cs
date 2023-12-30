@@ -11,10 +11,12 @@ namespace AST
         public Exp Cond;
         public List<Statement> Statements;
 
-        public SingleIf(Exp cond,  List<Statement> statements)
+        public SingleIf(Exp cond,  List<Statement> statements, int lineNumber, int startCol)
         {
             Cond = cond;
             Statements = statements;
+            LineNumber = lineNumber;
+            StartCol = startCol;
         }
 
         public override void Accept(Visitor v) => v.Visit(this);
