@@ -273,6 +273,20 @@ namespace AST
             n.E2.Accept(this);
         }
 
+        public void Visit(Is n)
+        {
+            n.E1.Accept(this);
+            Console.Write(" is ");
+            n.E2.Accept(this);
+        }
+
+        public void Visit(SubClassOf n)
+        {
+            n.E1.Accept(this);
+            Console.Write(" :< ");
+            n.E2.Accept(this);
+        }
+
 
         // boolean expressions
 
@@ -460,6 +474,7 @@ namespace AST
             }
             Console.Write(">");
         }
+
 
         private void endStatement()
         {

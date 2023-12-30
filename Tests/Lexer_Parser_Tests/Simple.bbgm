@@ -20,4 +20,15 @@
 
     kcal a :: 2 * 3 - 34 + 2 * (3 <: 3) - 21 % 6 ** 3 + 4 :> 4 :> 2
 	kcal b :: 3 ^ 4 | 5 and 6 or 2 xor bobafet_johnson
+
+	a :: a is b
+	a :: a :< b
+
+	a : repeatUp(c, d) :
+	   a :: b
+	   
+	a : repeatDown(c, d) {
+	   a :: b
+	   c :: d * e
+	}
 }

@@ -358,6 +358,18 @@ namespace AST
                     Exp e2 = visit((dynamic)n.children[2]);
                     return new LessThan(e1, e2, e1.LineNumber, e1.StartCol);
                 }
+                else if (token.Type == IS)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Is(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (token.Type == SUBCLASS_OF)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new SubClassOf(e1, e2, e1.LineNumber, e1.StartCol);
+                }
                 else if (token.Type == THIN_ARROW)
                 {
                     dynamic child0 = n.children[0];
@@ -373,7 +385,7 @@ namespace AST
                         Exp e1 = visit(child0);
                         return new MemberAccess(e1, visit(child2), e1.LineNumber, e1.StartCol);
                     }
-                    else if (child2 is IToken)
+                    else if (child2.Payload is IToken)
                     {
                         IToken token2 = (IToken)child2.Payload;
                         Exp e1 = visit(child0);
@@ -413,14 +425,12 @@ namespace AST
                     Exp e2 = visit((dynamic)n.children[2]);
                     return new PackAccess(e1, e2, e1.LineNumber, e1.StartCol);
                 }
-                else
-                    throw new Exception("Invalid type detected");
             }
             else if (child1 is ExpressionContext)
             {
                 dynamic child0 = n.children[0];
 
-                if (child0 is IToken)
+                if (child0.Payload is IToken)
                 {
                     IToken token0 = (IToken)child0.Payload;
 
@@ -438,13 +448,11 @@ namespace AST
                         return new NewTuple(exps, token0.Line, token0.Column);
                     }
                     else if (token0.Type == NOT | token0.Type == NOT_OP)
-                    {
-
-                    }
+                        return new Not(visit(child1), token0.Line, token0.Column);
                 }
             }
-            else
-                throw new Exception($"Invalid type {child1.GetType()} detected");
+
+           throw new Exception($"Invalid type {child1.GetType()} detected");
         }
 
         private IdentifierExp visit(IdentifierContext n)

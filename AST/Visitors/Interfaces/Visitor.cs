@@ -62,6 +62,8 @@ namespace AST
         public void Visit(GreaterThanEquals n);
         public void Visit(LessThan n);
         public void Visit(LessThanEquals n);
+        public void Visit(Is n);
+        public void Visit(SubClassOf n);
 
         // boolean expressions
         public void Visit(Not n);
