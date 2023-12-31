@@ -42,9 +42,31 @@ namespace AST
 
         }
 
-        private void visit(Class_memberContext n)
+        private (bool, Visbility, Visbility, AstNode) visit(Class_memberContext n)
         {
+            bool sticky = n.STICKY() != null;
+            bool visibility = n.visibility() != null;
+            Visbility get = Visbility.Bold;
+            Visbility set = Visbility.Bland;
+            AstNode member;
 
+            if (visibility)
+            {
+                get = visit((VisibilityContext)n.children[sticky ? 1 : 0]);
+            }
+
+            if (n.PRINT() != null)
+            {
+                set = Visbility.Bold;
+            }
+            else if (n.DEBUG() != null)
+            {
+                set = Visbility.Subtle;
+            }
+
+            member = visit((dynamic)n.children[(sticky && visibility) ? 2 : ((sticky || visibility) ? 1 : 0)]);
+
+            return (sticky, get, set, member);
         }
 
         private void visit(InterfaceContext n)
@@ -52,29 +74,141 @@ namespace AST
 
         }
 
-        private void visit(Interface_memberContext n)
+        private (bool, Visbility, Visbility, AstNode) visit(Interface_memberContext n)
         {
+            bool sticky = n.STICKY() != null;
+            bool visibility = n.visibility() != null;
+            Visbility get = Visbility.Bold;
+            Visbility set = Visbility.Bland;
+            AstNode member;
 
+            if(visibility)
+            {
+                get = visit((VisibilityContext)n.children[sticky ? 1 : 0]);
+            }
+
+            if(n.PRINT() != null)
+            {
+                set = Visbility.Bold;
+            } else if (n.DEBUG() != null)
+            {
+                set = Visbility.Subtle;
+            }
+
+            member = visit((dynamic)n.children[(sticky && visibility) ? 2 : ((sticky || visibility) ? 1 : 0)]);
+
+            return (sticky, get, set, member);
         }
 
-        private void visit(VisibilityContext n)
+        private Visbility visit(VisibilityContext n)
         {
+            IToken vis = (IToken)n.Payload;
 
+            switch (vis.Type)
+            {
+                case BOLD:
+                    return Visbility.Bold;
+                case SUBTLE:
+                    return Visbility.Subtle;
+                case BLAND:
+                    return Visbility.Bland;
+                default:
+                    throw new Exception($"Invalid token {vis.Type} detected");
+            }
         }
 
-        private void visit(FunctionContext n)
+        private Function visit(FunctionContext n)
         {
+            FunctionHeader header = visit((Function_headerContext)n.children[0]);
+            Statement statements = visit((dynamic)n.children[n.ChildCount - 1]);
+            List<Statement> stats;
 
+            if(statements is StatementList)
+            {
+                stats = ((StatementList)statements).Statements;
+            } else
+            {
+                stats = new List<Statement>() { statements };
+            }
+
+            return new Function(header, stats, header.LineNumber, header.StartCol);
         }
 
-        private void visit(Function_headerContext n)
+        private FunctionHeader visit(Function_headerContext n)
         {
+            IToken recipe = (IToken)n.children[0].Payload;
+            IToken identifier = (IToken)n.children[2].Payload;
+            string Name = identifier.Text;
+            List<(bool, AnyType, string, bool)> Params = visit((ParametersContext)n.children[3]);
+            List<(AnyType, string, bool)> Outputs;
 
+            var output = n.children[4];
+            if(output is OutputsContext)
+            {
+                Outputs = visit((OutputsContext)output);
+            } else if(output is TypeContext)
+            {
+                var type = visit((TypeContext)output).Item1;
+                Outputs = new List<(AnyType, string, bool)> { (type, "", false) };
+            } else
+            {
+                throw new Exception($"Invalid type {output.GetType()} detected");
+            }
+
+            return new FunctionHeader(Name, Params, Outputs, recipe.Line, recipe.Column);
         }
 
-        private void visit(ParametersContext n)
+        private List<(bool, AnyType, string, bool)> visit(ParametersContext n)
         {
+            var parameters = new List<(bool, AnyType, string, bool)>();
 
+            bool isImmutable = false;
+            AnyType type = new FlavorType();
+            string identifier = "";
+            bool hasEllipses = false;
+
+            for (int i = 1; i < n.ChildCount; i++)
+            {
+                var childi = n.children[i];
+                if (childi is TypeContext)
+                {
+                    type = visit((TypeContext)childi).Item1;
+                }
+                else if (childi.Payload is IToken)
+                {
+                    IToken token = (IToken)childi.Payload;
+
+                    if (token.Type == COMMA || token.Type == RIGHT_ANGLE_BRACKET)
+                    {
+                        parameters.Add((isImmutable, type, identifier, hasEllipses));
+                        isImmutable = false;
+                        identifier = "";
+                        hasEllipses = false;
+                    }
+                    else if (token.Type == IMMUTABLE)
+                    {
+                        isImmutable = true;
+                    }
+                    else if (token.Type == IDENTIFIER)
+                    {
+                        identifier = token.Text;
+                    }
+                    else if (token.Type == ELLIPSES)
+                    {
+                        hasEllipses = true;
+                    }
+                    else
+                    {
+                        throw new Exception($"Invalid type {token.Type} detected");
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Invalid type {childi.GetType()} detected");
+                }
+            }
+
+            return parameters;
         }
 
         private List<(AnyType, string, bool)> visit(OutputsContext n)
