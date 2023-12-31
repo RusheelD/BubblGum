@@ -52,9 +52,25 @@ namespace AST
 
         }
 
-        private void visit(StructContext n)
+        private Struct visit(StructContext n)
         {
+            IToken candy = (IToken)n.children[0];
+            IToken identifier = (IToken)n.children[2];
+            string name = identifier.Text;
+            int lineNumber = candy.Line;
+            int startCol = candy.Column;
+            var statements = new List<AstNode>();
+            
+            for(int i = 4; i < n.ChildCount; i++)
+            {
+                dynamic childi = n.children[i];
+                if(childi is Primitive_declarationContext || childi is AssignmentContext)
+                {
+                    statements.Add(visit(childi));
+                }
+            }
 
+            return new Struct(name, statements, lineNumber, startCol);
         }
 
         private StatementList visit(Scope_bodyContext n) => visit((dynamic)n.children[1]);
