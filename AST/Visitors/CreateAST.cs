@@ -15,7 +15,6 @@ namespace AST
 {
     public class CreateAST
     {
-
        public Program Visit(ProgramContext n)
         {
             var programPieces = new List<AstNode>();
@@ -37,9 +36,88 @@ namespace AST
         // may return statement or statement list
         private Statement visit(StatementContext n) => visit((dynamic)n.children[0]);
 
-        private void visit(ClassContext n)
+        private Class visit(ClassContext n)
         {
+            bool sticky = n.STICKY() != null;
+            bool visiblityExists = (n.visibility() != null);
+            Visbility visibility = visiblityExists ? visit(n.visibility()) : Visbility.Bold;
+            string name = "";
+            var parents = new List<string>();
+            var members = new List<(bool, Visbility, Visbility, AstNode)>();
 
+            var child = n.children[(sticky && visiblityExists) ? 3 : ((sticky || visiblityExists) ? 2 : 1)];
+            IToken tokenIdentifier = (IToken)child.Payload;
+            if (tokenIdentifier.Type == IDENTIFIER)
+                name = tokenIdentifier.Text;
+
+            int startIdx = (sticky && visiblityExists) ? 5 : ((sticky || visiblityExists) ? 4 : 3);
+            int endIdx = 0;
+            for (int i = startIdx; i < n.ChildCount; i++)
+            {
+                IToken tokeni = (IToken)(n.children[i].Payload);
+                if (tokeni.Type == IDENTIFIER)
+                    parents.Add(tokeni.Text);
+
+                if (tokeni.Type == LEFT_CURLY_BRACKET)
+                {
+                    endIdx = i + 1;
+                    break;
+                }
+            }
+
+            for (int i = endIdx; i < n.ChildCount - 1; i++)
+                members.Add(visit((Class_memberContext)n.children[i]));
+
+            IToken start = sticky ? ((IToken)(n.STICKY().Payload)) :
+                (visiblityExists ? ((IToken)(n.visibility().children[0].Payload))
+                    : ((IToken)(n.GUM().Payload)));
+
+            int line = start.Line;
+            int column = start.Column;
+
+            return new Class(sticky, visibility, name, parents, members, line, column);
+        }
+
+        private Interface visit(InterfaceContext n)
+        {
+            bool sticky = n.STICKY() != null;
+            bool visiblityExists = (n.visibility() != null);
+            Visbility visibility = visiblityExists ? visit(n.visibility()) : Visbility.Bold;
+            string name = "";
+            var parents = new List<string>();
+            var members = new List<(bool, Visbility, Visbility, AstNode)>();
+
+            var child = n.children[(sticky && visiblityExists) ? 3 : ((sticky || visiblityExists) ? 2 : 1)];
+            IToken tokenIdentifier = (IToken)child.Payload;
+            if (tokenIdentifier.Type == IDENTIFIER)
+                name = tokenIdentifier.Text;
+
+            int startIdx = (sticky && visiblityExists) ? 5 : ((sticky || visiblityExists) ? 4 : 3);
+            int endIdx = 0;
+            for (int i = startIdx; i < n.ChildCount; i++)
+            {
+                IToken tokeni = (IToken)(n.children[i].Payload);
+                if (tokeni.Type == IDENTIFIER)
+                    parents.Add(tokeni.Text);
+
+                if (tokeni.Type == LEFT_CURLY_BRACKET)
+                {
+                    endIdx = i + 1;
+                    break;
+                }
+            }
+
+            for (int i = endIdx; i < n.ChildCount-1; i++)
+                members.Add(visit((Interface_memberContext)n.children[i]));
+
+            IToken start = sticky ? ((IToken)(n.STICKY().Payload)) :
+                (visiblityExists ? ((IToken)(n.visibility().children[0].Payload))
+                    : ((IToken)(n.WRAPPER().Payload)));
+
+            int line = start.Line;
+            int column = start.Column;
+
+            return new Interface(sticky, visibility, name, parents, members, line, column);
         }
 
         private (bool, Visbility, Visbility, AstNode) visit(Class_memberContext n)
@@ -67,11 +145,6 @@ namespace AST
             member = visit((dynamic)n.children[(sticky && visibility) ? 2 : ((sticky || visibility) ? 1 : 0)]);
 
             return (sticky, get, set, member);
-        }
-
-        private void visit(InterfaceContext n)
-        {
-
         }
 
         private (bool, Visbility, Visbility, AstNode) visit(Interface_memberContext n)
