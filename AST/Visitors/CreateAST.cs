@@ -39,7 +39,12 @@ namespace AST
 
         private void visit(ClassContext n)
         {
-           
+
+        }
+
+        private void visit(Class_memberContext n)
+        {
+
         }
 
         private void visit(InterfaceContext n)
@@ -47,7 +52,32 @@ namespace AST
 
         }
 
+        private void visit(Interface_memberContext n)
+        {
+
+        }
+
+        private void visit(VisibilityContext n)
+        {
+
+        }
+
         private void visit(FunctionContext n)
+        {
+
+        }
+
+        private void visit(Function_headerContext n)
+        {
+
+        }
+
+        private void visit(ParametersContext n)
+        {
+
+        }
+
+        private void visit(OutputsContext n)
         {
 
         }
