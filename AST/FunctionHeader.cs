@@ -11,7 +11,7 @@ namespace AST
     {
         public string Name;
         public List<(bool, AnyType, string, bool)> Params; // isImmutable, type, name, isEllipses
-        public List<(AnyType, string, bool)> Outputs; // Type, VarName, HasElipses
+        public List<(AnyType, string, bool)> Outputs; // Type, VarName, HasEllipses
 
         public FunctionHeader(string name, List<(bool, AnyType, string, bool)> Params,
             List<(AnyType, string, bool)> outputs, int lineNumber, int startCol)

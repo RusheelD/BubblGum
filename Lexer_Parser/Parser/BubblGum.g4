@@ -21,8 +21,8 @@ visibility: BOLD | SUBTLE | BLAND;
 struct: CANDY COLON IDENTIFIER LEFT_CURLY_BRACKET (primitive_declaration | assignment)* RIGHT_CURLY_BRACKET;
 function: function_header ((COLON single_statement) | scope_body);
 function_header: RECIPE COLON IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
-parameters: LEFT_PAREN (IMMUTABLE? type IDENTIFIER ELIPSES? (COMMA IMMUTABLE? type IDENTIFIER ELIPSES?)*)? RIGHT_PAREN;
-outputs: LEFT_ANGLE_BRACKET ((type (IDENTIFIER)? ELIPSES? (COMMA type IDENTIFIER? ELIPSES?)*)) RIGHT_ANGLE_BRACKET;
+parameters: LEFT_PAREN (IMMUTABLE? type IDENTIFIER ELLIPSES? (COMMA IMMUTABLE? type IDENTIFIER ELLIPSES?)*)? RIGHT_PAREN;
+outputs: LEFT_ANGLE_BRACKET ((type (IDENTIFIER)? ELLIPSES? (COMMA type IDENTIFIER? ELLIPSES?)*)) RIGHT_ANGLE_BRACKET;
 
 scope_body: LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET; // { statements }
 statement_list: (statement)*; // statements
@@ -165,7 +165,7 @@ RIGHT_ANGLE_BRACKET: '>';
 COMMA: ',';
 SEMICOLON: ';';
 COLON: ':';
-ELIPSES: '...';
+ELLIPSES: '...';
 DOT: '.';
 PRINT: '!';
 DEBUG: '?';

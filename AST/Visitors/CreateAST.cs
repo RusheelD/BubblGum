@@ -77,9 +77,48 @@ namespace AST
 
         }
 
-        private void visit(OutputsContext n)
+        private List<(AnyType, string, bool)> visit(OutputsContext n)
         {
+            var Outputs = new List<(AnyType, string, bool)>();
 
+            AnyType type = new FlavorType();
+            string identifier = "";
+            bool hasEllipses = false;
+
+            for(int i = 1; i < n.ChildCount; i++)
+            {
+                var childi = n.children[i];
+                if(childi is TypeContext)
+                {
+                    type = visit((TypeContext)childi).Item1;
+                } else if(childi.Payload is IToken)
+                {
+                    IToken token = (IToken)childi.Payload;
+
+                    if(token.Type == COMMA || token.Type == RIGHT_ANGLE_BRACKET)
+                    {
+                        Outputs.Add((type, identifier, hasEllipses));
+                        identifier = "";
+                        hasEllipses = false;
+                    } 
+                    else if (token.Type == IDENTIFIER)
+                    {
+                        identifier = token.Text;
+                    }
+                    else if (token.Type == ELLIPSES)
+                    {
+                        hasEllipses = true;
+                    } else
+                    {
+                        throw new Exception($"Invalid type {token.Type} detected");
+                    }
+                } else
+                {
+                    throw new Exception($"Invalid type {childi.GetType()} detected");
+                }
+            }
+
+            return Outputs;
         }
 
         private Struct visit(StructContext n)

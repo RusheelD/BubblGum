@@ -45,7 +45,7 @@ public partial class BubblGumParser : Parser {
 		IN=44, IS=45, ASSIGN=46, LEFT_PAREN=47, RIGHT_PAREN=48, LEFT_SQUARE_BRACKET=49, 
 		RIGHT_SQUARE_BRACKET=50, LEFT_CURLY_BRACKET=51, RIGHT_CURLY_BRACKET=52, 
 		LEFT_ANGLE_BRACKET=53, RIGHT_ANGLE_BRACKET=54, COMMA=55, SEMICOLON=56, 
-		COLON=57, ELIPSES=58, DOT=59, PRINT=60, DEBUG=61, DOUBLE_QUOTE=62, SINGLE_QUOTE=63, 
+		COLON=57, ELLIPSES=58, DOT=59, PRINT=60, DEBUG=61, DOUBLE_QUOTE=62, SINGLE_QUOTE=63, 
 		BACK_TICK=64, IMMUTABLE=65, GT_EQ=66, LT_EQ=67, LEFT_SHIFT=68, RIGHT_SHIFT=69, 
 		NOT_EQ_1=70, NOT_EQ_2=71, PLUS_COLON=72, MINUS_COLON=73, THIN_ARROW=74, 
 		THICK_ARROW=75, SUBCLASS_OF=76, EQUALS=77, AND_OP=78, OR_OP=79, NOT_OP=80, 
@@ -98,7 +98,7 @@ public partial class BubblGumParser : Parser {
 		"REPEAT_DOWN", "POPSTREAM", "NOT", "IN", "IS", "ASSIGN", "LEFT_PAREN", 
 		"RIGHT_PAREN", "LEFT_SQUARE_BRACKET", "RIGHT_SQUARE_BRACKET", "LEFT_CURLY_BRACKET", 
 		"RIGHT_CURLY_BRACKET", "LEFT_ANGLE_BRACKET", "RIGHT_ANGLE_BRACKET", "COMMA", 
-		"SEMICOLON", "COLON", "ELIPSES", "DOT", "PRINT", "DEBUG", "DOUBLE_QUOTE", 
+		"SEMICOLON", "COLON", "ELLIPSES", "DOT", "PRINT", "DEBUG", "DOUBLE_QUOTE", 
 		"SINGLE_QUOTE", "BACK_TICK", "IMMUTABLE", "GT_EQ", "LT_EQ", "LEFT_SHIFT", 
 		"RIGHT_SHIFT", "NOT_EQ_1", "NOT_EQ_2", "PLUS_COLON", "MINUS_COLON", "THIN_ARROW", 
 		"THICK_ARROW", "SUBCLASS_OF", "EQUALS", "AND_OP", "OR_OP", "NOT_OP", "XOR_OP", 
@@ -1090,9 +1090,9 @@ public partial class BubblGumParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IMMUTABLE(int i) {
 			return GetToken(BubblGumParser.IMMUTABLE, i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ELIPSES() { return GetTokens(BubblGumParser.ELIPSES); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ELIPSES(int i) {
-			return GetToken(BubblGumParser.ELIPSES, i);
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ELLIPSES() { return GetTokens(BubblGumParser.ELLIPSES); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ELLIPSES(int i) {
+			return GetToken(BubblGumParser.ELLIPSES, i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] COMMA() { return GetTokens(BubblGumParser.COMMA); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COMMA(int i) {
@@ -1147,10 +1147,10 @@ public partial class BubblGumParser : Parser {
 				State = 218;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if (_la==ELIPSES) {
+				if (_la==ELLIPSES) {
 					{
 					State = 217;
-					Match(ELIPSES);
+					Match(ELLIPSES);
 					}
 				}
 
@@ -1179,10 +1179,10 @@ public partial class BubblGumParser : Parser {
 					State = 227;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
-					if (_la==ELIPSES) {
+					if (_la==ELLIPSES) {
 						{
 						State = 226;
-						Match(ELIPSES);
+						Match(ELLIPSES);
 						}
 					}
 
@@ -1223,9 +1223,9 @@ public partial class BubblGumParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IDENTIFIER(int i) {
 			return GetToken(BubblGumParser.IDENTIFIER, i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ELIPSES() { return GetTokens(BubblGumParser.ELIPSES); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ELIPSES(int i) {
-			return GetToken(BubblGumParser.ELIPSES, i);
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ELLIPSES() { return GetTokens(BubblGumParser.ELLIPSES); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ELLIPSES(int i) {
+			return GetToken(BubblGumParser.ELLIPSES, i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] COMMA() { return GetTokens(BubblGumParser.COMMA); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COMMA(int i) {
@@ -1275,10 +1275,10 @@ public partial class BubblGumParser : Parser {
 			State = 244;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if (_la==ELIPSES) {
+			if (_la==ELLIPSES) {
 				{
 				State = 243;
-				Match(ELIPSES);
+				Match(ELLIPSES);
 				}
 			}
 
@@ -1305,10 +1305,10 @@ public partial class BubblGumParser : Parser {
 				State = 252;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if (_la==ELIPSES) {
+				if (_la==ELLIPSES) {
 					{
 					State = 251;
-					Match(ELIPSES);
+					Match(ELLIPSES);
 					}
 				}
 
