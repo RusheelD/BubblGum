@@ -13,8 +13,10 @@ namespace AST
     public class PrintAST : Visitor, TypeVisitor
     {
         private int nestedPrints = 0;
-        private bool printTupleWithBrackets;
-        // program + program pieces
+        private bool enableBoldSet;
+        private bool enableSubtleSet;
+
+        // program + program piecesend
 
         public void Visit(Program n)
         {
@@ -24,27 +26,141 @@ namespace AST
 
         public void Visit(Class n)
         {
-            throw new NotImplementedException();
+            if (n.IsSticky)
+                Console.Write("sticky ");
+
+            Console.Write(n.Visbility.ToString().ToLower());
+            Console.Write(" Gum " + n.Name);
+
+            if (n.InterfacesAndParentClasses.Count != 0)
+                Console.Write($" : {n.InterfacesAndParentClasses[0]}");
+
+            for (int i = 1; i < n.InterfacesAndParentClasses.Count; i++)
+                Console.Write($", {n.InterfacesAndParentClasses[i]}");
+
+            Console.WriteLine(" {");
+
+            for (int i = 0; i < n.ClassMemberInfo.Count; i++)
+            {
+                (bool isSticky, Visbility get, Visbility set, AstNode node) = n.ClassMemberInfo[i];
+                if (isSticky)
+                    Console.Write("sticky ");
+                Console.Write(get.ToString().ToLower() + " ");
+
+                switch (set)
+                {
+                    case Visbility.Bold:
+                        enableBoldSet = true;
+                        break;
+                    case Visbility.Subtle:
+                        enableSubtleSet = true;
+                        break;
+                    default:
+                        break;
+                }
+                node.Accept(this);
+            }
+
+            Console.WriteLine(" }");
         }
 
         public void Visit(Function n)
         {
-            throw new NotImplementedException();
+            n.Header.Accept(this);
+            Console.WriteLine("{");
+            foreach (var statement in n.Statements)
+                statement.Accept(this);
+            Console.WriteLine("}");
         }
 
         public void Visit(FunctionHeader n)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"recipe : {n.Name} (");
+
+            if (n.Params.Count != 0)
+            {
+                (bool isImmut, AnyType type, string name, bool isEllipses) = n.Params[0];
+                if (isImmut)
+                    Console.Write("$");
+                type.Accept(this);
+                Console.Write($" {name}{(isEllipses ? "..." : "")}");
+            }
+
+            for (int i = 1; i < n.Params.Count; i++)
+            {
+                Console.Write(", ");
+                (bool isImmut, AnyType type, string name, bool isEllipses) = n.Params[i];
+                if (isImmut)
+                    Console.Write("$");
+                type.Accept(this);
+                Console.Write($" {name}{(isEllipses ? "..." : "")}");
+            }
+
+            Console.Write(") ");
+            if (n.Outputs.Count == 1 && n.Outputs[0].Item2.Equals("") && !n.Outputs[0].Item3)
+                n.Outputs[0].Item1.Accept(this);
+            else if (n.Outputs.Count > 0)
+            {
+                Console.Write("<");
+                n.Outputs[0].Item1.Accept(this);
+                Console.Write($" {n.Outputs[0].Item2}{(n.Outputs[0].Item3 ? "..." : "")}");
+
+                for (int i = 1; i < n.Outputs.Count; i++)
+                {
+                    Console.Write(", ");
+                    n.Outputs[i].Item1.Accept(this);
+                    Console.Write($" {n.Outputs[0].Item2}{(n.Outputs[0].Item3 ? "..." : "")}");
+                }
+                Console.Write(">");
+            }
         }
 
         public void Visit(Struct n)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"candy : {n.Name} {{");
+            foreach (var statement in n.Statements )
+                statement.Accept(this);
+            Console.WriteLine("}");
         }
 
         public void Visit(Interface n)
         {
-            throw new NotImplementedException();
+            if (n.IsSticky)
+                Console.Write("sticky ");
+
+            Console.Write(n.Visbility.ToString().ToLower());
+            Console.Write(" Wrapper " + n.Name);
+
+            if (n.ParentInterfaces.Count != 0)
+                Console.Write($" : {n.ParentInterfaces[0]}");
+
+            for (int i = 1; i < n.ParentInterfaces.Count; i++)
+                Console.Write($", {n.ParentInterfaces[i]}");
+
+            Console.WriteLine(" {");
+
+            for (int i = 0; i < n.InterfaceMemberInfo.Count; i++)
+            {
+                (bool isSticky, Visbility get, Visbility set, AstNode node) = n.InterfaceMemberInfo[i];
+                if (isSticky)
+                    Console.Write("sticky ");
+                Console.Write(get.ToString().ToLower() + " ");
+
+                switch (set)
+                {
+                    case Visbility.Bold:
+                        enableBoldSet = true;
+                        break;
+                    case Visbility.Subtle:
+                        enableSubtleSet = true;
+                        break;
+                    default:
+                        break;
+                }
+                node.Accept(this);
+            }
+
+            Console.WriteLine(" }");
         }
 
 
@@ -75,12 +191,32 @@ namespace AST
 
         public void Visit(PrimitiveDeclaration1 n)
         {
-            throw new NotImplementedException();
+            Console.Write(n.TypeInfo.ToString().ToLower() + " ");
+
+            if (n.Variables.Count != 0)
+                Console.Write(n.Variables[0]);
+
+            for (int i = 1; i < n.Variables.Count; i++)
+                Console.Write(", " + n.Variables[i]);
+
+            endStatement();
         }
 
         public void Visit(PrimitiveDeclaration2 n)
         {
-            throw new NotImplementedException();
+            if (n.TypeVarPair.Count != 0)
+            {
+                Console.Write(n.TypeVarPair[0].Item1.ToString().ToLower());
+                Console.Write(" " + n.TypeVarPair[0].Item2);
+            }
+
+            for (int i = 1; i < n.TypeVarPair.Count; i++)
+            {
+                Console.Write(", " + n.TypeVarPair[i].Item1.ToString().ToLower());
+                Console.Write(" " + n.TypeVarPair[i].Item2);
+            }
+
+            endStatement();
         }
 
 
@@ -88,7 +224,8 @@ namespace AST
 
         public void Visit(Pop n)
         {
-            throw new NotImplementedException();
+            Console.Write("pop");
+            endStatement();
         }
 
         public void Visit(PopLoop n)
@@ -107,12 +244,32 @@ namespace AST
 
         public void Visit(PopStream n)
         {
-            throw new NotImplementedException();
+            Console.Write("pop ");
+            n.Var.Accept(this);
+            Console.Write(" => popstream");
+
+            if (n.HasOutputIdx)
+            {
+                Console.Write("(");
+                n.OutputIdx.Accept(this);
+                Console.Write(")");
+            }
+
+            endStatement();
         }
 
         public void Visit(PopVar n)
         {
-            throw new NotImplementedException();
+            Console.Write("pop ");
+            n.Var.Accept(this);
+
+            if (n.UseOutput)
+            {
+                Console.Write(" => ");
+                n.Output.Accept(this);
+            }
+
+            endStatement();
         }
 
 
@@ -144,12 +301,52 @@ namespace AST
 
         public void Visit(SingleIf n)
         {
-            throw new NotImplementedException();
+            Console.Write("if (");
+            n.Cond.Accept(this);
+            Console.WriteLine(") {");
+
+            for (int i = 0; i < n.Statements.Count; i++)
+                n.Statements[i].Accept(this);
+
+            Console.Write("}");
+            endStatement();
         }
 
         public void Visit(MultiIf n)
         {
-            throw new NotImplementedException();
+            //  public Exp Cond;
+            //public List<Statement> Statements;
+            //public List<(Exp, List<Statement>)> Elifs;
+            //public List<Statement> Else;
+
+            Console.Write("if (");
+            n.Cond.Accept(this);
+            Console.WriteLine(") {");
+            for (int i = 0; i < n.Statements.Count; i++)
+                n.Statements[i].Accept(this);
+            Console.Write("} ");
+
+            for (int i = 0; i < n.Elifs.Count; i++)
+            {
+                Console.Write("elif (");
+                n.Elifs[i].Item1.Accept(this);
+                Console.WriteLine(") {");
+                for (int j = 0; j < n.Statements.Count; j++)
+                    n.Elifs[i].Item2[j].Accept(this);
+                Console.Write("} ");
+            }
+
+            if (n.Else.Count != 0)
+            {
+                Console.WriteLine("else {");
+
+                for (int j = 0; j < n.Else.Count; j++)
+                    n.Else[j].Accept(this);
+
+                Console.Write("}");
+            }
+
+            endStatement();
         }
 
         public void Visit(IncDec n)
@@ -157,6 +354,7 @@ namespace AST
             n.E1.Accept(this);
             Console.Write(n.ShouldIncrement ? " +: " : " -: ");
             n.E2.Accept(this);
+            endStatement();
         }
 
         public void Visit(RepeatLoop n)
@@ -189,22 +387,35 @@ namespace AST
         }
 
 
-
         // access expressions
 
         public void Visit(GlobalAccess n)
         {
-            throw new NotImplementedException();
+            Console.Write("sweets->");
+            n.E1.Accept(this);
         }
 
         public void Visit(MemberAccess n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write("->");
+            n.E2.Accept(this);
         }
 
         public void Visit(MethodCall n)
         {
-            throw new NotImplementedException();
+            n.Lhs.Accept(this);
+            Console.Write("(");
+
+            if (n.Args.Count != 0)
+                n.Args[0].Accept(this);
+
+            for (int i = 1; i < n.Args.Count; i++)
+            {
+                Console.Write(", ");
+                n.Args[i].Accept(this);
+            }
+            Console.Write(")");
         }
 
 
@@ -400,12 +611,25 @@ namespace AST
 
         public void Visit(NewPack n)
         {
-            throw new NotImplementedException();
+            n.PackType.Accept(this);
+            Console.Write("(");
+            n.Exp.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(NewTuple n)
         {
-            throw new NotImplementedException();
+            Console.Write("<");
+            if (n.Exps.Count != 0)
+                n.Exps[0].Accept(this);
+
+            for (int i = 1; i < n.Exps.Count; i++)
+            {
+                Console.Write(", ");
+                n.Exps[i].Accept(this);
+            }
+
+            Console.Write(">");
         }
 
         public void Visit(IdentifierExp n)
@@ -415,17 +639,22 @@ namespace AST
 
         public void Visit(ObjectEmpty n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write("->empty");
         }
 
         public void Visit(PackAccess n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write("[");
+            n.E2.Accept(this);
+            Console.Write("]");
         }
 
         public void Visit(PackSize n)
         {
-            throw new NotImplementedException();
+            n.E1.Accept(this);
+            Console.Write("->size");
         }
 
 
@@ -495,6 +724,14 @@ namespace AST
 
         private void endStatement()
         {
+            if (enableBoldSet)
+                Console.Write("!");
+            else if (enableSubtleSet)
+                Console.Write("?");
+
+            enableBoldSet = false;
+            enableSubtleSet = false;
+
             if (nestedPrints == 0)
                 Console.WriteLine();
         }
