@@ -2788,9 +2788,11 @@ public partial class BubblGumParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RIGHT_PAREN() { return GetToken(BubblGumParser.RIGHT_PAREN, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode REPEAT_DOWN() { return GetToken(BubblGumParser.REPEAT_DOWN, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode REPEAT_UP() { return GetToken(BubblGumParser.REPEAT_UP, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] INTEGER_LITERAL() { return GetTokens(BubblGumParser.INTEGER_LITERAL); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INTEGER_LITERAL(int i) {
-			return GetToken(BubblGumParser.INTEGER_LITERAL, i);
+		[System.Diagnostics.DebuggerNonUserCode] public IntContext[] @int() {
+			return GetRuleContexts<IntContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public IntContext @int(int i) {
+			return GetRuleContext<IntContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
 			return GetRuleContexts<ExpressionContext>();
@@ -2850,7 +2852,7 @@ public partial class BubblGumParser : Parser {
 			case 1:
 				{
 				State = 433;
-				Match(INTEGER_LITERAL);
+				@int();
 				}
 				break;
 			case 2:
@@ -2868,7 +2870,7 @@ public partial class BubblGumParser : Parser {
 			case 1:
 				{
 				State = 438;
-				Match(INTEGER_LITERAL);
+				@int();
 				}
 				break;
 			case 2:
@@ -4682,8 +4684,8 @@ public partial class BubblGumParser : Parser {
 		0,0,0,420,419,1,0,0,0,421,51,1,0,0,0,422,423,5,39,0,0,423,427,3,58,29,
 		0,424,425,5,57,0,0,425,428,3,28,14,0,426,428,3,22,11,0,427,424,1,0,0,0,
 		427,426,1,0,0,0,428,53,1,0,0,0,429,430,5,88,0,0,430,431,5,57,0,0,431,432,
-		7,3,0,0,432,435,5,47,0,0,433,436,5,90,0,0,434,436,3,58,29,0,435,433,1,
-		0,0,0,435,434,1,0,0,0,436,437,1,0,0,0,437,440,5,55,0,0,438,441,5,90,0,
+		7,3,0,0,432,435,5,47,0,0,433,436,3,62,31,0,434,436,3,58,29,0,435,433,1,
+		0,0,0,435,434,1,0,0,0,436,437,1,0,0,0,437,440,5,55,0,0,438,441,3,62,31,
 		0,439,441,3,58,29,0,440,438,1,0,0,0,440,439,1,0,0,0,441,442,1,0,0,0,442,
 		446,5,48,0,0,443,444,5,57,0,0,444,447,3,28,14,0,445,447,3,22,11,0,446,
 		443,1,0,0,0,446,445,1,0,0,0,447,55,1,0,0,0,448,449,5,16,0,0,449,450,5,

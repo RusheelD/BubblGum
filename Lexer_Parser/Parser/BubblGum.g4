@@ -52,8 +52,8 @@ else_statement: (ELSE ((COLON single_statement) | scope_body));
 
 loop: while_loop | repeat_loop | pop_loop;
 while_loop: WHILE expression ((COLON single_statement) | scope_body);
-repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (INTEGER_LITERAL | expression) COMMA
-             (INTEGER_LITERAL | expression) RIGHT_PAREN ((COLON single_statement) | scope_body);
+repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (int | expression) COMMA
+             (int | expression) RIGHT_PAREN ((COLON single_statement) | scope_body);
 pop_loop: POP FLAVORS IDENTIFIER IN expression THICK_ARROW (single_statement | scope_body);
 
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
