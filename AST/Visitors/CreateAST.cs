@@ -213,27 +213,35 @@ namespace AST
             IToken identifier = (IToken)n.children[2].Payload;
             string Name = identifier.Text;
             List<(bool, AnyType, string, bool)> Params = visit((ParametersContext)n.children[3]);
-            List<(AnyType, string, bool)> Outputs;
+            var outputs = new List<(AnyType, string, bool)>();
 
-            var output = n.children[4];
-            if(output is OutputsContext)
+            if (n.ChildCount == 5)
             {
-                Outputs = visit((OutputsContext)output);
-            } else if(output is TypeContext)
-            {
-                var type = visit((TypeContext)output).Item1;
-                Outputs = new List<(AnyType, string, bool)> { (type, "", false) };
-            } else
-            {
-                throw new Exception($"Invalid type {output.GetType()} detected");
+                var output = n.children[4];
+                if (output is OutputsContext)
+                {
+                    outputs = visit((OutputsContext)output);
+                }
+                else if (output is TypeContext)
+                {
+                    var type = visit((TypeContext)output).Item1;
+                    outputs = new List<(AnyType, string, bool)> { (type, "", false) };
+                }
+                else
+                {
+                    throw new Exception($"Invalid type {output.GetType()} detected");
+                }
             }
 
-            return new FunctionHeader(Name, Params, Outputs, recipe.Line, recipe.Column);
+            return new FunctionHeader(Name, Params, outputs, recipe.Line, recipe.Column);
         }
 
         private List<(bool, AnyType, string, bool)> visit(ParametersContext n)
         {
             var parameters = new List<(bool, AnyType, string, bool)>();
+
+            if (n.ChildCount == 2)
+                return parameters;
 
             bool isImmutable = false;
             AnyType type = new FlavorType();
@@ -251,7 +259,7 @@ namespace AST
                 {
                     IToken token = (IToken)childi.Payload;
 
-                    if (token.Type == COMMA || token.Type == RIGHT_ANGLE_BRACKET)
+                    if (token.Type == COMMA || token.Type == RIGHT_PAREN)
                     {
                         parameters.Add((isImmutable, type, identifier, hasEllipses));
                         isImmutable = false;
@@ -272,7 +280,7 @@ namespace AST
                     }
                     else
                     {
-                        throw new Exception($"Invalid type {token.Type} detected");
+                        throw new Exception($"Invalid type {token.Text} detected on line {token.Line}");
                     }
                 }
                 else
@@ -286,7 +294,7 @@ namespace AST
 
         private List<(AnyType, string, bool)> visit(OutputsContext n)
         {
-            var Outputs = new List<(AnyType, string, bool)>();
+            var outputs = new List<(AnyType, string, bool)>();
 
             AnyType type = new FlavorType();
             string identifier = "";
@@ -304,7 +312,7 @@ namespace AST
 
                     if(token.Type == COMMA || token.Type == RIGHT_ANGLE_BRACKET)
                     {
-                        Outputs.Add((type, identifier, hasEllipses));
+                        outputs.Add((type, identifier, hasEllipses));
                         identifier = "";
                         hasEllipses = false;
                     } 
@@ -325,7 +333,7 @@ namespace AST
                 }
             }
 
-            return Outputs;
+            return outputs;
         }
 
         private Struct visit(StructContext n)
@@ -949,6 +957,7 @@ namespace AST
             lineNumber = identifier.Line; 
             startCol = identifier.Column;
             isUp = repeat.Type == REPEAT_UP;
+
             start = visit((dynamic)n.children[4]);
             end = visit((dynamic)n.children[6]);
             Statement stat = visit((dynamic)n.children[n.ChildCount - 1]);

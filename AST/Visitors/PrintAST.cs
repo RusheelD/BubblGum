@@ -67,7 +67,7 @@ namespace AST
         public void Visit(Function n)
         {
             n.Header.Accept(this);
-            Console.WriteLine("{");
+            Console.WriteLine(" {");
             foreach (var statement in n.Statements)
                 statement.Accept(this);
             Console.WriteLine("}");
@@ -75,7 +75,7 @@ namespace AST
 
         public void Visit(FunctionHeader n)
         {
-            Console.WriteLine($"recipe : {n.Name} (");
+            Console.Write($"recipe : {n.Name}(");
 
             if (n.Params.Count != 0)
             {
@@ -103,13 +103,13 @@ namespace AST
             {
                 Console.Write("<");
                 n.Outputs[0].Item1.Accept(this);
-                Console.Write($" {n.Outputs[0].Item2}{(n.Outputs[0].Item3 ? "..." : "")}");
+                Console.Write($"{n.Outputs[0].Item2}{(n.Outputs[0].Item3 ? "..." : "")}");
 
                 for (int i = 1; i < n.Outputs.Count; i++)
                 {
                     Console.Write(", ");
                     n.Outputs[i].Item1.Accept(this);
-                    Console.Write($" {n.Outputs[0].Item2}{(n.Outputs[0].Item3 ? "..." : "")}");
+                    Console.Write($"{n.Outputs[0].Item2}{(n.Outputs[0].Item3 ? "..." : "")}");
                 }
                 Console.Write(">");
             }
@@ -453,7 +453,7 @@ namespace AST
 
         public void Visit(StringLiteral n)
         {
-            Console.Write(n.Value);
+            Console.Write($"{"\""}{n.Value}{"\""}");
         }
 
 

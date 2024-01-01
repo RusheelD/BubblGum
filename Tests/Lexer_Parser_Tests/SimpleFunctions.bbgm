@@ -26,12 +26,12 @@ recipe: SomeFunc1() <carb...> {
 
 recipe: SomeFunc2(carb a) kcal {
         pop flavors x in a => {
-            pop x*x!
+            (pop x*x)!
         }
 }
 
 recipe: SomeFunc2(carb a) <kcal d> {
         pop flavors x in a => {
-            pop x*x!
+            (pop x*x)!
         }
 }
