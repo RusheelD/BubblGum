@@ -4,5 +4,6 @@
 Gum Class1 {
     recipe: Main() {
        ("Hello World") !
+       (mintpack[0]) !
     }
 }

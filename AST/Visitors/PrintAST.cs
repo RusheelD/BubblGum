@@ -462,6 +462,11 @@ namespace AST
             Console.Write($"{"\""}{n.Value}{"\""}");
         }
 
+        public void Visit(Mintpack n)
+        {
+            Console.Write("mintpack");
+        }
+
 
         // comparison expressions
 

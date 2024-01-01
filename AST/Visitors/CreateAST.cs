@@ -597,6 +597,10 @@ namespace AST
                     {
                         return new CharLiteral(text[1], line, col);
                     }
+                    else if (loneToken.Type == MINTPACK)
+                    {
+                        return new Mintpack(line, col);
+                    }
                     else
                         throw new Exception("Invalid type detected");
                 }
