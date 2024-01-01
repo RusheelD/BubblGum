@@ -79,7 +79,8 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               boolean |
               identifier |
               double |
-              int |
+              int | 
+              MINTPACK |
               STRING_LITERAL |
               CHAR_LITERAL |
               FLAVORLESS;
@@ -126,6 +127,7 @@ INPUT: 'input';         // input from stdin
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
 WRAPPER: 'Wrapper';     // interface
+MINTPACK: 'mintpack';    // args
 
 PACK: 'pack';
 SUGARPACK: 'sugarpack';
