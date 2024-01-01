@@ -467,6 +467,18 @@ namespace AST
             Console.Write("mintpack");
         }
 
+        public void Visit(Input n)
+        {
+            Console.Write("Input");
+        }
+
+        public void Visit(Cast n)
+        {
+            n.CastType.Accept(this);
+            Console.Write("(");
+            n.E1.Accept(this);
+            Console.Write(")");
+        }
 
         // comparison expressions
 

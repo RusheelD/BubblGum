@@ -55,6 +55,8 @@ namespace AST
         public void Visit(Integer n);
         public void Visit(StringLiteral n);
         public void Visit(Mintpack n);
+        public void Visit(Input n);
+        public void Visit(Cast n);
 
         // comparison expressions
         public void Visit(NotEquals n);

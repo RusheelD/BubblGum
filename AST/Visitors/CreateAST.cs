@@ -775,6 +775,25 @@ namespace AST
                         Exp e1 = visit((ExpressionContext)n.children[2]);
                         return new NewPack(type, e1, line, col);
                     }
+                    else if (child0 is PrimitiveContext)
+                    {
+                        (AnyType type, int line, int col) = visit((PrimitiveContext)child0);
+                        Exp e1 = visit((ExpressionContext)n.children[2]);
+                        return new Cast(type, e1, line, col);
+                    }
+                    else if (child0.Payload is IToken)
+                    {
+                        IToken token0 = (IToken)child0.Payload;
+                        if (token0.Type == INPUT)
+                        {
+                            return new Input(token0.Line, token0.Column);
+                        } 
+                        else if (token0.Type == IDENTIFIER)
+                        {
+                            Exp e1 = visit((ExpressionContext)n.children[2]);
+                            return new Cast(new ObjectType(token0.Text, false), e1, token0.Line, token0.Column);
+                        }
+                    }
                 }
                 else if (token.Type == LEFT_SQUARE_BRACKET)
                 {

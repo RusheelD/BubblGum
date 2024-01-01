@@ -11,7 +11,7 @@ namespace AST
     {
         public string Name;
         public bool isEmpty;
-        public Origin 
+        //public Origin
         public AnyType Type;
         public int LineNum, Column;
     }

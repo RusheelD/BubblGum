@@ -9,6 +9,7 @@ using Antlr4.Runtime.Tree;
 using System.Xml.Serialization;
 using AST;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 public class BubblGum
 {
@@ -41,6 +42,16 @@ public class BubblGum
             Console.Error.WriteLine("Specified compiler mode not yet implemented");
     }
 
+    private static string getDefaultRecipeKey(int i, List<(bool, AnyType, string, bool)> methodInfo, List<string> methodNames)
+    {
+        var sb = new StringBuilder(methodNames[i]);
+        sb.Append((methodInfo.ToString()));
+
+        if (i == 1)
+            Console.WriteLine($"{sb}");
+        return sb.ToString();
+    }
+
     // Takes in an outstream to print compiler messages to, and a file to parse
     // Returns whether parsing was successful (ie. 0 errors)
     public static bool ExecuteParser(string filePath, TextWriter outStream)
@@ -48,7 +59,133 @@ public class BubblGum
         var inputTxt = File.ReadAllText(filePath);
         var originalOutStream = Console.Out;
         Console.SetOut(outStream);
-           
+
+        Stopwatch timer = new Stopwatch();
+        List<(bool, AnyType, string, bool)> methodInfo = new();
+        List<string> methodNames = new();
+
+        //methodInfo.Add()
+        //methodNames.Add()
+
+        int numFunctions = 100;
+
+        Random rand = new();
+        for (int i = 0; i < 12; i++)
+        {
+            var elip = rand.Next(0, 1) > 0;
+            AnyType tip = new FlavorType();
+            switch (rand.Next(0, 17))
+            {
+                case 0:
+                    tip = new PrimitiveType(TypeBI.Sugar);
+                    break;
+                case 1:
+                    tip = new PrimitiveType(TypeBI.Carb);
+                    break;
+                case 2:
+                    tip = new PrimitiveType(TypeBI.Yum);
+                    break;
+                case 3:
+                    tip = new PrimitiveType(TypeBI.PureSugar);
+                    break;
+                case 4:
+                    tip = new PackType(TypePack.SugarPack);
+                    break;
+                case 5:
+                    tip = new PackType(TypePack.CarbPack);
+                    break;
+                case 6:
+                    tip = new PackType(TypePack.CalPack);
+                    break;
+                case 7:
+                    tip = new PackType(TypePack.PureSugarPack);
+                    break;
+                case 8:
+                    tip = new ObjectType("hi" + i, false);
+                    break;
+                case 9:
+                    tip = new ObjectType("joe" + i, true);
+                    break;
+                case 10:
+                    tip = new FlavorType();
+                    break;
+                case 11:
+                    tip = new FlavorType();
+                    break;
+                case 12:
+                    tip = new SingularArrayType(new FlavorType());
+                    break;
+                case 13:
+                    tip = new SingularArrayType(new ObjectType("bobf", true));
+                    break;
+                case 14:
+                    tip = new ArrayType(new TupleType(new List<(AnyType, string)> { (new FlavorType(), "hi")})) ;
+                    break;
+                case 15:
+                    tip = new TupleType(new List<(AnyType, string)> { (new FlavorType(), "asdf"), (new FlavorType(), "asdf") });
+                    break;
+                case 16:
+                    tip = new TupleType(new List<(AnyType, string)> { (new FlavorType(), "joemama"), (new FlavorType(), "hi") });
+                    break;
+
+            }
+            methodInfo.Add(new(false, tip, "param1", elip));
+        }
+
+        for (int i = 0; i < numFunctions; i++)
+            methodNames.Add("Method" + i * 2);
+
+        Dictionary<string, int> RecipeTables = new();
+        List<string> keys = new();
+
+        timer.Start();
+        for (int i = 0; i < numFunctions; i++)
+        {
+            keys.Add(getDefaultRecipeKey(i, methodInfo, methodNames));
+            RecipeTables[keys[i]] = i * 2 - 1;
+        }
+        Console.WriteLine($"Time:{timer.ElapsedMilliseconds}");
+        timer.Restart();
+
+        long a = 0;
+        for (int i = 0; i < numFunctions; i++)
+        {
+          //  Console.WriteLine($"{keys[i]}");
+            a += RecipeTables[keys[i]];
+        }
+
+        if (a != 2)
+            Console.WriteLine("result was " + a);
+
+        Console.WriteLine($"Time:{timer.ElapsedMilliseconds}");
+        timer.Stop();
+
+        keys.Clear();
+        a = 0;
+        Console.WriteLine(keys.Count);
+        timer = new Stopwatch();
+        timer.Start();
+        for (int i = 0; i < numFunctions; i++)
+        {
+            keys.Add(GlobalSymbolTable.GenerateRecipeKey(methodNames[i], methodInfo));
+            RecipeTables[keys[i]] = i * 2 - 1;
+        }
+        Console.WriteLine($"Time:{timer.ElapsedMilliseconds}");
+
+        timer.Restart();
+        for (int i = 0; i < numFunctions; i++) {
+          //  Console.WriteLine($"{keys[i]}");
+            a += RecipeTables[keys[i]];
+        }
+
+        if (a != 2)
+            Console.WriteLine("result was " + a);
+        Console.WriteLine($"Time:{timer.ElapsedMilliseconds}");
+
+
+
+
+        /*
         #pragma warning disable
         AntlrInputStream input = new AntlrInputStream(inputTxt);
         BubblGumLexer lexer = new BubblGumLexer(input);
@@ -70,7 +207,8 @@ public class BubblGum
         var printAST = new PrintAST();
         printAST.Visit(program);
 
-        Console.Out.Close();
+        Console.Out.Close();*/
+
         Console.SetOut(originalOutStream);
         return true;
     }

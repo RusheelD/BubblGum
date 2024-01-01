@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
+    // MUST match corresponding primitive order of TypeBI
     public enum TypePack
     {
         SugarPack,

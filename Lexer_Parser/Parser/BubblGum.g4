@@ -66,6 +66,8 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call or new object
               array LEFT_PAREN expression RIGHT_PAREN | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
+              INPUT LEFT_PAREN RIGHT_PAREN | // input string
+              (primitive | IDENTIFIER) LEFT_PAREN expression RIGHT_PAREN | // cast
               (NOT | NOT_OP) expression |
               expression (POWER | MODULO) expression |
               expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
@@ -127,8 +129,9 @@ INPUT: 'input';         // input from stdin
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
 WRAPPER: 'Wrapper';     // interface
-MINTPACK: 'mintpack';    // args
-
+MINTPACK: 'mintpack';   // args 
+INPUT: 'input';         // input
+     
 PACK: 'pack';
 SUGARPACK: 'sugarpack';
 CARBPACK: 'carbpack';
