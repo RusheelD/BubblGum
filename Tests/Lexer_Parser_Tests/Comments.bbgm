@@ -4,8 +4,7 @@
 # asfjsdaf * !
 
 #Oh look a valid statement
-a + b !
-
+(a + b) !
 
 #>
 Everything below better be commented out or we get errors
@@ -64,12 +63,13 @@ a : repetDown (c, d){
     c : d
 }
 
+
 sugar c :: 0
 pop flavors a in z => c +: a
 
 <#
  {}
- {a + b !}
+ {(a + b) !}
 {
 sugar a :: 2
 sugar b :: 2

@@ -5,7 +5,7 @@ recipe: HelloWorld($sugar a, kcal b, $[BubbleGum, Backpack] d) <sugar, kcal b, c
 
     _cow b :: b->c[4]->a + b
 
-    pop "hello" !
+    (pop "hello") !
     pop "!" => 2
     pop "world" => b
 }

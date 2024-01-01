@@ -1,9 +1,9 @@
 a :: 1 * 2 + (3 - 4)* 4 + 2
-kcal a :: 2 * 3 - 34 + ++2 * (3 << 3) - 21 % 6 ** 3 
-a :: 4 * ++4 * +4 / ~3 * 2--
+kcal a :: 2 * 3 - 34 * (3 <: 3) - 21 % 6 ** 3 
+a :: 4 * +4 / ~3 * -2
 b :: mom->what + 2
 arrays :: b[4] * b->length + b->size * 2**3 / arr[mom->what % 3]
-calzone c :: a and b or c xor d and not e++
+calzone c :: a and b or c xor d and not e
 didact d :: chief & cortana | arbiter - 2 ^ not what
 method :: d(arbiter + 2, totempole, ~true^sugarpack(3))
 d :: hi(s->what->cow->size, a[4])

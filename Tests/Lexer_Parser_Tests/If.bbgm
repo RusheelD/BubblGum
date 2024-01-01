@@ -15,6 +15,8 @@ if (b = 2) {
    a :: 3
 } elif a:
     b::3
+  elif a:
+    b::3
     a::3
 
 

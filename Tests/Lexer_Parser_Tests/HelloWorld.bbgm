@@ -1,8 +1,8 @@
-"Hello World" !
+("Hello World") !
 
 # Hello World program in C#/Java style
 Gum Class1 {
-    recipe: Main(kcal args) {
+    recipe: Main() {
        ("Hello World") !
     }
 }

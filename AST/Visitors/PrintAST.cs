@@ -61,16 +61,16 @@ namespace AST
                 node.Accept(this);
             }
 
-            Console.WriteLine(" }");
+            Console.WriteLine("}\n");
         }
 
         public void Visit(Function n)
         {
             n.Header.Accept(this);
-            Console.WriteLine(" {");
+            Console.Write($" {{{((n.Statements.Count != 0) ? "\n" : "")}");
             foreach (var statement in n.Statements)
                 statement.Accept(this);
-            Console.WriteLine("}");
+            Console.WriteLine("}\n");
         }
 
         public void Visit(FunctionHeader n)
@@ -103,13 +103,17 @@ namespace AST
             {
                 Console.Write("<");
                 n.Outputs[0].Item1.Accept(this);
+                if (!n.Outputs[0].Item2.Equals(""))
+                    Console.Write(" ");
                 Console.Write($"{n.Outputs[0].Item2}{(n.Outputs[0].Item3 ? "..." : "")}");
 
                 for (int i = 1; i < n.Outputs.Count; i++)
                 {
                     Console.Write(", ");
                     n.Outputs[i].Item1.Accept(this);
-                    Console.Write($"{n.Outputs[0].Item2}{(n.Outputs[0].Item3 ? "..." : "")}");
+                    if (!n.Outputs[i].Item2.Equals(""))
+                        Console.Write(" ");
+                    Console.Write($"{n.Outputs[i].Item2}{(n.Outputs[i].Item3 ? "..." : "")}");
                 }
                 Console.Write(">");
             }
@@ -120,7 +124,7 @@ namespace AST
             Console.WriteLine($"candy : {n.Name} {{");
             foreach (var statement in n.Statements )
                 statement.Accept(this);
-            Console.WriteLine("}");
+            Console.WriteLine("}\n");
         }
 
         public void Visit(Interface n)
@@ -160,7 +164,7 @@ namespace AST
                 node.Accept(this);
             }
 
-            Console.WriteLine(" }");
+            Console.WriteLine("}\n");
         }
 
 
@@ -331,8 +335,10 @@ namespace AST
                 Console.Write("elif (");
                 n.Elifs[i].Item1.Accept(this);
                 Console.WriteLine(") {");
-                for (int j = 0; j < n.Statements.Count; j++)
-                    n.Elifs[i].Item2[j].Accept(this);
+
+                var statements = n.Elifs[i].Item2;
+                for (int j = 0; j < statements.Count; j++)
+                    statements[j].Accept(this);
                 Console.Write("} ");
             }
 
@@ -359,7 +365,7 @@ namespace AST
 
         public void Visit(RepeatLoop n)
         {
-            Console.Write(n.VarName + ": ");
+            Console.Write(n.VarName + ":");
             Console.Write(n.IsUp ? " repeatUp(" : " repeatDown(");
             n.Start.Accept(this);
             Console.Write(", ");
@@ -461,58 +467,74 @@ namespace AST
 
         public void Visit(NotEquals n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" ~= ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(Equals n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" = ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(GreaterThan n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" > ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(GreaterThanEquals n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" >= ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(LessThan n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" < ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(LessThanEquals n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" <= ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(Is n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" is ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(SubClassOf n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" :< ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
 
@@ -520,66 +542,84 @@ namespace AST
 
         public void Visit(Not n)
         {
+            Console.Write("(");
             Console.Write("~");
             n.E1.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(And n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" & ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(Or n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" | ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         // arithmetic expressions
 
         public void Visit(Plus n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" + ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(Minus n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" - ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(Multiply n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" * ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(Divide n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" / ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(Modulo n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" % ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(Power n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" ** ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
 
@@ -587,23 +627,29 @@ namespace AST
 
         public void Visit(LeftShift n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" <: ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(RightShift n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" :> ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
         public void Visit(Xor n)
         {
+            Console.Write("(");
             n.E1.Accept(this);
             Console.Write(" ^ ");
             n.E2.Accept(this);
+            Console.Write(")");
         }
 
 
@@ -680,7 +726,7 @@ namespace AST
 
         public void Visit(ObjectType n)
         {
-            Console.Write(n.Name + " ");
+            Console.Write(n.Name);
 
             if (n.IsPack)
                 Console.Write(" pack");

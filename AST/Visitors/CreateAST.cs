@@ -50,7 +50,7 @@ namespace AST
             if (tokenIdentifier.Type == IDENTIFIER)
                 name = tokenIdentifier.Text;
 
-            int startIdx = (sticky && visiblityExists) ? 5 : ((sticky || visiblityExists) ? 4 : 3);
+            int startIdx = (sticky && visiblityExists) ? 4 : ((sticky || visiblityExists) ? 3 : 2);
             int endIdx = 0;
             for (int i = startIdx; i < n.ChildCount; i++)
             {
@@ -92,7 +92,7 @@ namespace AST
             if (tokenIdentifier.Type == IDENTIFIER)
                 name = tokenIdentifier.Text;
 
-            int startIdx = (sticky && visiblityExists) ? 5 : ((sticky || visiblityExists) ? 4 : 3);
+            int startIdx = (sticky && visiblityExists) ? 4 : ((sticky || visiblityExists) ? 3 : 2);
             int endIdx = 0;
             for (int i = startIdx; i < n.ChildCount; i++)
             {
@@ -175,7 +175,7 @@ namespace AST
 
         private Visbility visit(VisibilityContext n)
         {
-            IToken vis = (IToken)n.Payload;
+            IToken vis = (IToken)n.children[0].Payload;
 
             switch (vis.Type)
             {
@@ -362,7 +362,7 @@ namespace AST
         private StatementList visit(Statement_listContext n)
         {
             List<Statement> statements = new List<Statement>();
-            for (int i = 0; i < n.children.Count; i++)
+            for (int i = 0; i < n.ChildCount; i++)
             {
                 Statement node = visit((StatementContext)n.children[i]);
 
@@ -389,17 +389,17 @@ namespace AST
                 TypeBI primitiveType = ((PrimitiveType)type).Type;
                 var variables = new List<string>();
 
-                for (int i = 3; i < n.children.Count; i++)
+                for (int i = 0; i < n.children.Count; i++)
                 {
-                    dynamic childi = n.children[i];
-                    if (childi is IToken)
+                    var childi = n.children[i];
+                    if (childi.Payload is IToken)
                     {
                         IToken tokeni = (IToken)childi.Payload;
                         if (tokeni.Type == IDENTIFIER)
                             variables.Add(tokeni.Text);
                     }
                 }
-
+                Console.WriteLine($"{variables.Count}");
                 return new PrimitiveDeclaration1(primitiveType, variables, line, col);
             }
             else
@@ -414,7 +414,7 @@ namespace AST
                         AnyType typei = visit((PrimitiveContext)n.children[i]).Item1;
                         primitiveType = ((PrimitiveType)typei).Type;
                     }
-                    else if (childi is IToken)
+                    else if (childi.Payload is IToken)
                     {
                         IToken tokeni = (IToken)childi.Payload;
                         if (tokeni.Type == IDENTIFIER)
