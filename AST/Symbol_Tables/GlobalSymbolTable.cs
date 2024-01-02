@@ -11,20 +11,16 @@ namespace AST
 {
     public class GlobalSymbolTable
     {
-        public Dictionary<string, WrapperTable> WrapperTables; // interfaces
-        public Dictionary<string, GumTable> GumTables; // classes
-        public Dictionary<string, CandyTable> CandyTables; // structs
+        // files to their info
+        public Dictionary<string, FileTable> Files; // files
 
-        public Dictionary<string, RecipeTable> RecipeTables; // global methods
-        public Dictionary<string, FlavorInfo> FlavorInfos; // global vars
+        // namespaces to all their info
+        public Dictionary<string, StockTable> Namespaces; // namespaces
 
         public GlobalSymbolTable()
         {
-            WrapperTables = new();
-            GumTables = new();
-            CandyTables = new();
-            RecipeTables = new();
-            FlavorInfos = new();
+            Files = new();
+            Namespaces = new();
         }
     }
 }

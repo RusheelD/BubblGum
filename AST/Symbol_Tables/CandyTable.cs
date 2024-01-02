@@ -7,9 +7,20 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class CandyTable
+    public class CandyTable : Info
     {
+        public string Name;
+        public Dictionary<string, FlavorInfo> Variables;
+        public int LineNum {get; set;} = 0;
+        public int Column {get; set;} = 0;
 
+        public CandyTable(string name, int line, int column)
+        {
+            Variables = new();
+            Name = name;
+            LineNum = line;
+            Column = column;
+        }
     }
 
 }

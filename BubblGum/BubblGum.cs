@@ -36,8 +36,9 @@ public class BubblGum
 
         TextWriter outStream = (!DEBUG_MODE) ? Console.Out : new StreamWriter(OUTPUT_FILE, false);
 
-        if (args[0].Equals("-P"))
+        if (args[0].Equals("-P")) {
             ExecuteParser(args[1], outStream);
+        }
         else
             Console.Error.WriteLine("Specified compiler mode not yet implemented");
     }
