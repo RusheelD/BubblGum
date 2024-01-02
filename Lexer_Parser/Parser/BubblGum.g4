@@ -1,8 +1,9 @@
 grammar BubblGum;
 
-program: (class | interface | function | struct | statement | define_stock)* EOF;
+program: chew_import* define_stock? (class | interface | function | struct | statement)* EOF;
 
 define_stock: STOCK IDENTIFIER (THIN_ARROW IDENTIFIER)*;
+chew_import: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL);
 
 class: STICKY? visibility? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? 
     LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
@@ -30,9 +31,7 @@ scope_body: LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET; // { statemen
 statement_list: (statement)*; // statements
 
 statement: single_statement | scope_body;
-single_statement: base_statement | chew_statement | print_statement | debug_statement | if_statement | loop;
-
-chew_statement: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL);
+single_statement: base_statement | print_statement | debug_statement | if_statement | loop;
 
 print_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN PRINT PRINT?;
 debug_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN DEBUG DEBUG?;

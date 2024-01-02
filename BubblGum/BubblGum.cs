@@ -37,6 +37,21 @@ public class BubblGum
         TextWriter outStream = (!DEBUG_MODE) ? Console.Out : new StreamWriter(OUTPUT_FILE, false);
 
         if (args[0].Equals("-P")) {
+            /*
+               Plan:
+                  
+                create queue of files and add main entry point file to queue
+                create list of processed files = empty
+
+                while (queue is not empty) {
+                  file f = dequeue
+                  add files it is using to queue
+                  mark f as processed
+                }
+
+                //
+            
+            */
             ExecuteParser(args[1], outStream);
         }
         else
