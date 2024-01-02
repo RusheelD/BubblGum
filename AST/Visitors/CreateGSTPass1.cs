@@ -212,11 +212,6 @@ namespace AST
             throw new NotImplementedException();
         }
 
-        public void Visit(Input n)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Visit(Cast n)
         {
             throw new NotImplementedException();
@@ -337,20 +332,11 @@ namespace AST
             throw new NotImplementedException();
         }
 
-        public void Visit(ObjectEmpty n)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Visit(PackAccess n)
         {
             throw new NotImplementedException();
         }
 
-        public void Visit(PackSize n)
-        {
-            throw new NotImplementedException();
-        }
 
         public void Visit(ArrayType n)
         {

@@ -96,17 +96,17 @@ public class BubblGum
         BubblGumLexer lexer = new BubblGumLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BubblGumHeaderParser parser = new BubblGumHeaderParser(tokens);
-        BubblGumParser.ProgramContext programContext = parser.program();
+        BubblGumHeaderParser.ProgramContext programContext = parser.program();
         #pragma warning restore
 
         if (parser.NumberOfSyntaxErrors > 0)
         {
             Console.SetOut(originalOutStream);
-            Console.WriteLine("Parsing failed due to syntax errors.");
+            Console.WriteLine("Parsing failed in header due to syntax errors.");
             return false;
         }
 
-        var createAST = new CreateAST();
+        var createAST = new CreateHeaderAST();
         Program program = createAST.Visit(programContext);
 
         var printAST = new PrintAST();

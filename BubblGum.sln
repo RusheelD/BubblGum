@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ast", "AST\Ast.csproj", "{E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntlrCSharpTests", "Tests\AntlrCSharpTests.csproj", "{D1602016-36A0-493B-A681-3A9B156C5748}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Preprocessing", "Preprocessing\Preprocessing.csproj", "{FC2CEDC9-F05E-4F0E-B477-C9D72BD25D24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{D1602016-36A0-493B-A681-3A9B156C5748}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1602016-36A0-493B-A681-3A9B156C5748}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1602016-36A0-493B-A681-3A9B156C5748}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC2CEDC9-F05E-4F0E-B477-C9D72BD25D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC2CEDC9-F05E-4F0E-B477-C9D72BD25D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC2CEDC9-F05E-4F0E-B477-C9D72BD25D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC2CEDC9-F05E-4F0E-B477-C9D72BD25D24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

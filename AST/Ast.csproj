@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lexer_Parser\AntlrCSharp.csproj" />
+    <ProjectReference Include="..\Preprocessing\Preprocessing.csproj" />
   </ItemGroup>
 
 </Project>

@@ -33,7 +33,7 @@ namespace AST
             return new Program(programPieces, 0, 0);
        }
 
-        public Stock Visit(Define_stockContext n)
+        private Stock visit(Define_stockContext n)
         {
             IToken child0 = (IToken)n.children[0].Payload;
 
@@ -46,6 +46,27 @@ namespace AST
 
            return new Stock(names, child0.Line, child0.Column);
        }
+
+        private AstNode visit(Chew_importContext n)
+        {
+
+            IToken child0 = (IToken)n.children[0].Payload;
+            if (n.STRING_LITERAL() != null)
+            {
+                IToken child1 = (IToken)(n.children[1].Payload);
+                string text = child1.Text;
+                return new ChewPath(text.Substring(1, text.Length - 2), child0.Line, child0.Column);
+            }
+
+            var names = new List<string>();
+            for (int i = 1; i < n.ChildCount; i++)
+            {
+                IToken childi = (IToken)n.children[i].Payload;
+                if (childi.Type == IDENTIFIER)
+                    names.Add(childi.Text);
+            }
+            return new ChewNames(names, child0.Line, child0.Column);
+        }
 
         // may return statement or statement list
         private Statement visit(StatementContext n) => visit((dynamic)n.children[0]);
@@ -379,24 +400,6 @@ namespace AST
         private Statement visit(Single_statementContext n) => visit((dynamic)n.children[0]);
 
         private Statement visit(Base_statementContext n) => visit((dynamic)n.children[0]);
-
-        private AstNode visit(Chew_importContext n) {
-            
-            IToken child0 = (IToken)(n.children[0]);
-            if (n.STRING_LITERAL() != null) {
-                IToken child1 = (IToken)(n.children[1].Payload);
-                string text = child1.Text;
-                return new ChewPath(text.Substring(1, text.Length - 2), child0.Line, child0.Column);
-            }
-
-            var names = new List<string>();
-            for (int i = 1; i < n.ChildCount; i++) {
-                IToken childi = (IToken)n.children[i].Payload;
-                if (childi.Type == IDENTIFIER)
-                    names.Add(childi.Text);
-            }
-            return new ChewNames(names, child0.Line, child0.Column);
-        }
 
         private Statement visit(Primitive_declarationContext n)
         {
