@@ -51,6 +51,16 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitDefine_stock([NotNull] BubblGumParser.Define_stockContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.chew_import"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterChew_import([NotNull] BubblGumParser.Chew_importContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.chew_import"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitChew_import([NotNull] BubblGumParser.Chew_importContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.class"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -190,16 +200,6 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitSingle_statement([NotNull] BubblGumParser.Single_statementContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.chew_statement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterChew_statement([NotNull] BubblGumParser.Chew_statementContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.chew_statement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitChew_statement([NotNull] BubblGumParser.Chew_statementContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.print_statement"/>.
 	/// </summary>
