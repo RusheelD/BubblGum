@@ -156,17 +156,12 @@ namespace AST
             AstNode member;
 
             if(visibility)
-            {
                 get = visit((VisibilityContext)n.children[sticky ? 1 : 0]);
-            }
 
-            if(n.PRINT() != null)
-            {
+            if (n.PRINT() != null)
                 set = Visbility.Bold;
-            } else if (n.DEBUG() != null)
-            {
+            else if (n.DEBUG() != null)
                 set = Visbility.Subtle;
-            }
 
             member = visit((dynamic)n.children[(sticky && visibility) ? 2 : ((sticky || visibility) ? 1 : 0)]);
 
@@ -197,12 +192,9 @@ namespace AST
             List<Statement> stats;
 
             if(statements is StatementList)
-            {
                 stats = ((StatementList)statements).Statements;
-            } else
-            {
+            else
                 stats = new List<Statement>() { statements };
-            }
 
             return new Function(header, stats, header.LineNumber, header.StartCol);
         }
@@ -219,18 +211,14 @@ namespace AST
             {
                 var output = n.children[4];
                 if (output is OutputsContext)
-                {
                     outputs = visit((OutputsContext)output);
-                }
                 else if (output is TypeContext)
                 {
                     var type = visit((TypeContext)output).Item1;
                     outputs = new List<(AnyType, string, bool)> { (type, "", false) };
                 }
                 else
-                {
                     throw new Exception($"Invalid type {output.GetType()} detected");
-                }
             }
 
             return new FunctionHeader(Name, Params, outputs, recipe.Line, recipe.Column);
@@ -252,9 +240,7 @@ namespace AST
             {
                 var childi = n.children[i];
                 if (childi is TypeContext)
-                {
                     type = visit((TypeContext)childi).Item1;
-                }
                 else if (childi.Payload is IToken)
                 {
                     IToken token = (IToken)childi.Payload;
@@ -752,9 +738,32 @@ namespace AST
                             return new ObjectEmpty(e1, e1.LineNumber, e1.StartCol);
                     }
                 }
+                else if (token.Type == THICK_ARROW)
+                {
+                    var child0 = n.children[0];
+                    var child2 = n.children[2];
+
+                    if (child0 is ExpressionContext)
+                    {
+                        Exp e1 = visit((ExpressionContext)child0);
+                        AnyType castType;
+
+                        if (child2 is PrimitiveContext)
+                            castType = visit((PrimitiveContext)child2).Item1;
+                        else if (child2.Payload is IToken)
+                        {
+                            IToken token2 = (IToken)child2.Payload;
+                            castType = new ObjectType(token2.Text, false);
+                        }
+                        else
+                            throw new Exception("invalid child2 type");
+
+                        return new Cast(castType, e1, e1.LineNumber, e1.StartCol);
+                    }
+                }
                 else if (token.Type == LEFT_PAREN)
                 {
-                    dynamic child0 = n.children[0];
+                    var child0 = n.children[0];
 
                     if (child0 is ExpressionContext)
                     {
@@ -762,9 +771,9 @@ namespace AST
                         var args = new List<Exp>();
                         for (int i = 2; i < n.children.Count; i++)
                         {
-                            dynamic childi = n.children[i];
+                            var childi = n.children[i];
                             if (childi is ExpressionContext)
-                                args.Add(visit(childi));
+                                args.Add(visit((ExpressionContext)childi));
                         }
 
                         return new MethodCall(lhs, args, lhs.LineNumber, lhs.StartCol);
@@ -775,23 +784,12 @@ namespace AST
                         Exp e1 = visit((ExpressionContext)n.children[2]);
                         return new NewPack(type, e1, line, col);
                     }
-                    else if (child0 is PrimitiveContext)
-                    {
-                        (AnyType type, int line, int col) = visit((PrimitiveContext)child0);
-                        Exp e1 = visit((ExpressionContext)n.children[2]);
-                        return new Cast(type, e1, line, col);
-                    }
                     else if (child0.Payload is IToken)
                     {
                         IToken token0 = (IToken)child0.Payload;
                         if (token0.Type == INPUT)
                         {
                             return new Input(token0.Line, token0.Column);
-                        } 
-                        else if (token0.Type == IDENTIFIER)
-                        {
-                            Exp e1 = visit((ExpressionContext)n.children[2]);
-                            return new Cast(new ObjectType(token0.Text, false), e1, token0.Line, token0.Column);
                         }
                     }
                 }
@@ -1067,10 +1065,11 @@ namespace AST
 
         private (AnyType, int, int) visit(ArrayContext n)
         {
-            dynamic child = n.children[0];
-            if (child is Primitive_packContext | child is Any_arrayContext)
-                return visit(child);
-
+            var child = n.children[0];
+            if (child is Primitive_packContext)
+                return visit((Primitive_packContext)child);
+            else if (child is Any_arrayContext)
+                return visit((Any_arrayContext)child);
 
             var token = (IToken)child.Payload;
             return (new ObjectType(token.Text, true), token.Line, token.Column);
@@ -1190,7 +1189,7 @@ namespace AST
 
         private (AnyType, int, int) visit(PrimitiveContext n)
         {
-            dynamic child = n.children[0];
+            var child = n.children[0];
             var token = (IToken)child.Payload;
             switch (token.Type)
             {
@@ -1213,7 +1212,7 @@ namespace AST
 
         private (AnyType, int, int) visit(Primitive_packContext n)
         {
-            dynamic child = n.children[0];
+            var child = n.children[0];
             var token = (IToken)child.Payload;
             switch (token.Type)
             {

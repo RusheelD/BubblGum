@@ -1,6 +1,8 @@
 grammar BubblGum;
 
-program: (class | interface | function | struct | statement)* EOF;
+program: (class | interface | function | struct | statement | define_stock)* EOF;
+
+define_stock: STOCK IDENTIFIER (THIN_ARROW IDENTIFIER)*;
 
 class: STICKY? visibility? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? 
     LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
@@ -28,7 +30,10 @@ scope_body: LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET; // { statemen
 statement_list: (statement)*; // statements
 
 statement: single_statement | scope_body;
-single_statement: base_statement | print_statement | debug_statement | if_statement | loop;
+single_statement: base_statement | chew_statement | print_statement | debug_statement | if_statement | loop;
+
+chew_statement: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL);
+
 print_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN PRINT PRINT?;
 debug_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN DEBUG DEBUG?;
 
@@ -67,7 +72,7 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               array LEFT_PAREN expression RIGHT_PAREN | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
               INPUT LEFT_PAREN RIGHT_PAREN | // input string
-              (primitive | IDENTIFIER) LEFT_PAREN expression RIGHT_PAREN | // cast
+              expression THICK_ARROW (primitive | IDENTIFIER) | // cast
               (NOT | NOT_OP) expression |
               expression (POWER | MODULO) expression |
               expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
@@ -108,10 +113,12 @@ any_array: LEFT_SQUARE_BRACKET ((type | FLAVOR) | ((type | FLAVOR) IDENTIFIER? (
 /* ------------------------ TOKENS ------------------------*/
 // keywords
 THIS: 'gum';            // this
-SWEETS: 'sweets';       // global namespace
+SWEETS: 'sweets';       // file namespace
+STOCK: 'stock';         // define new namespace
 RECIPE: 'recipe';       // method
 CANDY: 'candy';         // struct
 GUM: 'Gum';             // class 
+CHEW: 'Chew';           // using/import
 FLAVOR: 'flavor';       // var
 FLAVORS: 'flavors';     // keyword
 SUGAR: 'sugar';         // int

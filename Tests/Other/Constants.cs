@@ -6,7 +6,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text.RegularExpressions;
 
-public class RunTests
+public static class Constants
 {
-    
+    public const string FILE_EXTENSION = ".bbgm";
 }

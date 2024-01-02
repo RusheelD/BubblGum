@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
     <ProjectReference Include="..\BubblGum\BubblGum.csproj" />
+    <ProjectReference Include="..\Tests\AntlrCSharpTests.csproj" />
   </ItemGroup>
 
 </Project>

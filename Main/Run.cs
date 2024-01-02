@@ -12,6 +12,13 @@ public class Run
 {
     public static void Main(string[] args)
     {
-        BubblGum.Execute(args);
+        var newArgs = new string[args.Length-1];
+        for (int i = 1; i < args.Length; i++)
+            newArgs[i-1] = args[i];
+
+        if (args[0] == "run")
+            BubblGum.Execute(newArgs);
+        else if (args[0] == "test")
+            RecipeKeyTest.Execute();
     }
 }

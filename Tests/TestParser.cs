@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.IO;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Text;

@@ -1,0 +1,4 @@
+﻿sugar a :: 4 + ('a' => sugar)
+
+Animal x :: Cow()
+flavor y :: x => Cow

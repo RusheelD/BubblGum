@@ -15,6 +15,7 @@ namespace AST
         private int nestedPrints = 0;
         private bool enableBoldSet;
         private bool enableSubtleSet;
+        private int numTabs = 0;
 
         // program + program piecesend
 
@@ -26,6 +27,7 @@ namespace AST
 
         public void Visit(Class n)
         {
+            tab();
             if (n.IsSticky)
                 Console.Write("sticky ");
 
@@ -38,10 +40,16 @@ namespace AST
             for (int i = 1; i < n.InterfacesAndParentClasses.Count; i++)
                 Console.Write($", {n.InterfacesAndParentClasses[i]}");
 
-            Console.WriteLine(" {");
+            Console.Write(" {");
 
+            if (n.ClassMemberInfo.Count != 0)
+                Console.WriteLine();
+
+                numTabs++;
             for (int i = 0; i < n.ClassMemberInfo.Count; i++)
             {
+                tab();
+
                 (bool isSticky, Visbility get, Visbility set, AstNode node) = n.ClassMemberInfo[i];
                 if (isSticky)
                     Console.Write("sticky ");
@@ -58,8 +66,10 @@ namespace AST
                     default:
                         break;
                 }
+
                 node.Accept(this);
             }
+            numTabs--;
 
             Console.WriteLine("}\n");
         }
@@ -67,10 +77,8 @@ namespace AST
         public void Visit(Function n)
         {
             n.Header.Accept(this);
-            Console.Write($" {{{((n.Statements.Count != 0) ? "\n" : "")}");
-            foreach (var statement in n.Statements)
-                statement.Accept(this);
-            Console.WriteLine("}\n");
+            acceptList(n.Statements);
+            Console.WriteLine();
         }
 
         public void Visit(FunctionHeader n)
@@ -97,8 +105,10 @@ namespace AST
             }
 
             Console.Write(") ");
-            if (n.Outputs.Count == 1 && n.Outputs[0].Item2.Equals("") && !n.Outputs[0].Item3)
+            if (n.Outputs.Count == 1 && n.Outputs[0].Item2.Equals("") && !n.Outputs[0].Item3) {
                 n.Outputs[0].Item1.Accept(this);
+                Console.Write(" ");
+            }
             else if (n.Outputs.Count > 0)
             {
                 Console.Write("<");
@@ -115,20 +125,22 @@ namespace AST
                         Console.Write(" ");
                     Console.Write($"{n.Outputs[i].Item2}{(n.Outputs[i].Item3 ? "..." : "")}");
                 }
-                Console.Write(">");
+                Console.Write("> ");
             }
         }
 
         public void Visit(Struct n)
         {
-            Console.WriteLine($"candy : {n.Name} {{");
-            foreach (var statement in n.Statements )
-                statement.Accept(this);
-            Console.WriteLine("}\n");
+            tab();
+            Console.Write($"candy : {n.Name} ");
+
+            acceptList(n.Statements);
+            Console.WriteLine();
         }
 
         public void Visit(Interface n)
         {
+            tab();
             if (n.IsSticky)
                 Console.Write("sticky ");
 
@@ -141,10 +153,15 @@ namespace AST
             for (int i = 1; i < n.ParentInterfaces.Count; i++)
                 Console.Write($", {n.ParentInterfaces[i]}");
 
-            Console.WriteLine(" {");
+            Console.Write(" {");
 
+            if (n.InterfaceMemberInfo.Count != 0)
+                Console.WriteLine();
+
+            numTabs++;
             for (int i = 0; i < n.InterfaceMemberInfo.Count; i++)
             {
+                tab();
                 (bool isSticky, Visbility get, Visbility set, AstNode node) = n.InterfaceMemberInfo[i];
                 if (isSticky)
                     Console.Write("sticky ");
@@ -163,6 +180,7 @@ namespace AST
                 }
                 node.Accept(this);
             }
+            numTabs--;
 
             Console.WriteLine("}\n");
         }
@@ -236,12 +254,9 @@ namespace AST
         {
             Console.Write($"pop flavors {n.VarName} in (");
             n.Exp.Accept(this);
-            Console.WriteLine(") => {");
+            Console.Write(") => ");
 
-            foreach(Statement s in n.Statements)
-                s.Accept(this);
-
-            Console.Write("}");
+            acceptList(n.Statements);
             endStatement();
 
         }
@@ -307,12 +322,8 @@ namespace AST
         {
             Console.Write("if (");
             n.Cond.Accept(this);
-            Console.WriteLine(") {");
-
-            for (int i = 0; i < n.Statements.Count; i++)
-                n.Statements[i].Accept(this);
-
-            Console.Write("}");
+            Console.Write(") ");
+            acceptList(n.Statements);
             endStatement();
         }
 
@@ -325,31 +336,24 @@ namespace AST
 
             Console.Write("if (");
             n.Cond.Accept(this);
-            Console.WriteLine(") {");
-            for (int i = 0; i < n.Statements.Count; i++)
-                n.Statements[i].Accept(this);
-            Console.Write("} ");
+            Console.Write(") ");
+
+            acceptList(n.Statements);
+            Console.Write(" ");
 
             for (int i = 0; i < n.Elifs.Count; i++)
             {
                 Console.Write("elif (");
                 n.Elifs[i].Item1.Accept(this);
-                Console.WriteLine(") {");
-
-                var statements = n.Elifs[i].Item2;
-                for (int j = 0; j < statements.Count; j++)
-                    statements[j].Accept(this);
-                Console.Write("} ");
+                Console.Write(") ");
+                acceptList(n.Elifs[i].Item2);
+                Console.Write(" ");
             }
 
             if (n.Else.Count != 0)
             {
-                Console.WriteLine("else {");
-
-                for (int j = 0; j < n.Else.Count; j++)
-                    n.Else[j].Accept(this);
-
-                Console.Write("}");
+                Console.Write("else ");
+                acceptList(n.Else);
             }
 
             endStatement();
@@ -370,12 +374,9 @@ namespace AST
             n.Start.Accept(this);
             Console.Write(", ");
             n.End.Accept(this);
-            Console.WriteLine(") {");
+            Console.Write(") ");
 
-            foreach (Statement s in n.Statements)
-                s.Accept(this);
-
-            Console.Write("}");
+            acceptList(n.Statements);
             endStatement();
         }
 
@@ -383,12 +384,9 @@ namespace AST
         {
             Console.Write("while (");
             n.Cond.Accept(this);
-            Console.WriteLine(") {");
+            Console.Write(") ");
 
-            foreach (Statement s in n.Statements)
-                s.Accept(this);
-
-            Console.Write("}");
+            acceptList(n.Statements);
             endStatement();
         }
 
@@ -797,6 +795,55 @@ namespace AST
 
             if (nestedPrints == 0)
                 Console.WriteLine();
+        }
+
+        // write tabs
+        private void tab()
+        {
+            for (int i = 0; i < numTabs; i++)
+                Console.Write("    ");
+        }
+
+        private void acceptList(List<AstNode> nodes)
+        {
+            Console.Write("{");
+
+            if (nodes.Count != 0)
+            {
+                Console.WriteLine();
+
+                numTabs++;
+                foreach (var node in nodes)
+                {
+                    tab();
+                    node.Accept(this);
+                }
+                numTabs--;
+                tab();
+            }
+
+            Console.WriteLine("}");
+        }
+
+        private void acceptList(List<Statement> nodes)
+        {
+            Console.Write("{");
+
+            if (nodes.Count != 0)
+            {
+                Console.WriteLine();
+
+                numTabs++;
+                foreach (var node in nodes)
+                {
+                    tab();
+                    node.Accept(this);
+                }
+                numTabs--;
+                tab();
+            }
+
+            Console.WriteLine("}");
         }
     }
 }
