@@ -48,6 +48,18 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitProgram([NotNull] BubblGumParser.ProgramContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.define_stock"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDefine_stock([NotNull] BubblGumParser.Define_stockContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.define_stock"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDefine_stock([NotNull] BubblGumParser.Define_stockContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.class"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -215,6 +227,18 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitSingle_statement([NotNull] BubblGumParser.Single_statementContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.chew_statement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterChew_statement([NotNull] BubblGumParser.Chew_statementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.chew_statement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitChew_statement([NotNull] BubblGumParser.Chew_statementContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.print_statement"/>.
 	/// <para>The default implementation does nothing.</para>
