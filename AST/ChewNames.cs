@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class ChewNames : Statement
+    public class ChewNames : AstNode, ProgramPiece
     {
         public List<string> Names;
 

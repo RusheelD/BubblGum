@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class ChewPath : Statement
+    public class ChewPath : AstNode, ProgramPiece
     {
         public string Path;
 

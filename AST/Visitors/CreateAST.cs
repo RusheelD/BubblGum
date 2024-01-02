@@ -380,7 +380,7 @@ namespace AST
 
         private Statement visit(Base_statementContext n) => visit((dynamic)n.children[0]);
 
-        private Statement visit(Chew_statementContext n) {
+        private AstNode visit(Chew_importContext n) {
             
             IToken child0 = (IToken)(n.children[0]);
             if (n.STRING_LITERAL() != null) {

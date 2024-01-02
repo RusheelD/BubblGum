@@ -49,7 +49,17 @@ public class BubblGum
                   mark f as processed
                 }
 
+                Console.error.writeline
+
                 //
+                stock a->asdf->asdf    -> adsf     Gum bob {}
+
+
+                string namespace -> List<string> filePaths
+                recipe add files:
+                   look for word stock
+                   if present, take the word/phrase after stock
+                   
             
             */
             ExecuteParser(args[1], outStream);

@@ -6,6 +6,9 @@ REM ex. ./commands gen
 IF "%1"=="gen" (
     REM compiles and registers ANTLR grammar changes
     antlr4 -o ./Lexer_Parser/Parser ./Lexer_Parser/Parser/BubblGum.g4 -Dlanguage=CSharp
+) ELSE IF "%1"=="genHeader" (
+    REM compiles and registers ANTLR grammar for imports
+    antlr4 -o ./Preprocessing/Parser ./Preprocessing/Parser/BubblGumHeader.g4 -Dlanguage=CSharp
 ) ELSE IF "%1"=="run" (
     REM runs compiler
     dotnet run --project ./Main/Main.csproj "run" "%2" "%3"
