@@ -58,11 +58,6 @@ namespace AST
                 if (obj.IsPack)
                     sb.Append(pack);
             }
-            else if (type is FlavorType)
-            {
-                // starts with flavor char
-                sb.Append(flavor);
-            }
             else if (type is SingularArrayType)
             {
                 // [primitive] should output same code as primitive pack
@@ -90,6 +85,11 @@ namespace AST
                 // start with array char
                 sb.Append(array);
                 encodeVar(((ArrayType)type).TupleType, false, sb, size, false);
+            }
+            else if (type is FlavorType)
+            {
+                // starts with flavor char
+                sb.Append(flavor);
             }
 
             if (hasEllipses)

@@ -7,8 +7,8 @@ using System.Text;
 
 public static class RecipeKeyTest
 {
-    private const int numMethods = 10000;
-    private const int numParameters = 12;
+    private const int numMethods = 100000;
+    private const int numParameters = 10;
 
     // tests out unique methods key generation + lookup
     // prints performance time in milliseconds

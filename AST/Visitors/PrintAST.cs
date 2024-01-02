@@ -25,6 +25,19 @@ namespace AST
                 piece.Accept(this);
         }
 
+        public void Visit(Stock n)
+        {
+            Console.Write($"stock ");
+
+            if (n.Names.Count > 0)
+                Console.Write(n.Names[0]);
+            
+            for (int i = 1; i < n.Names.Count; i++) 
+                Console.Write("->" + n.Names[i]);
+
+            endStatement();
+        }
+
         public void Visit(Class n)
         {
             tab();
@@ -390,6 +403,24 @@ namespace AST
             endStatement();
         }
 
+        public void Visit(ChewNames n)
+        {
+            Console.Write($"Chew ");
+
+            if (n.Names.Count > 0)
+                Console.Write(n.Names[0]);
+            
+            for (int i = 1; i < n.Names.Count; i++) 
+                Console.Write("->" + n.Names[i]);
+
+            endStatement();
+        }
+
+        public void Visit(ChewPath n)
+        {
+            Console.Write($"Chew \"{n.Path}\"");
+            endStatement();
+        }
 
         // access expressions
 

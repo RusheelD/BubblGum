@@ -33,6 +33,20 @@ namespace AST
             return new Program(programPieces, 0, 0);
        }
 
+        public Stock Visit(Define_stockContext n)
+        {
+            IToken child0 = (IToken)n.children[0].Payload;
+
+            var names = new List<string>();
+            for (int i = 1; i < n.ChildCount; i++) {
+                IToken childi = (IToken)n.children[i].Payload;
+                if (childi.Type == IDENTIFIER)
+                    names.Add(childi.Text);
+            }
+
+           return new Stock(names, child0.Line, child0.Column);
+       }
+
         // may return statement or statement list
         private Statement visit(StatementContext n) => visit((dynamic)n.children[0]);
 
@@ -366,6 +380,24 @@ namespace AST
 
         private Statement visit(Base_statementContext n) => visit((dynamic)n.children[0]);
 
+        private Statement visit(Chew_statementContext n) {
+            
+            IToken child0 = (IToken)(n.children[0]);
+            if (n.STRING_LITERAL() != null) {
+                IToken child1 = (IToken)(n.children[1].Payload);
+                string text = child1.Text;
+                return new ChewPath(text.Substring(1, text.Length - 2), child0.Line, child0.Column);
+            }
+
+            var names = new List<string>();
+            for (int i = 1; i < n.ChildCount; i++) {
+                IToken childi = (IToken)n.children[i].Payload;
+                if (childi.Type == IDENTIFIER)
+                    names.Add(childi.Text);
+            }
+            return new ChewNames(names, child0.Line, child0.Column);
+        }
+
         private Statement visit(Primitive_declarationContext n)
         {
             (AnyType type, int line, int col) = visit((PrimitiveContext)n.children[0]);
@@ -385,7 +417,6 @@ namespace AST
                             variables.Add(tokeni.Text);
                     }
                 }
-                Console.WriteLine($"{variables.Count}");
                 return new PrimitiveDeclaration1(primitiveType, variables, line, col);
             }
             else

@@ -7,6 +7,9 @@ while t {
     e::f
 }
 
+
+while t {}
+p
 a : repeatUp (0, d) {
     b :: 2 * a + 1
 }
