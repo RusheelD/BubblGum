@@ -132,7 +132,6 @@ BLAND: 'bland';         // private
 POP: 'pop';             // return (but better) (also a foreach loop)
 SIZE: 'size';           // array size 
 EMPTY: 'empty';         // Object's empty status
-INPUT: 'input';         // input from stdin     
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
 WRAPPER: 'Wrapper';     // interface
