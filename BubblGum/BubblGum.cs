@@ -37,7 +37,7 @@ public class BubblGum
         TextWriter outStream = (!DEBUG_MODE) ? Console.Out : new StreamWriter(OUTPUT_FILE, false);
 
         if (args[0].Equals("-A")) {
-            bool success = ExecuteHeaderParser(args[1], outStream);
+            (bool success, List<string> filePaths) = ExecuteHeaderParser(args[1], outStream);
             if (!success)
                 return;
             
@@ -62,92 +62,121 @@ public class BubblGum
     }
 
     
-    public static bool ExecuteHeaderParser(string filePath, TextWriter outStream) {
-            /*
-               Plan:
-                  
-                create queue of files and add main entry point file to queue
-                create list of processed files = empty
+    public static (bool, List<string>) ExecuteHeaderParser(string filePath, TextWriter outStream) {
 
-                while (queue is not empty) {
-                  file f = dequeue
-                  add files it is using to queue
-                  mark f as processed
-                }
+        if (!File.Exists(filePath))
+            return (false, null);
 
-                Console.error.writeline
-
-                //
-                stock a->asdf->asdf    -> adsf     Gum bob {}
-
-
-                string namespace -> List<string> filePaths
-                recipe add files:
-                   look for word stock
-                   if present, take the word/phrase after stock
-            
-            */ 
-        var inputTxt = File.ReadAllText(filePath);
+        // update outstream
         var originalOutStream = Console.Out;
         Console.SetOut(outStream);
 
-        #pragma warning disable
-        AntlrInputStream input = new AntlrInputStream(inputTxt);
-        BubblGumLexer lexer = new BubblGumLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        BubblGumHeaderParser parser = new BubblGumHeaderParser(tokens);
-        BubblGumHeaderParser.ProgramContext programContext = parser.program();
-        #pragma warning restore
-
-        if (parser.NumberOfSyntaxErrors > 0)
+        // add all file paths recursively in main file's directory + subdirectories
+        var allFilePaths = new List<string>();
+        string? mainDirectory = Path.GetDirectoryName("./" + filePath);
+        if (mainDirectory != null && !mainDirectory.Equals(string.Empty))
         {
-            Console.SetOut(originalOutStream);
-            Console.WriteLine("Parsing failed in header due to syntax errors.");
-            return false;
+            var directoriesToSearch = new Queue<string>();
+            directoriesToSearch.Enqueue(mainDirectory);
+
+            while (directoriesToSearch.Count > 0)
+            {
+                string currDirectory = directoriesToSearch.Dequeue();
+                string[] files = Directory.GetFiles(currDirectory);
+                allFilePaths.AddRange(files);
+
+                string[] directories = Directory.GetDirectories(currDirectory);
+                foreach (var dir in directories)
+                    directoriesToSearch.Enqueue(dir);
+            }
+        }
+        else
+            allFilePaths.Add(filePath);
+
+        // gather namespace info for all files
+        var baseNamespace = new Namespace("");
+        var filePathToProgram = new Dictionary<string, Program>();
+        foreach (string path in allFilePaths)
+        {
+            var inputTxt = File.ReadAllText(path);
+
+            #pragma warning disable
+            AntlrInputStream input = new AntlrInputStream(inputTxt);
+            BubblGumHeaderLexer lexer = new BubblGumHeaderLexer(input);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            BubblGumHeaderParser parser = new BubblGumHeaderParser(tokens);
+            BubblGumHeaderParser.ProgramContext programContext = parser.program();
+            #pragma warning restore
+
+            if (parser.NumberOfSyntaxErrors > 0)
+            {
+                Console.SetOut(originalOutStream);
+                Console.WriteLine($"Parsing failed for file {path} due to syntax errors.");
+                return (false, null);
+            }
+
+            var createASTHeader = new CreateHeaderAST();
+            Program program = createASTHeader.Visit(programContext);
+            filePathToProgram[path] = program;
+
+            var gatherNamespaces = new GatherNamespaces();
+            gatherNamespaces.Execute(program, baseNamespace, path);
         }
 
-        var createAST = new CreateHeaderAST();
-        Program program = createAST.Visit(programContext);
+        // generate list of all files used
+        var filePathsToScan = new Queue<string>();
+        filePathsToScan.Enqueue(filePath);
+        var filePathsUsed = new List<string>();
 
-        var printAST = new PrintAST();
-        printAST.Visit(program);
+        var scanHeader = new ScanHeader();
+
+        while (filePathsToScan.Count > 0)
+        {
+            var path = filePathsToScan.Dequeue();
+            var currProgram = filePathToProgram[path];
+            var newPathsUsed = scanHeader.Execute(currProgram, baseNamespace, filePathToProgram);
+            filePathsUsed.AddRange(newPathsUsed);
+        }
 
         Console.Out.Close();
         Console.SetOut(originalOutStream);
-        return true;
+        return (true, filePathsUsed);
     }
 
     // Takes in an outstream to print compiler messages to, and a file to parse
     // Returns whether parsing was successful (ie. 0 errors)
-    public static bool ExecuteParser(string filePath, TextWriter outStream)
+    public static bool ExecuteParser(List<string> filePaths, TextWriter outStream)
     {
-        var inputTxt = File.ReadAllText(filePath);
         var originalOutStream = Console.Out;
         Console.SetOut(outStream);
 
-        #pragma warning disable
-        AntlrInputStream input = new AntlrInputStream(inputTxt);
-        BubblGumLexer lexer = new BubblGumLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        BubblGumParser parser = new BubblGumParser(tokens);
-        BubblGumParser.ProgramContext programContext = parser.program();
-        #pragma warning restore
-
-        if (parser.NumberOfSyntaxErrors > 0)
+        foreach (var path in filePaths)
         {
-            Console.SetOut(originalOutStream);
-            Console.WriteLine("Parsing failed due to syntax errors.");
-            return false;
+            var inputTxt = File.ReadAllText(path);
+
+            #pragma warning disable
+            AntlrInputStream input = new AntlrInputStream(inputTxt);
+            BubblGumLexer lexer = new BubblGumLexer(input);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            BubblGumParser parser = new BubblGumParser(tokens);
+            BubblGumParser.ProgramContext programContext = parser.program();
+            #pragma warning restore
+
+            if (parser.NumberOfSyntaxErrors > 0)
+            {
+                Console.SetOut(originalOutStream);
+                Console.WriteLine("Parsing failed due to syntax errors.");
+                return false;
+            }
+
+            var createAST = new CreateAST();
+            Program program = createAST.Visit(programContext);
+
+            var printAST = new PrintAST();
+            printAST.Visit(program);
         }
 
-        var createAST = new CreateAST();
-        Program program = createAST.Visit(programContext);
-
-        var printAST = new PrintAST();
-        printAST.Visit(program);
-
         Console.Out.Close();
-
         Console.SetOut(originalOutStream);
         return true;
     }

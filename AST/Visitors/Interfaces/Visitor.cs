@@ -1,4 +1,5 @@
-﻿using Antlr4.Runtime;
+﻿
+using Antlr4.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +11,14 @@ using static BubblGumParser;
 
 namespace AST
 {
-    public interface Visitor
+    public interface Visitor : VisitorHeader
     {
-        // program + program pieces
-        public void Visit(Program n);
-        public void Visit(Stock n);
+        // program pieces
         public void Visit(Class n);
         public void Visit(Function n);
         public void Visit(FunctionHeader n);
         public void Visit(Struct n);
         public void Visit(Interface n);
-
 
         // assignment and declaration statments
         public void Visit(AssignDeclLHS n);
@@ -42,8 +40,6 @@ namespace AST
         public void Visit(IncDec n);
         public void Visit(RepeatLoop n);
         public void Visit(While n);
-        public void Visit(ChewNames n);
-        public void Visit(ChewPath n);
 
         // access expressions
         public void Visit(GlobalAccess n);

@@ -11,6 +11,6 @@ namespace AST
         public int LineNumber;
         public int StartCol;
 
-        public abstract void Accept(Visitor v);
+        public abstract void Accept(VisitorHeader v);
     }
 }

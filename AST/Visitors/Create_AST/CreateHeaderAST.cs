@@ -28,7 +28,8 @@ namespace AST
                 else if (childi is Chew_importContext)
                   node = visit((Chew_importContext)childi);
 
-                programPieces.Add(node);
+                if (node != null)
+                    programPieces.Add(node);
             }
 
             return new Program(programPieces, 0, 0);
