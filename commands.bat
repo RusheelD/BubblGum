@@ -4,10 +4,10 @@ REM type ./commands [arg] to run a command
 REM ex. ./commands gen 
 
 IF "%1"=="gen" (
-    REM compiles and registers ANTLR grammar changes
+    REM compiles and registers ANTLR grammar (lexer + parser)
     antlr4 -o ./Lexer_Parser/Parser ./Lexer_Parser/Parser/BubblGum.g4 -Dlanguage=CSharp
 ) ELSE IF "%1"=="genHeader" (
-    REM compiles and registers ANTLR grammar for imports
+    REM compiles and registers ANTLR grammar storing imports + namespaces (used to link files efficiently)
     antlr4 -o ./Preprocessing/Parser ./Preprocessing/Parser/BubblGumHeader.g4 -Dlanguage=CSharp
 ) ELSE IF "%1"=="run" (
     REM runs compiler

@@ -36,7 +36,33 @@ public class BubblGum
 
         TextWriter outStream = (!DEBUG_MODE) ? Console.Out : new StreamWriter(OUTPUT_FILE, false);
 
-        if (args[0].Equals("-P")) {
+        if (args[0].Equals("-A")) {
+            bool success = ExecuteHeaderParser(args[1], outStream);
+            if (!success)
+                return;
+            
+            success = ExecuteParser(args[1], outStream);
+            if (!success)
+                return;
+
+            success = ExecuteSemanticAnalysis(args[1], outStream);
+        } 
+        else if (args[0].Equals("-H")) {
+            ExecuteHeaderParser(args[1], outStream);
+        } 
+        else if (args[0].Equals("-P")) {
+            ExecuteParser(args[1], outStream);
+        }
+        else if (args[0].Equals("-T")) {
+            ExecuteSemanticAnalysis(args[1], outStream);
+        }
+
+        else
+            Console.Error.WriteLine("Specified compiler mode not yet implemented");
+    }
+
+    
+    public static bool ExecuteHeaderParser(string filePath, TextWriter outStream) {
             /*
                Plan:
                   
@@ -59,13 +85,36 @@ public class BubblGum
                 recipe add files:
                    look for word stock
                    if present, take the word/phrase after stock
-                   
             
-            */
-            ExecuteParser(args[1], outStream);
+            */ 
+        var inputTxt = File.ReadAllText(filePath);
+        var originalOutStream = Console.Out;
+        Console.SetOut(outStream);
+
+        #pragma warning disable
+        AntlrInputStream input = new AntlrInputStream(inputTxt);
+        BubblGumLexer lexer = new BubblGumLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        BubblGumHeaderParser parser = new BubblGumHeaderParser(tokens);
+        BubblGumParser.ProgramContext programContext = parser.program();
+        #pragma warning restore
+
+        if (parser.NumberOfSyntaxErrors > 0)
+        {
+            Console.SetOut(originalOutStream);
+            Console.WriteLine("Parsing failed due to syntax errors.");
+            return false;
         }
-        else
-            Console.Error.WriteLine("Specified compiler mode not yet implemented");
+
+        var createAST = new CreateAST();
+        Program program = createAST.Visit(programContext);
+
+        var printAST = new PrintAST();
+        printAST.Visit(program);
+
+        Console.Out.Close();
+        Console.SetOut(originalOutStream);
+        return true;
     }
 
     // Takes in an outstream to print compiler messages to, and a file to parse
@@ -102,6 +151,7 @@ public class BubblGum
         Console.SetOut(originalOutStream);
         return true;
     }
+    public static bool ExecuteSemanticAnalysis(string filePath, TextWriter outStream) {return true;}
 
     private static void printProgramPieces(Program program)
     {

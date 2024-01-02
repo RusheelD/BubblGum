@@ -64,13 +64,10 @@ pop_loop: POP FLAVORS IDENTIFIER IN expression THICK_ARROW (single_statement | s
 expression: LEFT_PAREN expression RIGHT_PAREN |
               SWEETS THIN_ARROW expression | // global access
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
-              expression THIN_ARROW SIZE | // array size access
-              expression THIN_ARROW EMPTY | // object empty check
               expression THIN_ARROW expression | // member access
               expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call or new object
               array LEFT_PAREN expression RIGHT_PAREN | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
-              INPUT LEFT_PAREN RIGHT_PAREN | // input string
               expression THICK_ARROW (primitive | IDENTIFIER) | // cast
               (NOT | NOT_OP) expression |
               expression (POWER | MODULO) expression |
@@ -129,13 +126,10 @@ BOLD: 'bold';           // public
 SUBTLE: 'subtle';       // protected
 BLAND: 'bland';         // private
 POP: 'pop';             // return (but better) (also a foreach loop)
-SIZE: 'size';           // array size 
-EMPTY: 'empty';         // Object's empty status
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
 WRAPPER: 'Wrapper';     // interface
 MINTPACK: 'mintpack';   // args 
-INPUT: 'input';         // input
      
 PACK: 'pack';
 SUGARPACK: 'sugarpack';

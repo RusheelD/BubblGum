@@ -759,15 +759,6 @@ namespace AST
                         Exp e1 = visit(child0);
                         return new MemberAccess(e1, visit(child2), e1.LineNumber, e1.StartCol);
                     }
-                    else if (child2.Payload is IToken)
-                    {
-                        IToken token2 = (IToken)child2.Payload;
-                        Exp e1 = visit(child0);
-                        if (token2.Type == SIZE)
-                            return new PackSize(e1, e1.LineNumber, e1.StartCol);
-                        else if (token2.Type == EMPTY)
-                            return new ObjectEmpty(e1, e1.LineNumber, e1.StartCol);
-                    }
                 }
                 else if (token.Type == THICK_ARROW)
                 {
@@ -815,14 +806,6 @@ namespace AST
                         Exp e1 = visit((ExpressionContext)n.children[2]);
                         return new NewPack(type, e1, line, col);
                     }
-                    else if (child0.Payload is IToken)
-                    {
-                        IToken token0 = (IToken)child0.Payload;
-                        if (token0.Type == INPUT)
-                        {
-                            return new Input(token0.Line, token0.Column);
-                        }
-                    }
                 }
                 else if (token.Type == LEFT_SQUARE_BRACKET)
                 {
@@ -866,6 +849,7 @@ namespace AST
             IToken token = (IToken)n.children[0].Payload;
             lineNum = token.Line;
             col = token.Column;
+
             return new IdentifierExp(token.Text, lineNum, col);
         }
 

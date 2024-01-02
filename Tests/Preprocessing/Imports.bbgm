@@ -1,0 +1,12 @@
+Chew "gimme some icecream"
+Chew "this is the greatest path of all time"
+Chew "another path that is meh"
+Chew bob->marley->toast
+
+stock bob
+
+Gum thing {
+ sugar a :: 2
+}
+
+Gum thing: NiceInterface {}

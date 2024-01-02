@@ -59,7 +59,6 @@ namespace AST
         public void Visit(Integer n);
         public void Visit(StringLiteral n);
         public void Visit(Mintpack n);
-        public void Visit(Input n);
         public void Visit(Cast n);
 
         // comparison expressions
@@ -94,8 +93,6 @@ namespace AST
         public void Visit(NewPack n);
         public void Visit(NewTuple n);
         public void Visit(IdentifierExp n);
-        public void Visit(ObjectEmpty n);
         public void Visit(PackAccess n);
-        public void Visit(PackSize n);
     }
 }

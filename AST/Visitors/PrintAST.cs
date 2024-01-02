@@ -496,11 +496,6 @@ namespace AST
             Console.Write("mintpack");
         }
 
-        public void Visit(Input n)
-        {
-            Console.Write("Input");
-        }
-
         public void Visit(Cast n)
         {
             n.CastType.Accept(this);
@@ -729,12 +724,6 @@ namespace AST
             Console.Write(n.Value);
         }
 
-        public void Visit(ObjectEmpty n)
-        {
-            n.E1.Accept(this);
-            Console.Write("->empty");
-        }
-
         public void Visit(PackAccess n)
         {
             n.E1.Accept(this);
@@ -742,13 +731,6 @@ namespace AST
             n.E2.Accept(this);
             Console.Write("]");
         }
-
-        public void Visit(PackSize n)
-        {
-            n.E1.Accept(this);
-            Console.Write("->size");
-        }
-
 
         // types
         public void Visit(SingularArrayType n)
