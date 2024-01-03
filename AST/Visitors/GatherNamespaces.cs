@@ -10,7 +10,7 @@ using static BubblGumParser;
 
 namespace AST
 {
-    public class GatherNamespaces : VisitorHeader
+    public class GatherNamespaces
     {
         private Namespace baseNamespace;
         private string filePath;
@@ -24,8 +24,10 @@ namespace AST
 
         public void Visit(Program n)
         {
-            foreach (var node in n.Pieces)
-                node.Accept(this);
+            foreach (var node in n.Pieces) {
+                if (node is Stock)
+                    Visit((Stock)node);
+            }
         }
 
         public void Visit(Stock n)

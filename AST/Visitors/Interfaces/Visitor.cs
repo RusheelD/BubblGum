@@ -13,6 +13,12 @@ namespace AST
 {
     public interface Visitor : VisitorHeader
     {
+        // program, imports and namespaces
+        public void Visit(Program n);
+        public void Visit(Stock n);
+        public void Visit(ChewNames n);
+        public void Visit(ChewPath n);
+
         // program pieces
         public void Visit(Class n);
         public void Visit(Function n);

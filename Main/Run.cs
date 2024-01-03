@@ -19,6 +19,15 @@ public class Run
         if (args[0] == "run")
             BubblGum.Execute(newArgs);
         else if (args[0] == "test")
-            RecipeKeyTest.Execute();
+        {
+            (bool success, HashSet<string> filePath) = BubblGum.ExecuteHeaderParser(args[1], Console.Out);
+            if (success)
+            {
+                foreach (string path in filePath)
+                    Console.WriteLine(path);
+            }
+            else
+                Console.WriteLine("Bruh you failure");
+        }
     }
 }

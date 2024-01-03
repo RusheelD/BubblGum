@@ -37,11 +37,11 @@ public class BubblGum
         TextWriter outStream = (!DEBUG_MODE) ? Console.Out : new StreamWriter(OUTPUT_FILE, false);
 
         if (args[0].Equals("-A")) {
-            (bool success, List<string> filePaths) = ExecuteHeaderParser(args[1], outStream);
+            (bool success, HashSet<string> filePaths) = ExecuteHeaderParser(args[1], outStream);
             if (!success)
                 return;
             
-            success = ExecuteParser(args[1], outStream);
+            success = ExecuteParser(filePaths.ToList(), outStream);
             if (!success)
                 return;
 
@@ -51,7 +51,7 @@ public class BubblGum
             ExecuteHeaderParser(args[1], outStream);
         } 
         else if (args[0].Equals("-P")) {
-            ExecuteParser(args[1], outStream);
+            ExecuteParser(new List<string>() { args[1] }, outStream);
         }
         else if (args[0].Equals("-T")) {
             ExecuteSemanticAnalysis(args[1], outStream);
@@ -62,10 +62,12 @@ public class BubblGum
     }
 
     
-    public static (bool, List<string>) ExecuteHeaderParser(string filePath, TextWriter outStream) {
+    public static (bool, HashSet<string>) ExecuteHeaderParser(string filePath, TextWriter outStream) {
 
         if (!File.Exists(filePath))
             return (false, null);
+
+        filePath = $".\\{Path.GetRelativePath(".\\", filePath)}";
 
         // update outstream
         var originalOutStream = Console.Out;
@@ -73,7 +75,7 @@ public class BubblGum
 
         // add all file paths recursively in main file's directory + subdirectories
         var allFilePaths = new List<string>();
-        string? mainDirectory = Path.GetDirectoryName("./" + filePath);
+        string? mainDirectory = Path.GetDirectoryName(filePath);
         if (mainDirectory != null && !mainDirectory.Equals(string.Empty))
         {
             var directoriesToSearch = new Queue<string>();
@@ -126,8 +128,8 @@ public class BubblGum
         // generate list of all files used
         var filePathsToScan = new Queue<string>();
         filePathsToScan.Enqueue(filePath);
-        var filePathsUsed = new List<string>();
 
+        var filePathsUsed = new HashSet<string>() { filePath };
         var scanHeader = new ScanHeader();
 
         while (filePathsToScan.Count > 0)
@@ -135,7 +137,12 @@ public class BubblGum
             var path = filePathsToScan.Dequeue();
             var currProgram = filePathToProgram[path];
             var newPathsUsed = scanHeader.Execute(currProgram, baseNamespace, filePathToProgram);
-            filePathsUsed.AddRange(newPathsUsed);
+
+            foreach (var newPath in newPathsUsed)
+            {
+                filePathsUsed.Add(newPath);
+                filePathsToScan.Enqueue(newPath);
+            }
         }
 
         Console.Out.Close();

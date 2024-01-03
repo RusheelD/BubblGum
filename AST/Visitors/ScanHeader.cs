@@ -10,7 +10,7 @@ using static BubblGumParser;
 
 namespace AST
 {
-    public class ScanHeader : VisitorHeader
+    public class ScanHeader
     {
         private Namespace baseNamespace;
         private Dictionary<string, Program> filePathToProgram;
@@ -30,10 +30,13 @@ namespace AST
         public void Visit(Program n)
         {
             foreach (var node in n.Pieces)
-                node.Accept(this);
+            {
+                if (node is ChewNames)
+                    Visit((ChewNames)node);
+                else if (node is ChewPath)
+                    Visit((ChewPath)node);
+            }
         }
-
-        public void Visit(Stock n) { }
 
         public void Visit(ChewNames n) 
         {
@@ -57,9 +60,10 @@ namespace AST
             }
         }
 
-        public void Visit(ChewPath n) 
+        public void Visit(ChewPath n)
         {
-            filesUsed.Add(n.Path);
+            string fileUsed = $".\\{Path.GetRelativePath(".\\", n.Path)}";
+            filesUsed.Add(fileUsed);
         }
     }
 }

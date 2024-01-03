@@ -1,7 +1,6 @@
-Chew cat->dog
-Chew joe
+Chew "./Other/Cat.bbgm"
 
-stock bob
+stock joe
 
 Gum thing {
  sugar a :: 2
