@@ -11,12 +11,12 @@ recipe: HelloWorld($sugar a, kcal b, $[BubbleGum, Backpack] d) <sugar, kcal b, c
 }
 
 # ellipses (ie. auto arrays) and flavor types
-recipe: SomeFunc1(kcal d, kcal d..., sugar a...) <carb..., kcal...> {
+recipe: SomeFunc1(kcal d, kcal d..., sugar a...) <carb..., sugar...> {
         pop 17
         flavor c :: "batman" + "hates joker"
         flavor arr :: [Batman, Joker, LoveHateRelationship](4)
         a: repeatUp(0, 16):
-                pop a
+            pop a
 }
 
 # single line function
