@@ -36,8 +36,9 @@ public partial class BubblGumHeaderParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		STOCK=1, CHEW=2, IDENTIFIER=3, THIN_ARROW=4, STRING_LITERAL=5, ESCAPE_SEQUENCE=6, 
-		WHITE=7, EOL=8, SINGLE_LINE_COMMENT=9, MULTI_LINE_COMMENT=10, ANYCHAR=11;
+		STOCK=1, CHEW=2, FROM=3, IDENTIFIER=4, THIN_ARROW=5, STRING_LITERAL=6, 
+		ESCAPE_SEQUENCE=7, WHITE=8, EOL=9, SINGLE_LINE_COMMENT=10, MULTI_LINE_COMMENT=11, 
+		ANYCHAR=12;
 	public const int
 		RULE_program = 0, RULE_define_stock = 1, RULE_chew_import = 2;
 	public static readonly string[] ruleNames = {
@@ -45,11 +46,12 @@ public partial class BubblGumHeaderParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'stock'", "'Chew'", null, "'->'", null, null, null, "'\\r\\n'"
+		null, "'stock'", "'Chew'", "'from'", null, "'->'", null, null, null, "'\\r\\n'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "STOCK", "CHEW", "IDENTIFIER", "THIN_ARROW", "STRING_LITERAL", "ESCAPE_SEQUENCE", 
-		"WHITE", "EOL", "SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT", "ANYCHAR"
+		null, "STOCK", "CHEW", "FROM", "IDENTIFIER", "THIN_ARROW", "STRING_LITERAL", 
+		"ESCAPE_SEQUENCE", "WHITE", "EOL", "SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT", 
+		"ANYCHAR"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -122,6 +124,10 @@ public partial class BubblGumHeaderParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ESCAPE_SEQUENCE(int i) {
 			return GetToken(BubblGumHeaderParser.ESCAPE_SEQUENCE, i);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] FROM() { return GetTokens(BubblGumHeaderParser.FROM); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode FROM(int i) {
+			return GetToken(BubblGumHeaderParser.FROM, i);
+		}
 		public ProgramContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -177,12 +183,12 @@ public partial class BubblGumHeaderParser : Parser {
 			State = 18;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2174L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4350L) != 0)) {
 				{
 				{
 				State = 15;
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 2174L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 4350L) != 0)) ) {
 				ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -284,7 +290,11 @@ public partial class BubblGumHeaderParser : Parser {
 
 	public partial class Chew_importContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CHEW() { return GetToken(BubblGumHeaderParser.CHEW, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING_LITERAL() { return GetToken(BubblGumHeaderParser.STRING_LITERAL, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] STRING_LITERAL() { return GetTokens(BubblGumHeaderParser.STRING_LITERAL); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRING_LITERAL(int i) {
+			return GetToken(BubblGumHeaderParser.STRING_LITERAL, i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode FROM() { return GetToken(BubblGumHeaderParser.FROM, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] IDENTIFIER() { return GetTokens(BubblGumHeaderParser.IDENTIFIER); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IDENTIFIER(int i) {
 			return GetToken(BubblGumHeaderParser.IDENTIFIER, i);
@@ -358,6 +368,18 @@ public partial class BubblGumHeaderParser : Parser {
 			default:
 				throw new NoViableAltException(this);
 			}
+			State = 46;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,6,Context) ) {
+			case 1:
+				{
+				State = 44;
+				Match(FROM);
+				State = 45;
+				Match(STRING_LITERAL);
+				}
+				break;
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -372,19 +394,21 @@ public partial class BubblGumHeaderParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,11,45,2,0,7,0,2,1,7,1,2,2,7,2,1,0,5,0,8,8,0,10,0,12,0,11,9,0,1,0,3,
+		4,1,12,49,2,0,7,0,2,1,7,1,2,2,7,2,1,0,5,0,8,8,0,10,0,12,0,11,9,0,1,0,3,
 		0,14,8,0,1,0,5,0,17,8,0,10,0,12,0,20,9,0,1,0,1,0,1,1,1,1,1,1,1,1,5,1,28,
 		8,1,10,1,12,1,31,9,1,1,2,1,2,1,2,1,2,5,2,37,8,2,10,2,12,2,40,9,2,1,2,3,
-		2,43,8,2,1,2,0,0,3,0,2,4,0,1,2,0,1,6,11,11,47,0,9,1,0,0,0,2,23,1,0,0,0,
-		4,32,1,0,0,0,6,8,3,4,2,0,7,6,1,0,0,0,8,11,1,0,0,0,9,7,1,0,0,0,9,10,1,0,
-		0,0,10,13,1,0,0,0,11,9,1,0,0,0,12,14,3,2,1,0,13,12,1,0,0,0,13,14,1,0,0,
-		0,14,18,1,0,0,0,15,17,7,0,0,0,16,15,1,0,0,0,17,20,1,0,0,0,18,16,1,0,0,
-		0,18,19,1,0,0,0,19,21,1,0,0,0,20,18,1,0,0,0,21,22,5,0,0,1,22,1,1,0,0,0,
-		23,24,5,1,0,0,24,29,5,3,0,0,25,26,5,4,0,0,26,28,5,3,0,0,27,25,1,0,0,0,
-		28,31,1,0,0,0,29,27,1,0,0,0,29,30,1,0,0,0,30,3,1,0,0,0,31,29,1,0,0,0,32,
-		42,5,2,0,0,33,38,5,3,0,0,34,35,5,4,0,0,35,37,5,3,0,0,36,34,1,0,0,0,37,
-		40,1,0,0,0,38,36,1,0,0,0,38,39,1,0,0,0,39,43,1,0,0,0,40,38,1,0,0,0,41,
-		43,5,5,0,0,42,33,1,0,0,0,42,41,1,0,0,0,43,5,1,0,0,0,6,9,13,18,29,38,42
+		2,43,8,2,1,2,1,2,3,2,47,8,2,1,2,0,0,3,0,2,4,0,1,2,0,1,7,12,12,52,0,9,1,
+		0,0,0,2,23,1,0,0,0,4,32,1,0,0,0,6,8,3,4,2,0,7,6,1,0,0,0,8,11,1,0,0,0,9,
+		7,1,0,0,0,9,10,1,0,0,0,10,13,1,0,0,0,11,9,1,0,0,0,12,14,3,2,1,0,13,12,
+		1,0,0,0,13,14,1,0,0,0,14,18,1,0,0,0,15,17,7,0,0,0,16,15,1,0,0,0,17,20,
+		1,0,0,0,18,16,1,0,0,0,18,19,1,0,0,0,19,21,1,0,0,0,20,18,1,0,0,0,21,22,
+		5,0,0,1,22,1,1,0,0,0,23,24,5,1,0,0,24,29,5,4,0,0,25,26,5,5,0,0,26,28,5,
+		4,0,0,27,25,1,0,0,0,28,31,1,0,0,0,29,27,1,0,0,0,29,30,1,0,0,0,30,3,1,0,
+		0,0,31,29,1,0,0,0,32,42,5,2,0,0,33,38,5,4,0,0,34,35,5,5,0,0,35,37,5,4,
+		0,0,36,34,1,0,0,0,37,40,1,0,0,0,38,36,1,0,0,0,38,39,1,0,0,0,39,43,1,0,
+		0,0,40,38,1,0,0,0,41,43,5,6,0,0,42,33,1,0,0,0,42,41,1,0,0,0,43,46,1,0,
+		0,0,44,45,5,3,0,0,45,47,5,6,0,0,46,44,1,0,0,0,46,47,1,0,0,0,47,5,1,0,0,
+		0,7,9,13,18,29,38,42,46
 	};
 
 	public static readonly ATN _ATN =
