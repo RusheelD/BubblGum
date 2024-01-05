@@ -14,26 +14,31 @@ namespace AST
     {
         private Namespace baseNamespace;
         private Dictionary<string, Program> filePathToProgram;
-        private List<string> filesUsed;
+        private List<string> newlyConfirmedFilePaths;
         private string currFilePath, mainDirectory;
         private bool success;
 
-        // requires a current file path that exists, the main directory of the entry point file,
-        // a namespace tree, and a map of files to programs
+
+        // requires a namespace tree, a map of file paths to their header programs, and
+        // a set of any file paths that have been already confirmed as imported/required
+        public ScanImports(Namespace baseNamespace, Dictionary<string, Program> filePathToProgram) {
+
+            this.baseNamespace = baseNamespace;
+            this.filePathToProgram = filePathToProgram;
+        }
+
+        // requires a current file path that exists and the main directory of the entry point file
         // returns whether import scanning was a success (0 errors),
-        // and the paths of all files used in imports (directly or through namespace imports)
-        public (bool, List<string>) Execute(string currFilePath, string mainDirectory, 
-            Namespace baseNamespace, Dictionary<string, Program> filePathToProgram)
+        // and the paths of all files used in imports (ie. file imports or namespace imports)
+        public (bool, List<string>) Execute(string currFilePath, string mainDirectory)
         {
             this.currFilePath = currFilePath;
             this.mainDirectory = mainDirectory;
-            this.baseNamespace = baseNamespace;
-            this.filePathToProgram = filePathToProgram;
             success = true;
+            newlyConfirmedFilePaths = new();
 
-            filesUsed = new();
             Visit(filePathToProgram[currFilePath]);
-            return (success, filesUsed);
+            return (success, newlyConfirmedFilePaths);
         }
 
         public void Visit(Program n)
@@ -55,21 +60,29 @@ namespace AST
                 if (!currNamespace.ChildNamespaces.ContainsKey(name)) {
                     Console.Error.WriteLine($"Namespace {name} not found in file {currFilePath}");
                     success = false;
+                    return;
                 }
 
                 currNamespace = currNamespace.ChildNamespaces[name];
             }
+            
+            if (currNamespace.IsImported)
+                return;
 
             var namespacesToAdd = new Queue<Namespace>();
             namespacesToAdd.Enqueue(currNamespace);
             while (namespacesToAdd.Count > 0) {
-                currNamespace = namespacesToAdd.Dequeue();
+                var tempNamespace = namespacesToAdd.Dequeue();
+                tempNamespace.IsImported = true;
 
-                foreach (string path in currNamespace.FilePaths)
-                    filesUsed.Add(path);
+                foreach (string path in tempNamespace.FilePaths) {
+                    newlyConfirmedFilePaths.Add(path);
+                }
 
-                foreach (var childNamespace in currNamespace.ChildNamespaces.Values)
-                    namespacesToAdd.Enqueue(childNamespace);
+                foreach (var childNamespace in tempNamespace.ChildNamespaces.Values) {
+                    if (!childNamespace.IsImported)
+                        namespacesToAdd.Enqueue(childNamespace);
+                }
             }
         }
 
@@ -81,7 +94,7 @@ namespace AST
             sb.Append(Path.GetRelativePath(mainDirectory, fileUsedFullPath));
             var file = sb.ToString();
             if (filePathToProgram.ContainsKey(file))
-               filesUsed.Add(file);
+                newlyConfirmedFilePaths.Add(file);
             else {
                 Console.Error.WriteLine($"File {mainDirectory}\\{file} not found in file {mainDirectory}\\{currFilePath}");
                 success = false;

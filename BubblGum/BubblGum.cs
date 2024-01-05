@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using AST;
 using System.Diagnostics;
 using System.Xml.Linq;
+using Microsoft.VisualBasic;
 
 public class BubblGum
 {
@@ -66,7 +67,7 @@ public class BubblGum
 
         if (!File.Exists(filePath))
             return (false, null);
-            
+        
         string? mainDirectory = Path.GetDirectoryName(filePath);
         if (mainDirectory == null || mainDirectory.Equals(string.Empty)) {
             Console.Error.WriteLine("Directory of entry file could not be established");
@@ -80,15 +81,17 @@ public class BubblGum
         Console.SetOut(outStream);
 
         // add all file paths recursively in main file's directory + subdirectories
-        var allFilePaths = new List<string>();
+        string requiredFileEnding = "*" + Constants.FILE_EXTENSION;  
+        var filePathsFound = new List<string>();
+
         var directoriesToSearch = new Queue<string>();
         directoriesToSearch.Enqueue(mainDirectory);
 
         while (directoriesToSearch.Count > 0)
         {
             string currDirectory = directoriesToSearch.Dequeue();
-            string[] files = Directory.GetFiles(currDirectory);
-            allFilePaths.AddRange(files);
+            string[] files = Directory.GetFiles(currDirectory, requiredFileEnding);
+            filePathsFound.AddRange(files);
 
             string[] directories = Directory.GetDirectories(currDirectory);
             foreach (var dir in directories)
@@ -100,7 +103,7 @@ public class BubblGum
 
         // map a file path to a program containing it's namespace (if applicable) and it's imports
         var filePathToProgram = new Dictionary<string, Program>();
-        foreach (string path in allFilePaths)
+        foreach (string path in filePathsFound)
         {
             var inputTxt = File.ReadAllText(path);
 
@@ -129,36 +132,29 @@ public class BubblGum
             gatherNamespaces.Execute(program, baseNamespace, shortenedPath);
         }
 
-        // generate list of all files used based off file and namespace imports
+        // generate list of all files used based off a file and it's imports
         // start with the main entry point file
-        var filePathsToScan = new Queue<(string, string)>(); // (imported file path, file that import was located in)
-        filePathsToScan.Enqueue((filePath, filePath));
+        var filesToScan = new Queue<string>();
+        filesToScan.Enqueue(filePath);
 
-        var filePathsUsed = new HashSet<string>() { filePath }; 
-        var scanImports = new ScanImports();
-
+        var finalFilesUsed = new HashSet<string>() {};
+        var scanImports = new ScanImports(baseNamespace, filePathToProgram);
         int errorCount = 0;
 
-        while (filePathsToScan.Count > 0)
+        while (filesToScan.Count > 0)
         {
-            (var path, var ogFilePath) = filePathsToScan.Dequeue();
+            var path = filesToScan.Dequeue();
+            finalFilesUsed.Add(path);
 
-            if (!filePathToProgram.ContainsKey(path)) {
-                Console.Error.WriteLine($"Path {mainDirectory}\\{path} could not be imported in {mainDirectory}\\{ogFilePath}");
-                errorCount++;
-                continue;
-            }
-           
-            var currProgram = filePathToProgram[path];
-            (bool noErrors, var newPathsUsed) = scanImports.Execute(path, mainDirectory, baseNamespace, filePathToProgram);
+            (bool noErrors, var newFilesUsed) = scanImports.Execute(path, mainDirectory);
 
             if (!noErrors)
                 errorCount++;
 
-            foreach (var newPath in newPathsUsed)
+            foreach (var newFile in newFilesUsed)
             {
-                filePathsUsed.Add(newPath);
-                filePathsToScan.Enqueue((newPath, path));
+                if (!finalFilesUsed.Contains(newFile))
+                    filesToScan.Enqueue(newFile);
             }
         }
 
@@ -166,7 +162,7 @@ public class BubblGum
         Console.SetOut(originalOutStream);
 
         bool success = errorCount == 0;
-        return (success, filePathsUsed);
+        return (success, finalFilesUsed);
     }
 
     // Takes in an outstream to print compiler messages to, and a file to parse

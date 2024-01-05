@@ -19,27 +19,14 @@ namespace AST
 
         public Dictionary<string, Namespace> ChildNamespaces;
 
+        public bool IsImported;
+
         public Namespace(string name) 
         {
             Name = name;
             FilePaths = new();
             ChildNamespaces = new();
+            IsImported = false;
         }
-
-        // returns full namespace path given list of nested namespace names
-        // returns empty string if path couldn't be generated
-      /* public static string GetPath(List<string> indvNamespaceNames) {
-
-           if (indvNamespaceNames == null || indvNamespaceNames.Count == 0)
-                return "";
-
-            var sb = new StringBuilder();
-            sb.Append(indvNamespaceNames[0]);
-
-            for (int i = 1; i < indvNamespaceNames.Count; i++)
-                sb.Append("." + indvNamespaceNames[i]);
-
-            return sb.ToString();
-        }*/
     }
 }
