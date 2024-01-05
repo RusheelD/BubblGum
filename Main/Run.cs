@@ -21,13 +21,11 @@ public class Run
         else if (args[0] == "test")
         {
             (bool success, HashSet<string> filePath) = BubblGum.ExecuteHeaderParser(args[1], Console.Out);
-            if (success)
+            if (filePath != null)
             {
                 foreach (string path in filePath)
                     Console.WriteLine(path);
             }
-            else
-                Console.WriteLine("Bruh you failure");
         }
     }
 }

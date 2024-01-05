@@ -62,12 +62,18 @@ public class BubblGum
     }
 
     
-    public static (bool, HashSet<string>) ExecuteHeaderParser(string filePath, TextWriter outStream) {
+    public static (bool, HashSet<string>?) ExecuteHeaderParser(string filePath, TextWriter outStream) {
 
         if (!File.Exists(filePath))
             return (false, null);
+            
+        string? mainDirectory = Path.GetDirectoryName(filePath);
+        if (mainDirectory == null || mainDirectory.Equals(string.Empty)) {
+            Console.Error.WriteLine("Directory of entry file could not be established");
+            return (false, null);
+        }
 
-        filePath = $".\\{Path.GetRelativePath(".\\", filePath)}";
+        filePath = Path.GetRelativePath(mainDirectory, filePath);
 
         // update outstream
         var originalOutStream = Console.Out;
@@ -75,28 +81,24 @@ public class BubblGum
 
         // add all file paths recursively in main file's directory + subdirectories
         var allFilePaths = new List<string>();
-        string? mainDirectory = Path.GetDirectoryName(filePath);
-        if (mainDirectory != null && !mainDirectory.Equals(string.Empty))
+        var directoriesToSearch = new Queue<string>();
+        directoriesToSearch.Enqueue(mainDirectory);
+
+        while (directoriesToSearch.Count > 0)
         {
-            var directoriesToSearch = new Queue<string>();
-            directoriesToSearch.Enqueue(mainDirectory);
+            string currDirectory = directoriesToSearch.Dequeue();
+            string[] files = Directory.GetFiles(currDirectory);
+            allFilePaths.AddRange(files);
 
-            while (directoriesToSearch.Count > 0)
-            {
-                string currDirectory = directoriesToSearch.Dequeue();
-                string[] files = Directory.GetFiles(currDirectory);
-                allFilePaths.AddRange(files);
-
-                string[] directories = Directory.GetDirectories(currDirectory);
-                foreach (var dir in directories)
-                    directoriesToSearch.Enqueue(dir);
-            }
+            string[] directories = Directory.GetDirectories(currDirectory);
+            foreach (var dir in directories)
+                directoriesToSearch.Enqueue(dir);
         }
-        else
-            allFilePaths.Add(filePath);
 
-        // gather namespace info for all files
+        // store namespace info for all files in a tree
         var baseNamespace = new Namespace("");
+
+        // map a file path to a program containing it's namespace (if applicable) and it's imports
         var filePathToProgram = new Dictionary<string, Program>();
         foreach (string path in allFilePaths)
         {
@@ -113,41 +115,58 @@ public class BubblGum
             if (parser.NumberOfSyntaxErrors > 0)
             {
                 Console.SetOut(originalOutStream);
-                Console.WriteLine($"Parsing failed for file {path} due to syntax errors.");
+                Console.Error.WriteLine($"Parsing failed for file {path} due to syntax errors.");
                 return (false, null);
             }
 
             var createASTHeader = new CreateHeaderAST();
             Program program = createASTHeader.Visit(programContext);
-            filePathToProgram[path] = program;
+            
+            var shortenedPath = $"{Path.GetRelativePath(mainDirectory, path)}";
+            filePathToProgram[shortenedPath] = program;
 
             var gatherNamespaces = new GatherNamespaces();
-            gatherNamespaces.Execute(program, baseNamespace, path);
+            gatherNamespaces.Execute(program, baseNamespace, shortenedPath);
         }
 
-        // generate list of all files used
-        var filePathsToScan = new Queue<string>();
-        filePathsToScan.Enqueue(filePath);
+        // generate list of all files used based off file and namespace imports
+        // start with the main entry point file
+        var filePathsToScan = new Queue<(string, string)>(); // (imported file path, file that import was located in)
+        filePathsToScan.Enqueue((filePath, filePath));
 
-        var filePathsUsed = new HashSet<string>() { filePath };
-        var scanHeader = new ScanHeader();
+        var filePathsUsed = new HashSet<string>() { filePath }; 
+        var scanImports = new ScanImports();
+
+        int errorCount = 0;
 
         while (filePathsToScan.Count > 0)
         {
-            var path = filePathsToScan.Dequeue();
+            (var path, var ogFilePath) = filePathsToScan.Dequeue();
+
+            if (!filePathToProgram.ContainsKey(path)) {
+                Console.Error.WriteLine($"Path {mainDirectory}\\{path} could not be imported in {mainDirectory}\\{ogFilePath}");
+                errorCount++;
+                continue;
+            }
+           
             var currProgram = filePathToProgram[path];
-            var newPathsUsed = scanHeader.Execute(currProgram, baseNamespace, filePathToProgram);
+            (bool noErrors, var newPathsUsed) = scanImports.Execute(path, mainDirectory, baseNamespace, filePathToProgram);
+
+            if (!noErrors)
+                errorCount++;
 
             foreach (var newPath in newPathsUsed)
             {
                 filePathsUsed.Add(newPath);
-                filePathsToScan.Enqueue(newPath);
+                filePathsToScan.Enqueue((newPath, path));
             }
         }
 
         Console.Out.Close();
         Console.SetOut(originalOutStream);
-        return (true, filePathsUsed);
+
+        bool success = errorCount == 0;
+        return (success, filePathsUsed);
     }
 
     // Takes in an outstream to print compiler messages to, and a file to parse
