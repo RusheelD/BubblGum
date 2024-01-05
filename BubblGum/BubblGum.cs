@@ -132,37 +132,35 @@ public class BubblGum
             gatherNamespaces.Execute(program, baseNamespace, shortenedPath);
         }
 
-        // generate list of all files used based off a file and it's imports
-        // start with the main entry point file
+        // generate list of all files used
+        // start with the main entry point file, and scan its import statements with BFS
+        var allFilesUsed = new HashSet<string>() {};
         var filesToScan = new Queue<string>();
         filesToScan.Enqueue(filePath);
 
-        var finalFilesUsed = new HashSet<string>() {};
-        var scanImports = new ScanImports(baseNamespace, filePathToProgram);
-        int errorCount = 0;
+        // setup import scanning
+        var scanImports = new ScanImports(baseNamespace, filePathToProgram, allFilesUsed);
 
+        int errorCount = 0;
         while (filesToScan.Count > 0)
         {
             var path = filesToScan.Dequeue();
-            finalFilesUsed.Add(path);
+            allFilesUsed.Add(path);
 
-            (bool noErrors, var newFilesUsed) = scanImports.Execute(path, mainDirectory);
+            (bool noErrors, var newFilesToImport) = scanImports.Execute(path, mainDirectory);
 
             if (!noErrors)
                 errorCount++;
 
-            foreach (var newFile in newFilesUsed)
-            {
-                if (!finalFilesUsed.Contains(newFile))
-                    filesToScan.Enqueue(newFile);
-            }
+            foreach (var newFile in newFilesToImport)
+                filesToScan.Enqueue(newFile);
         }
 
         Console.Out.Close();
         Console.SetOut(originalOutStream);
 
         bool success = errorCount == 0;
-        return (success, finalFilesUsed);
+        return (success, allFilesUsed);
     }
 
     // Takes in an outstream to print compiler messages to, and a file to parse

@@ -14,45 +14,52 @@ namespace AST
     {
         private Namespace baseNamespace;
         private Dictionary<string, Program> filePathToProgram;
-        private List<string> newlyConfirmedFilePaths;
-        private string currFilePath, mainDirectory;
+        private List<string>? newFilesToImport;
+        private HashSet<string> filesUsed;
+        private string? currFilePath, mainDirectory;
         private bool success;
 
 
-        // requires a namespace tree, a map of file paths to their header programs, and
-        // a set of any file paths that have been already confirmed as imported/required
-        public ScanImports(Namespace baseNamespace, Dictionary<string, Program> filePathToProgram) {
+        /// <summary>
+        /// Requires a namespace tree, a map of file paths to their header programs, and
+        /// a set of any file paths that have been already confirmed as imported/used
+        /// </summary>
+        public ScanImports(Namespace baseNamespace, Dictionary<string, Program> filePathToProgram, HashSet<string> filesUsed) {
 
             this.baseNamespace = baseNamespace;
             this.filePathToProgram = filePathToProgram;
+            this.filesUsed = filesUsed;
         }
 
-        // requires a current file path that exists and the main directory of the entry point file
-        // returns whether import scanning was a success (0 errors),
-        // and the paths of all files used in imports (ie. file imports or namespace imports)
+        /// <summary>
+        /// Requires a path of some existing file, and the main directory of the compiler's entry point.
+        /// Returns whether import scanning was a success (0 errors),
+        /// and a list of all new files that should be imported because of the provided file.
+        /// </summary>
         public (bool, List<string>) Execute(string currFilePath, string mainDirectory)
         {
             this.currFilePath = currFilePath;
             this.mainDirectory = mainDirectory;
+            
             success = true;
-            newlyConfirmedFilePaths = new();
+            newFilesToImport = new();
 
-            Visit(filePathToProgram[currFilePath]);
-            return (success, newlyConfirmedFilePaths);
+            visit(filePathToProgram[currFilePath]);
+            return (success, newFilesToImport);
         }
 
-        public void Visit(Program n)
+        private void visit(Program n)
         {
             foreach (var node in n.Pieces)
             {
                 if (node is ChewNames)
-                    Visit((ChewNames)node);
+                    visit((ChewNames)node);
                 else if (node is ChewPath)
-                    Visit((ChewPath)node);
+                    visit((ChewPath)node);
             }
         }
 
-        public void Visit(ChewNames n) 
+        private void visit(ChewNames n) 
         {
             Namespace currNamespace = baseNamespace;
             foreach (string name in n.Names)
@@ -76,7 +83,8 @@ namespace AST
                 tempNamespace.IsImported = true;
 
                 foreach (string path in tempNamespace.FilePaths) {
-                    newlyConfirmedFilePaths.Add(path);
+                    if (!filesUsed.Contains(path))
+                        newFilesToImport.Add(path);
                 }
 
                 foreach (var childNamespace in tempNamespace.ChildNamespaces.Values) {
@@ -86,15 +94,15 @@ namespace AST
             }
         }
 
-        public void Visit(ChewPath n)
+        private void visit(ChewPath n)
         {
             string fileUsedFullPath = Path.GetFullPath(Path.Combine(mainDirectory, n.Path));
 
             var sb = new StringBuilder();
             sb.Append(Path.GetRelativePath(mainDirectory, fileUsedFullPath));
             var file = sb.ToString();
-            if (filePathToProgram.ContainsKey(file))
-                newlyConfirmedFilePaths.Add(file);
+            if (filePathToProgram.ContainsKey(file) && !filesUsed.Contains(file))
+                newFilesToImport.Add(file);
             else {
                 Console.Error.WriteLine($"File {mainDirectory}\\{file} not found in file {mainDirectory}\\{currFilePath}");
                 success = false;

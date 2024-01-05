@@ -3,7 +3,7 @@ grammar BubblGum;
 program: chew_import* define_stock? (class | interface | function | struct | statement)* EOF;
 
 define_stock: STOCK IDENTIFIER (THIN_ARROW IDENTIFIER)*;
-chew_import: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL);
+chew_import: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL) (FROM STRING_LITERAL)?;
 
 class: STICKY? visibility? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? 
     LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
@@ -21,6 +21,9 @@ class_member: STICKY? visibility? (function
 
 visibility: BOLD | SUBTLE | BLAND;
 
+// is it a statement right now?
+// makes sense
+
 struct: CANDY COLON IDENTIFIER LEFT_CURLY_BRACKET (primitive_declaration | assignment)* RIGHT_CURLY_BRACKET;
 function: function_header ((COLON single_statement) | scope_body);
 function_header: RECIPE COLON IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
@@ -37,7 +40,7 @@ print_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN PRINT PRIN
 debug_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN DEBUG DEBUG?;
 
 // anything that can be printed out or debugged
-base_statement: primitive_declaration | assignment | variable_inc_dec | return_statement;
+base_statement: primitive_declaration | assignment | variable_inc_dec | return_statement | (expression method_call);
 return_statement: (POP) | (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
 
@@ -58,14 +61,14 @@ loop: while_loop | repeat_loop | pop_loop;
 while_loop: WHILE expression ((COLON single_statement) | scope_body);
 repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (int | expression) COMMA
              (int | expression) RIGHT_PAREN ((COLON single_statement) | scope_body);
-pop_loop: POP FLAVORS IDENTIFIER IN expression THICK_ARROW (single_statement | scope_body);
+pop_loop: POP IDENTIFIER FROM expression THICK_ARROW (single_statement | scope_body);
 
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
 expression: LEFT_PAREN expression RIGHT_PAREN |
-              SWEETS THIN_ARROW expression | // global access
+              SWEETS access | // global access
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
-              expression THIN_ARROW expression | // member access
-              expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call or new object
+              expression access | // member access
+              expression method_call | // method call or new object
               array LEFT_PAREN expression RIGHT_PAREN | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
               expression THICK_ARROW (primitive | IDENTIFIER) | // cast
@@ -77,7 +80,7 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               expression (GT_EQ | LT_EQ | LEFT_ANGLE_BRACKET | RIGHT_ANGLE_BRACKET) expression |
               expression (EQUALS | NOT_EQ_1 | NOT_EQ_2 | IS | SUBCLASS_OF) expression |
               expression (AND | AND_OP) expression |
-              expression (XOR | XOR_OP) expression |
+              expression (XOR | XOR_OP | XNOR) expression |
               expression (OR | OR_OP) expression | // end of operator precedence
               boolean |
               identifier |
@@ -87,6 +90,10 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               STRING_LITERAL |
               CHAR_LITERAL |
               FLAVORLESS;
+
+// method call
+method_call: LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN;
+access: THIN_ARROW expression;
 
 double : (PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL?;
 int : (PLUS | MINUS)? INTEGER_LITERAL;
@@ -129,7 +136,7 @@ POP: 'pop';             // return (but better) (also a foreach loop)
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
 WRAPPER: 'Wrapper';     // interface
-MINTPACK: 'mintpack';   // args 
+MINTPACK: 'mintpack';   // args
      
 PACK: 'pack';
 SUGARPACK: 'sugarpack';
@@ -155,6 +162,7 @@ POPSTREAM: 'popstream';
 NOT: 'not';
 IN: 'in';
 IS: 'is';
+FROM: 'from';
 
 // DELIMITERS
 ASSIGN: '::';
