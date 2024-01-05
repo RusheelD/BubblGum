@@ -6,4 +6,6 @@ Gum thing {
  sugar a :: 2
 }
 
-Gum thing: NiceInterface {}
+Wrapper thing: NiceInterface {}
+
+Candy a {}

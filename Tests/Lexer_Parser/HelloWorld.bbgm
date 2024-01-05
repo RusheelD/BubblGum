@@ -1,9 +1,8 @@
 ("Hello World") !
 
 # Hello World program in C#/Java style
-Gum Class1 {
-    recipe: Main() {
+sticky bold Gum Class1 {
+    sticky bold recipe: Main() {
        ("Hello World") !
-       (mintpack[0]) !
     }
 }
