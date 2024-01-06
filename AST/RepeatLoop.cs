@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class RepeatLoop : Statement
+    public class RepeatLoop : AstNode, Statement
     {
         public string VarName;
         public bool IsUp;
         public Exp Start, End;
-        public List<Statement> Statements;
+        public List<AstNode> Statements;
 
         public RepeatLoop(string varName, bool isUp, Exp start, Exp end,
-             List<Statement> statements, int lineNumber, int startCol)
+             List<AstNode> statements, int lineNumber, int startCol)
         {
             VarName = varName;
             IsUp = isUp;

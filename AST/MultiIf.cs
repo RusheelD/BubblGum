@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class MultiIf : Statement
+    public class MultiIf : AstNode, Statement
     {
         public Exp Cond;
-        public List<Statement> Statements;
-        public List<(Exp, List<Statement>)> Elifs;
-        public List<Statement> Else;
+        public List<AstNode> Statements;
+        public List<(Exp, List<AstNode>)> Elifs;
+        public List<AstNode> Else;
 
-        public MultiIf(Exp cond, List<Statement> statements,
-            List<(Exp, List<Statement>)> elifs, List<Statement> Else,
+        public MultiIf(Exp cond, List<AstNode> statements,
+            List<(Exp, List<AstNode>)> elifs, List<AstNode> Else,
             int lineNumber, int startCol)
         {
             Cond = cond;

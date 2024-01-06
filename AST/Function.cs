@@ -10,9 +10,9 @@ namespace AST
     public class Function : AstNode, ClassMember, ProgramPiece
     {
         public FunctionHeader Header;
-        public List<Statement> Statements;
+        public List<AstNode> Statements;
 
-        public Function(FunctionHeader header, List<Statement> statements, int lineNumber, int startCol)
+        public Function(FunctionHeader header, List<AstNode> statements, int lineNumber, int startCol)
         {
             Header = header;
             Statements = statements;

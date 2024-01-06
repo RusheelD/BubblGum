@@ -11,7 +11,7 @@ using static BubblGumParser;
 
 namespace AST
 {
-    public interface Visitor : VisitorHeader
+    public interface Visitor
     {
         // program, imports and namespaces
         public void Visit(Program n);
@@ -90,6 +90,7 @@ namespace AST
         public void Visit(LeftShift n);
         public void Visit(RightShift n);
         public void Visit(Xor n);
+        public void Visit(Xnor n);
 
         // creation expressions and pack expressions
         public void Visit(NewPack n);

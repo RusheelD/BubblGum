@@ -9,11 +9,11 @@ using static Antlr4.Runtime.Atn.SemanticContext;
 namespace AST
 {
     // not in final AST tree, but useful immediate node for generating it
-    public class StatementList : Statement, Printable, ProgramPiece
+    public class StatementList : AstNode, Statement, Printable, ProgramPiece
     {
-        public List<Statement> Statements;
+        public List<AstNode> Statements;
 
-        public StatementList(List<Statement> statements, int lineNumber, int startCol)
+        public StatementList(List<AstNode> statements, int lineNumber, int startCol)
         {
             Statements = statements;
             LineNumber = lineNumber;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public abstract class Statement : AstNode, Printable, ProgramPiece
+    public interface Statement : Printable, ProgramPiece
     {
 
     }

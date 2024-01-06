@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class PopVar : Statement
+    public class PopVar : AstNode, Statement
     {
         public Exp Var;
         public bool UseOutput;

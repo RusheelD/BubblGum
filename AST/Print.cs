@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Print : Statement
+    public class Print : AstNode, Statement
     {
         public AstNode Thing;
         public bool UseNewLine;

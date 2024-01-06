@@ -317,6 +317,11 @@ namespace AST
             throw new NotImplementedException();
         }
 
+        public void Visit(Xnor n)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Visit(NewPack n)
         {
             throw new NotImplementedException();

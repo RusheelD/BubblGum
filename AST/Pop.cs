@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Pop : Statement
+    public class Pop : AstNode, Statement
     {
         public Pop(int lineNumber, int startCol)
         {

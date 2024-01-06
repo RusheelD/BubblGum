@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class While : AstNode, Statement
+    public class Xnor : Exp
     {
-        public Exp Cond;
-        public List<AstNode> Statements;
+        public Exp E1, E2;
 
-        public While(Exp cond, List<AstNode> statements, int lineNumber, int startCol)
+        public Xnor(Exp e1, Exp e2, int lineNumber, int startCol)
         {
-            Cond = cond;
-            Statements = statements;
-
+            E1 = e1;
+            E2 = e2;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

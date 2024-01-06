@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class SingleIf : Statement
+    public class SingleIf : AstNode, Statement
     {
         public Exp Cond;
-        public List<Statement> Statements;
+        public List<AstNode> Statements;
 
-        public SingleIf(Exp cond,  List<Statement> statements, int lineNumber, int startCol)
+        public SingleIf(Exp cond,  List<AstNode> statements, int lineNumber, int startCol)
         {
             Cond = cond;
             Statements = statements;

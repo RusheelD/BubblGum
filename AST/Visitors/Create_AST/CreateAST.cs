@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using System;
 using System.Buffers;
@@ -49,23 +50,36 @@ namespace AST
 
         private AstNode visit(Chew_importContext n)
         {
+            bool hasFrom = n.FROM() != null;
+            int numStringLiterals = hasFrom ? 2 : 1;
+
+            var lastChild = n.children[n.ChildCount - 1].Payload;
+            var importPath = "";
+            if (hasFrom)
+            {
+                var tokenLast = (IToken)lastChild;
+                var txt = tokenLast.Text;
+                importPath = txt.Substring(1, txt.Length - 2);
+            }
 
             IToken child0 = (IToken)n.children[0].Payload;
-            if (n.STRING_LITERAL() != null)
+            if (n.STRING_LITERAL().Length == numStringLiterals)
             {
                 IToken child1 = (IToken)(n.children[1].Payload);
                 string text = child1.Text;
-                return new ChewPath(text.Substring(1, text.Length - 2), child0.Line, child0.Column);
+                return new ChewPath(text.Substring(1, text.Length - 2), child0.Line, child0.Column, hasFrom, importPath);
             }
 
             var names = new List<string>();
-            for (int i = 1; i < n.ChildCount; i++)
+            int children = hasFrom ? n.ChildCount - 2 : n.ChildCount;
+            for (int i = 1; i < children; i++)
             {
                 IToken childi = (IToken)n.children[i].Payload;
                 if (childi.Type == IDENTIFIER)
                     names.Add(childi.Text);
             }
-            return new ChewNames(names, child0.Line, child0.Column);
+
+            return new ChewNames(names, child0.Line, child0.Column, hasFrom, importPath);
         }
 
         // may return statement or statement list
@@ -224,12 +238,12 @@ namespace AST
         {
             FunctionHeader header = visit((Function_headerContext)n.children[0]);
             Statement statements = visit((dynamic)n.children[n.ChildCount - 1]);
-            List<Statement> stats;
+            List<AstNode> stats;
 
             if(statements is StatementList)
                 stats = ((StatementList)statements).Statements;
             else
-                stats = new List<Statement>() { statements };
+                stats = new List<AstNode>() { (AstNode)statements };
 
             return new Function(header, stats, header.LineNumber, header.StartCol);
         }
@@ -382,15 +396,15 @@ namespace AST
 
         private StatementList visit(Statement_listContext n)
         {
-            List<Statement> statements = new List<Statement>();
+            List<AstNode> statements = new List<AstNode>();
             for (int i = 0; i < n.ChildCount; i++)
             {
                 Statement node = visit((StatementContext)n.children[i]);
 
                 if (node is StatementList)
                     statements.AddRange(((StatementList)node).Statements);
-                else
-                    statements.Add(node);
+                else if (node is AstNode)
+                    statements.Add((AstNode)node);
             }
 
             return new StatementList(statements, 0, 0);
@@ -399,7 +413,15 @@ namespace AST
 
         private Statement visit(Single_statementContext n) => visit((dynamic)n.children[0]);
 
-        private Statement visit(Base_statementContext n) => visit((dynamic)n.children[0]);
+        private Statement visit(Base_statementContext n)
+        {
+            if (n.ChildCount == 1)
+                return visit((dynamic)n.children[0]);
+            
+            Exp e1 = visit((ExpressionContext)n.children[0]);
+            List<Exp> args = visit((Method_callContext)n.children[1]);
+            return new MethodCall(e1, args, e1.LineNumber, e1.StartCol);
+        }
 
         private Statement visit(Primitive_declarationContext n)
         {
@@ -699,6 +721,12 @@ namespace AST
                     Exp e2 = visit((dynamic)n.children[2]);
                     return new Xor(e1, e2, e1.LineNumber, e1.StartCol);
                 }
+                else if (token.Type == XNOR)
+                {
+                    Exp e1 = visit((dynamic)n.children[0]);
+                    Exp e2 = visit((dynamic)n.children[2]);
+                    return new Xnor(e1, e2, e1.LineNumber, e1.StartCol);
+                }
                 else if (token.Type == EQUALS)
                 {
                     Exp e1 = visit((dynamic)n.children[0]);
@@ -747,22 +775,6 @@ namespace AST
                     Exp e2 = visit((dynamic)n.children[2]);
                     return new SubClassOf(e1, e2, e1.LineNumber, e1.StartCol);
                 }
-                else if (token.Type == THIN_ARROW)
-                {
-                    dynamic child0 = n.children[0];
-                    dynamic child2 = n.children[2];
-
-                    if (child0.Payload is IToken)
-                    {
-                        IToken token0 = (IToken)child0.Payload;
-                        return new GlobalAccess(visit(child2), token0.Line, token0.Column);
-                    }
-                    else if (child2 is ExpressionContext)
-                    {
-                        Exp e1 = visit(child0);
-                        return new MemberAccess(e1, visit(child2), e1.LineNumber, e1.StartCol);
-                    }
-                }
                 else if (token.Type == THICK_ARROW)
                 {
                     var child0 = n.children[0];
@@ -790,20 +802,7 @@ namespace AST
                 {
                     var child0 = n.children[0];
 
-                    if (child0 is ExpressionContext)
-                    {
-                        Exp lhs = visit((ExpressionContext)child0);
-                        var args = new List<Exp>();
-                        for (int i = 2; i < n.children.Count; i++)
-                        {
-                            var childi = n.children[i];
-                            if (childi is ExpressionContext)
-                                args.Add(visit((ExpressionContext)childi));
-                        }
-
-                        return new MethodCall(lhs, args, lhs.LineNumber, lhs.StartCol);
-                    }
-                    else if (child0 is ArrayContext)
+                    if (child0 is ArrayContext)
                     {
                         (AnyType type, int line, int col) = visit((ArrayContext)child0);
                         Exp e1 = visit((ExpressionContext)n.children[2]);
@@ -819,7 +818,7 @@ namespace AST
             }
             else if (child1 is ExpressionContext)
             {
-                dynamic child0 = n.children[0];
+                var child0 = n.children[0];
 
                 if (child0.Payload is IToken)
                 {
@@ -832,15 +831,36 @@ namespace AST
                         var exps = new List<Exp>();
                         for (int i = 1; i < n.children.Count; i++)
                         {
-                            dynamic childi = n.children[i];
+                            var childi = n.children[i];
                             if (childi is ExpressionContext)
-                                exps.Add(visit(childi));
+                                exps.Add(visit((ExpressionContext)childi));
                         }
                         return new NewTuple(exps, token0.Line, token0.Column);
                     }
                     else if (token0.Type == NOT | token0.Type == NOT_OP)
                         return new Not(visit(child1), token0.Line, token0.Column);
                 }
+            }
+            else if (child1 is AccessContext)
+            {
+                var child0 = n.children[0];
+                Exp e2 = visit((AccessContext)n.children[1]);
+                if (child0 is ExpressionContext)
+                {
+                    Exp e1 = visit((ExpressionContext)child0);
+                    return new MemberAccess(e1, e2, e1.LineNumber, e1.StartCol);
+                }
+                else if (child0.Payload is IToken)
+                {
+                    IToken token0 = (IToken)child0.Payload;
+                    return new GlobalAccess(e2, token0.Line, token0.Column);
+                }
+            }
+            else if (child1 is Method_callContext)
+            {
+                Exp e1 = visit((ExpressionContext)n.children[0]);
+                List<Exp> args = visit((Method_callContext)n.children[1]);
+                return new MethodCall(e1, args, e1.LineNumber, e1.StartCol);
             }
 
            throw new Exception($"Invalid type {child1.GetType()} detected");
@@ -893,20 +913,20 @@ namespace AST
             dynamic child = n.children[n.ChildCount - 1];
             Exp cond = visit((dynamic)n.children[1]);
             IToken If = (IToken)n.children[0].Payload;
-            var statements = new List<Statement>();
+            var statements = new List<AstNode>();
 
             if(child is Single_statementContext || child is Scope_bodyContext)
             {
                 Statement statement = visit(child);
                 if (statement is StatementList)
                     statements.AddRange(((StatementList)statement).Statements);
-                else
-                    statements.Add(statement);
+                else if (statement is AstNode)
+                    statements.Add((AstNode)statement);
                 return new SingleIf(cond, statements, If.Line, If.Column);
             } else
             {
-                var elifs = new List<(Exp, List<Statement>)>();
-                var Else = new List<Statement>();
+                var elifs = new List<(Exp, List<AstNode>)>();
+                var Else = new List<AstNode>();
 
                 for (int i = 2; i < n.ChildCount; i++)
                 {
@@ -917,8 +937,8 @@ namespace AST
                         Statement statement = visit(childi);
                         if (statement is StatementList)
                             statements.AddRange(((StatementList)statement).Statements);
-                        else
-                            statements.Add(statement);
+                        else if (statement is AstNode)
+                            statements.Add((AstNode)statement);
                     }
                     else if(childi is Elif_statementContext)
                         elifs.Add(visit(childi));
@@ -933,29 +953,29 @@ namespace AST
 
             
         }
-        private (Exp, List<Statement>) visit(Elif_statementContext n)
+        private (Exp, List<AstNode>) visit(Elif_statementContext n)
         {
             dynamic child = n.children[n.ChildCount - 1];
             Exp cond = visit((dynamic)n.children[1]);
-            var statements = new List<Statement>();
+            var statements = new List<AstNode>();
 
             Statement statement = visit(child);
             if (statement is StatementList)
                 statements.AddRange(((StatementList)statement).Statements);
-            else
-                statements.Add(statement);
+            else if (statement is AstNode)
+                statements.Add((AstNode)statement);
             return (cond, statements);
         }
-        private List<Statement> visit(Else_statementContext n)
+        private List<AstNode> visit(Else_statementContext n)
         {
             dynamic child = n.children[n.ChildCount - 1];
-            var statements = new List<Statement>();
+            var statements = new List<AstNode>();
 
             Statement statement = visit(child);
             if (statement is StatementList)
                 statements.AddRange(((StatementList)statement).Statements);
-            else
-                statements.Add(statement);
+            else if (statement is AstNode)
+                statements.Add((AstNode)statement);
             return statements;
         }
 
@@ -966,7 +986,7 @@ namespace AST
         private Statement visit(While_loopContext n)
         {
             Exp condition;
-            List<Statement> statements = new List<Statement>();
+            List<AstNode> statements = new List<AstNode>();
             int lineNumber, startCol;
 
             IToken identifier = (IToken)n.children[0].Payload;
@@ -976,8 +996,8 @@ namespace AST
             Statement stat = visit((dynamic)n.children[n.ChildCount - 1]);
             if (stat is StatementList)
                 statements.AddRange(((StatementList)stat).Statements);
-            else
-                statements.Add(stat);
+            else if (stat is AstNode)
+                statements.Add((AstNode)stat);
 
             return new While(condition, statements, lineNumber, startCol);
         }
@@ -986,7 +1006,7 @@ namespace AST
             string varName;
             bool isUp;
             Exp start, end;
-            List<Statement> statements = new List<Statement>();
+            List<AstNode> statements = new List<AstNode>();
             int lineNumber, startCol;
 
             IToken identifier = (IToken)n.children[0].Payload;
@@ -1002,8 +1022,8 @@ namespace AST
             Statement stat = visit((dynamic)n.children[n.ChildCount - 1]);
             if (stat is StatementList)
                 statements.AddRange(((StatementList)stat).Statements);
-            else
-                statements.Add(stat);
+            else if (stat is AstNode)
+                statements.Add((AstNode)stat);
 
             return new RepeatLoop(varName, isUp, start, end, statements, lineNumber, startCol);
         }
@@ -1011,21 +1031,21 @@ namespace AST
         {
             string varName;
             Exp exp;
-            List<Statement> statements = new List<Statement>();
+            List<AstNode> statements = new List<AstNode>();
             int lineNumber, startCol;
 
             IToken pop = (IToken)n.children[0].Payload;
-            IToken identifier = (IToken)n.children[2].Payload;
+            IToken identifier = (IToken)n.children[1].Payload;
 
             varName = identifier.Text;
             lineNumber = pop.Line;
             startCol = pop.Column;
-            exp = visit((dynamic)n.children[4]);
+            exp = visit((dynamic)n.children[3]);
             Statement stat = visit((dynamic)n.children[n.ChildCount - 1]);
             if (stat is StatementList)
                 statements.AddRange(((StatementList)stat).Statements);
-            else
-                statements.Add(stat);
+            else if (stat is AstNode)
+                statements.Add((AstNode)stat);
 
             return new PopLoop(varName, exp, statements, lineNumber, startCol);
         }
@@ -1066,6 +1086,21 @@ namespace AST
                 number = int.Parse(n.INTEGER_LITERAL()[0].GetText());
 
             return new Double(number * (negative ? -1 : 1), token.Line, token.Column);
+        }
+
+        private Exp visit(AccessContext n) => visit((ExpressionContext)n.children[1]);
+
+        private List<Exp> visit(Method_callContext n)
+        {
+            var args = new List<Exp>();
+            for (int i = 2; i<n.children.Count; i++)
+            {
+                var childi = n.children[i];
+                if (childi is ExpressionContext)
+                    args.Add(visit((ExpressionContext) childi));
+            }
+
+            return args;
         }
 
         private (AnyType, int, int) visit(TypeContext n)

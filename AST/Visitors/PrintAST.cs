@@ -693,6 +693,15 @@ namespace AST
             Console.Write(")");
         }
 
+        public void Visit(Xnor n)
+        {
+            Console.Write("(");
+            n.E1.Accept(this);
+            Console.Write(" xnor ");
+            n.E2.Accept(this);
+            Console.Write(")");
+        }
+
 
         // creation expressions and pack expressions
 
@@ -850,7 +859,7 @@ namespace AST
                 foreach (var node in nodes)
                 {
                     tab();
-                    node.Accept(this);
+                    ((AstNode)node).Accept(this);
                 }
                 numTabs--;
                 tab();

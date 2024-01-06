@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class PopStream : Statement
+    public class PopStream : AstNode, Statement
     {
         public Exp Var;
         public bool HasOutputIdx;

@@ -52,24 +52,36 @@ namespace AST
 
         private AstNode visit(Chew_importContext n)
         {
+            bool hasFrom = n.FROM() != null;
+            int numStringLiterals = hasFrom ? 2 : 1;
+
+            var lastChild = n.children[n.ChildCount - 1].Payload;
+            var importPath = "";
+            if (hasFrom)
+            {
+                var tokenLast = (IToken)lastChild;
+                var txt = tokenLast.Text;
+                importPath = txt.Substring(1, txt.Length - 2);
+            }
 
             IToken child0 = (IToken)n.children[0].Payload;
-            if (n.STRING_LITERAL() != null)
+            if (n.STRING_LITERAL().Length == numStringLiterals)
             {
                 IToken child1 = (IToken)(n.children[1].Payload);
                 string text = child1.Text;
-                return new ChewPath(text.Substring(1, text.Length - 2), child0.Line, child0.Column);
+                return new ChewPath(text.Substring(1, text.Length - 2), child0.Line, child0.Column, hasFrom, importPath);
             }
 
             var names = new List<string>();
-            for (int i = 1; i < n.ChildCount; i++)
+            int children = hasFrom ? n.ChildCount - 2 : n.ChildCount;
+            for (int i = 1; i < children; i++)
             {
                 IToken childi = (IToken)n.children[i].Payload;
                 if (childi.Type == IDENTIFIER)
                     names.Add(childi.Text);
             }
-            return new ChewNames(names, child0.Line, child0.Column);
-        }
 
+            return new ChewNames(names, child0.Line, child0.Column, hasFrom, importPath);
+        }
     }
 }

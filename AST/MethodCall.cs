@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class MethodCall : Exp
+    public class MethodCall : Exp, Statement
     {
         public Exp Lhs;
         public List<Exp> Args;

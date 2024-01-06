@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class IncDec : Statement
+    public class IncDec : AstNode, Statement
     {
         public Exp E1, E2;
         public bool ShouldIncrement; // decrement if false

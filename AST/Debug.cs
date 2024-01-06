@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-    public class Debug : Statement
+    public class Debug : AstNode, Statement
     {
         public AstNode Thing; // only add Printable at runtime
         public bool UseNewLine;
