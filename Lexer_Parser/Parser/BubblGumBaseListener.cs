@@ -48,6 +48,30 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitProgram([NotNull] BubblGumParser.ProgramContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.define_stock"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDefine_stock([NotNull] BubblGumParser.Define_stockContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.define_stock"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDefine_stock([NotNull] BubblGumParser.Define_stockContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.chew_import"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterChew_import([NotNull] BubblGumParser.Chew_importContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.chew_import"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitChew_import([NotNull] BubblGumParser.Chew_importContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.class"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -59,6 +83,30 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitClass([NotNull] BubblGumParser.ClassContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.interface"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterInterface([NotNull] BubblGumParser.InterfaceContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.interface"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitInterface([NotNull] BubblGumParser.InterfaceContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.interface_member"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterInterface_member([NotNull] BubblGumParser.Interface_memberContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.interface_member"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitInterface_member([NotNull] BubblGumParser.Interface_memberContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.class_member"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -83,6 +131,18 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVisibility([NotNull] BubblGumParser.VisibilityContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.struct"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterStruct([NotNull] BubblGumParser.StructContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.struct"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitStruct([NotNull] BubblGumParser.StructContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.function"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -228,53 +288,29 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitReturn_statement([NotNull] BubblGumParser.Return_statementContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.object_declaration_assignment"/>.
+	/// Enter a parse tree produced by <see cref="BubblGumParser.primitive_declaration"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterObject_declaration_assignment([NotNull] BubblGumParser.Object_declaration_assignmentContext context) { }
+	public virtual void EnterPrimitive_declaration([NotNull] BubblGumParser.Primitive_declarationContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.object_declaration_assignment"/>.
+	/// Exit a parse tree produced by <see cref="BubblGumParser.primitive_declaration"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitObject_declaration_assignment([NotNull] BubblGumParser.Object_declaration_assignmentContext context) { }
+	public virtual void ExitPrimitive_declaration([NotNull] BubblGumParser.Primitive_declarationContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.variable_declaration_assignment"/>.
+	/// Enter a parse tree produced by <see cref="BubblGumParser.assignment"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterVariable_declaration_assignment([NotNull] BubblGumParser.Variable_declaration_assignmentContext context) { }
+	public virtual void EnterAssignment([NotNull] BubblGumParser.AssignmentContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.variable_declaration_assignment"/>.
+	/// Exit a parse tree produced by <see cref="BubblGumParser.assignment"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitVariable_declaration_assignment([NotNull] BubblGumParser.Variable_declaration_assignmentContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.variable_declaration"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterVariable_declaration([NotNull] BubblGumParser.Variable_declarationContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.variable_declaration"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitVariable_declaration([NotNull] BubblGumParser.Variable_declarationContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.variable_assignment"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterVariable_assignment([NotNull] BubblGumParser.Variable_assignmentContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.variable_assignment"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitVariable_assignment([NotNull] BubblGumParser.Variable_assignmentContext context) { }
+	public virtual void ExitAssignment([NotNull] BubblGumParser.AssignmentContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.variable_inc_dec"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -384,6 +420,30 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitExpression([NotNull] BubblGumParser.ExpressionContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.method_call"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterMethod_call([NotNull] BubblGumParser.Method_callContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.method_call"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitMethod_call([NotNull] BubblGumParser.Method_callContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.access"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAccess([NotNull] BubblGumParser.AccessContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.access"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAccess([NotNull] BubblGumParser.AccessContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.double"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -444,6 +504,18 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitType([NotNull] BubblGumParser.TypeContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.array"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterArray([NotNull] BubblGumParser.ArrayContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.array"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitArray([NotNull] BubblGumParser.ArrayContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.primitive"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -456,6 +528,18 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitPrimitive([NotNull] BubblGumParser.PrimitiveContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.tuple"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTuple([NotNull] BubblGumParser.TupleContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.tuple"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTuple([NotNull] BubblGumParser.TupleContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.primitive_pack"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -467,6 +551,18 @@ public partial class BubblGumBaseListener : IBubblGumListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitPrimitive_pack([NotNull] BubblGumParser.Primitive_packContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.any_array"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAny_array([NotNull] BubblGumParser.Any_arrayContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.any_array"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAny_array([NotNull] BubblGumParser.Any_arrayContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

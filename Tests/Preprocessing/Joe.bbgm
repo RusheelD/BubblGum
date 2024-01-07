@@ -1,0 +1,10 @@
+Chew "./Other/Cat.bbgm"
+Chew bobafet
+
+stock joe
+
+Gum thing {
+ sugar a :: 2
+}
+
+Gum thing: NiceInterface {}

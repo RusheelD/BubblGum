@@ -1,0 +1,35 @@
+while a:
+    b :: c
+    c::d
+
+while t {
+    c :: d
+    e::f
+}
+
+
+while t {}
+
+a : repeatUp (0, d) {
+    b :: 2 * a + 1
+}
+
+a : repeatUp (c, d):
+    a :: b
+    c :: d
+
+a : repeatDown (c, d->size){
+    a :: b
+    c :: d
+}
+
+sugar c :: 0
+pop a from z => c +: a
+
+pop dist from loc => {
+    d : repeatDown (c, d) {
+        (d)!
+    }
+    d : repeatUp (d, c):
+        (1/d)!
+}

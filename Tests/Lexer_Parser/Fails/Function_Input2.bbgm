@@ -1,0 +1,6 @@
+# Fail due to flavor type used as input
+recipe: HelloWorld(flavor b) <sugar, kcal b, carb> {
+    pop "hello"
+    pop "!" => 2
+    pop "world" => b
+}

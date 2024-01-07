@@ -1,0 +1,6 @@
+# Fail due to flavor type returned in output
+recipe: HelloWorld(sugar a) <flavor b> {
+    pop "hello"
+    pop "!" => 2
+    pop "world" => b
+}

@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.IO;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Text;
@@ -36,7 +35,7 @@ public class TestParser
             // parse test file and if successful, store output in memory stream
             var memoryStream = new MemoryStream();
             var outputStream = new StreamWriter(TEMP_TEST_FILE_NAME, false);
-            bool isSuccess = BubblGum.ExecuteParser(inputFile, outputStream);
+            bool isSuccess = BubblGum.ExecuteParser(new List<string>() { inputFile }, outputStream);
             Assert.AreEqual(shouldSucceed, isSuccess);
 
             // compare received output to expected output

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Library</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -18,7 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AST\Ast.csproj" />
+    <ProjectReference Include="..\BubblGum\BubblGum.csproj" />
     <ProjectReference Include="..\Lexer_Parser\AntlrCSharp.csproj" />
+    <ProjectReference Include="..\Preprocessing\Preprocessing.csproj" />
   </ItemGroup>
 
 </Project>

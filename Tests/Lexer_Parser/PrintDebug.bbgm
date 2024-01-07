@@ -1,0 +1,5 @@
+﻿(sugar a :: 2-4) !
+(kcal b :: 2 * 4 - 3 / 2) ?
+(Dave->wife->lemonCookie :: 2) !
+a : repeatUp (0, 10):
+    (b :: a) ?

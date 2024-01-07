@@ -1,0 +1,33 @@
+# functions with immutable parameters, outputs w/ and w/o names, and various pop styles
+recipe: HelloWorld($sugar a, kcal b, $[BubbleGum, Backpack] d) <sugar, kcal b, carb> {
+    a: repeatUp(0, 16):
+       pop a
+
+    _cow b :: b->c[4]->a + b
+
+    (pop "hello") !
+    pop "!" => 2
+    pop "world" => b
+}
+
+# ellipses (ie. auto arrays) and flavor types
+recipe: SomeFunc1(kcal d, kcal d..., sugar a...) <carb..., sugar...> {
+        pop 17
+        flavor c :: "batman" + "hates joker"
+        flavor arr :: [Batman, Joker, LoveHateRelationship](4)
+        a: repeatUp(0, 16):
+            pop a
+}
+
+# single line function
+recipe: SingleLine(kcal d) kcal : pop "woah" + d
+
+# flavorpack is now an object!
+Gum Line2D {
+    recipe: SomeFunc() flavorpack {
+            flavor a :: flavorpack(SIZE)
+            a[0] :: 17
+            idx: repeatUp(0, 16):
+                    a[idx] :: idx
+    }
+}

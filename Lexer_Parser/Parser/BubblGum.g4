@@ -1,43 +1,56 @@
 grammar BubblGum;
 
-program: (class | function | statement)* EOF;
+program: chew_import* define_stock? (class | interface | function | struct | statement)* EOF;
 
-class: STICKY? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
+define_stock: STOCK IDENTIFIER (THIN_ARROW IDENTIFIER)*;
+chew_import: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL);
+
+class: STICKY? visibility? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? 
+    LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;
+
+interface: STICKY? visibility? WRAPPER IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? 
+    LEFT_CURLY_BRACKET interface_member* RIGHT_CURLY_BRACKET;
+
+interface_member: STICKY? visibility? (function_header 
+            | (primitive_declaration (PRINT | DEBUG)?) 
+            | (assignment (PRINT | DEBUG)?));
+
 class_member: STICKY? visibility? (function
            | (primitive_declaration (PRINT | DEBUG)?)
-           | (flavorless_object_assignment (PRINT | DEBUG)?)
            | (assignment (PRINT | DEBUG)?));
+
 visibility: BOLD | SUBTLE | BLAND;
 
+// is it a statement right now?
+// makes sense
+
+struct: CANDY COLON IDENTIFIER LEFT_CURLY_BRACKET (primitive_declaration | assignment)* RIGHT_CURLY_BRACKET;
 function: function_header ((COLON single_statement) | scope_body);
-function_header: (RECIPE COLON) IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
-parameters: LEFT_PAREN ((IMMUTABLE? type IDENTIFIER (COMMA IMMUTABLE? type IDENTIFIER)*)?
-        | (IMMUTABLE? type IDENTIFIER ELIPSES)?) RIGHT_PAREN;
-outputs: LEFT_ANGLE_BRACKET
-        ((type IDENTIFIER?)? | (type IDENTIFIER? (COMMA type IDENTIFIER?)*) | (type ELIPSES))
-         RIGHT_ANGLE_BRACKET;
+function_header: RECIPE COLON IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
+parameters: LEFT_PAREN (IMMUTABLE? type IDENTIFIER ELLIPSES? (COMMA IMMUTABLE? type IDENTIFIER ELLIPSES?)*)? RIGHT_PAREN;
+outputs: LEFT_ANGLE_BRACKET ((type (IDENTIFIER)? ELLIPSES? (COMMA type IDENTIFIER? ELLIPSES?)*)) RIGHT_ANGLE_BRACKET;
 
 scope_body: LEFT_CURLY_BRACKET statement_list RIGHT_CURLY_BRACKET; // { statements }
 statement_list: (statement)*; // statements
 
 statement: single_statement | scope_body;
 single_statement: base_statement | print_statement | debug_statement | if_statement | loop;
-print_statement: (base_statement | expression) PRINT PRINT?;
-debug_statement: (base_statement | expression) DEBUG;
+
+print_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN PRINT PRINT?;
+debug_statement: LEFT_PAREN (base_statement | expression) RIGHT_PAREN DEBUG DEBUG?;
 
 // anything that can be printed out or debugged
-base_statement: primitive_declaration | assignment | flavorless_object_assignment | variable_inc_dec | return_statement;
+base_statement: primitive_declaration | assignment | variable_inc_dec | return_statement | (expression method_call);
 return_statement: (POP) | (POP expression (THICK_ARROW expression)?) |
               (POP expression THICK_ARROW POPSTREAM (LEFT_PAREN expression RIGHT_PAREN)?);
 
-primitive_declaration: primitive IDENTIFIER (COMMA primitive IDENTIFIER)*;
-flavorless_object_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN FLAVORLESS;
-assignment: ((IMMUTABLE? type IDENTIFIER) | IDENTIFIER | expression) (COMMA (IMMUTABLE? type IDENTIFIER) | IDENTIFIER | expression)* ASSIGN expression;
-// supports anything on LHS (ex. sugar a, $Cow c, d, Life->HappinessCount :: exp)
+primitive_declaration: (primitive IDENTIFIER (COMMA primitive IDENTIFIER)*) | 
+               (primitive IDENTIFIER (COMMA IDENTIFIER)*);
+assignment: (((IMMUTABLE? (type | FLAVOR))? IDENTIFIER) | expression)
+    (COMMA (((IMMUTABLE? (type | FLAVOR))? IDENTIFIER) | expression))*
+    ASSIGN expression;
+// supports anything on LHS (ex. $Cow c, sugar a, [sugar] b, flavor d, loneWolf, Life->HappinessCount, a[0] :: b )
 
-//object_declaration_assignment: IMMUTABLE? IDENTIFIER IDENTIFIER (COMMA IMMUTABLE? IDENTIFIER IDENTIFIER)* ASSIGN (FLAVORLESS | expression);
-//variable_declaration_assignment: def_info (COMMA def_info)* ASSIGN expression;
-//variable_assignment: def_info | expression (COMMA (def_info | expression))* ASSIGN expression;
 variable_inc_dec: expression (PLUS_COLON | MINUS_COLON) expression;
 
 if_statement: IF expression ((COLON single_statement) | scope_body) elif_statement* else_statement?;
@@ -46,37 +59,41 @@ else_statement: (ELSE ((COLON single_statement) | scope_body));
 
 loop: while_loop | repeat_loop | pop_loop;
 while_loop: WHILE expression ((COLON single_statement) | scope_body);
-repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (INTEGER_LITERAL | expression) COMMA (INTEGER_LITERAL | expression) RIGHT_PAREN ((COLON single_statement) | scope_body);
-pop_loop: POP FLAVORS IDENTIFIER IN expression THICK_ARROW (single_statement | scope_body);
+repeat_loop: IDENTIFIER COLON (REPEAT_DOWN | REPEAT_UP) LEFT_PAREN (int | expression) COMMA
+             (int | expression) RIGHT_PAREN ((COLON single_statement) | scope_body);
+pop_loop: POP IDENTIFIER FROM expression THICK_ARROW (single_statement | scope_body);
 
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
 expression: LEFT_PAREN expression RIGHT_PAREN |
+              SWEETS access | // global access
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
-              expression THIN_ARROW SIZE | // array size access
-              expression THIN_ARROW EMPTY | // object empty access
-              expression THIN_ARROW expression | // member access
-              (primitive_pack | (primitive PACK)) LEFT_PAREN expression RIGHT_PAREN | // new array
-              expression LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN | // method call
-              expression LEFT_PAREN RIGHT_PAREN | // new object
-              INPUT LEFT_PAREN RIGHT_PAREN | // input method call
-              (PLUS_PLUS | MINUS_MINUS) expression | // start of operator precedence
-              expression (PLUS_PLUS | MINUS_MINUS) |
+              expression access | // member access
+              expression method_call | // method call or new object
+              array LEFT_PAREN expression RIGHT_PAREN | // new array
+              LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
+              expression THICK_ARROW (primitive | IDENTIFIER) | // cast
               (NOT | NOT_OP) expression |
               expression (POWER | MODULO) expression |
+              expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
               expression (MULTIPLY | DIVIDE) expression|
               expression (PLUS | MINUS) expression |
-              expression (LEFT_SHIFT | RIGHT_SHIFT) expression |
               expression (GT_EQ | LT_EQ | LEFT_ANGLE_BRACKET | RIGHT_ANGLE_BRACKET) expression |
               expression (EQUALS | NOT_EQ_1 | NOT_EQ_2 | IS | SUBCLASS_OF) expression |
               expression (AND | AND_OP) expression |
-              expression (XOR | XOR_OP) expression |
+              expression (XOR | XOR_OP | XNOR) expression |
               expression (OR | OR_OP) expression | // end of operator precedence
               boolean |
               identifier |
               double |
-              int |
+              int | 
+              MINTPACK |
               STRING_LITERAL |
-              CHAR_LITERAL;
+              CHAR_LITERAL |
+              FLAVORLESS;
+
+// method call
+method_call: LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN;
+access: THIN_ARROW expression;
 
 double : (PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL?;
 int : (PLUS | MINUS)? INTEGER_LITERAL;
@@ -88,15 +105,23 @@ boolean: YUP | NOPE;
 //// identifier: any identifier you can find in code
 identifier: (IDENTIFIER | THIS);
 
-type: primitive | primitive PACK | primitive_pack | IDENTIFIER | IDENTIFIER PACK;
-primitive: FLAVOR | SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
-primitive_pack: FLAVORPACK | SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
+type: primitive | array | tuple | IDENTIFIER;
+array: primitive_pack | any_array | IDENTIFIER PACK;
+primitive: SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
+tuple: LEFT_ANGLE_BRACKET (type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)* RIGHT_ANGLE_BRACKET;
+primitive_pack: SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
+any_array: LEFT_SQUARE_BRACKET ((type | FLAVOR) | ((type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)+))
+          RIGHT_SQUARE_BRACKET;
 
 /* ------------------------ TOKENS ------------------------*/
 // keywords
-THIS: 'gum';
+THIS: 'gum';            // this
+SWEETS: 'sweets';       // file namespace
+STOCK: 'stock';         // define new namespace
 RECIPE: 'recipe';       // method
-GUM: 'Gum';             // class
+CANDY: 'candy';         // struct
+GUM: 'Gum';             // class 
+CHEW: 'Chew';           // using/import
 FLAVOR: 'flavor';       // var
 FLAVORS: 'flavors';     // keyword
 SUGAR: 'sugar';         // int
@@ -108,15 +133,13 @@ BOLD: 'bold';           // public
 SUBTLE: 'subtle';       // protected
 BLAND: 'bland';         // private
 POP: 'pop';             // return (but better) (also a foreach loop)
-SIZE: 'size';           // array size 
-EMPTY: 'empty';         // Object's empty status
-INPUT: 'input';         // input from stdin     
 PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
-
+WRAPPER: 'Wrapper';     // interface
+MINTPACK: 'mintpack';   // args
+     
 PACK: 'pack';
-FLAVORPACK: 'flavorpack';
-SUGARPACK: 'sugarpack'; 
+SUGARPACK: 'sugarpack';
 CARBPACK: 'carbpack';
 CALPACK: 'calpack';
 KCALPACK: 'kcalpack';
@@ -139,6 +162,7 @@ POPSTREAM: 'popstream';
 NOT: 'not';
 IN: 'in';
 IS: 'is';
+FROM: 'from';
 
 // DELIMITERS
 ASSIGN: '::';
@@ -153,7 +177,7 @@ RIGHT_ANGLE_BRACKET: '>';
 COMMA: ',';
 SEMICOLON: ';';
 COLON: ':';
-ELIPSES: '...';
+ELLIPSES: '...';
 DOT: '.';
 PRINT: '!';
 DEBUG: '?';
@@ -165,12 +189,10 @@ IMMUTABLE: '$';
 // OPERATORS
 GT_EQ : '>=';
 LT_EQ : '<=';
-LEFT_SHIFT: '<<';
-RIGHT_SHIFT: '>>';
+LEFT_SHIFT: '<:';
+RIGHT_SHIFT: ':>';
 NOT_EQ_1 : '<>';
 NOT_EQ_2 : '~=';
-PLUS_PLUS: '++';
-MINUS_MINUS: '--';
 PLUS_COLON: '+:';
 MINUS_COLON: '-:';
 THIN_ARROW: '->';

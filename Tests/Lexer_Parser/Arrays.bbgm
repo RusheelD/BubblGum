@@ -1,0 +1,38 @@
+
+# various types of arrays
+recipe: HelloWorld() <[sugar, kcal, carb, kcarb, Cow], [sugar], [cow]> {}
+recipe: HelloWorld() [Yeet] {}
+
+# pack arrays
+sugarpack a :: sugarpack(4)
+Cow pack a :: Cow pack(4)
+Cow pack b :: [Cow](4)
+flavor a :: [Cow](4)
+
+# simplified syntax for tuple array
+recipe: HelloWorld() <[sugar, kcal, Cow] a> {}
+
+# rigorous syntax for tuple array
+recipe: HelloWorld() <[<sugar, sugar, Cow>] a> {}
+
+# array of arrays and tuples (recursive)
+recipe: HelloWorld() <[sugar, [[Cow, sugar]]] a> {}
+recipe: HelloWorld() <[sugar, [<carb, joe, [Cow, sugar] a>], Cow] a> {}
+
+# allow individual elements of a tuple to be defined in tupple arrays
+recipe: HelloWorld() <[sugar] b> {}
+recipe: HelloWorld() <[sugar a, kcal, carb b, [Kcarb a, Cow] b, Cow] a> {}
+recipe: HelloWorld() <[sugar b, [<carb e, joe, [Cow, sugar f] a>], Cow] a> {}
+
+#Should add support for arr[0]->Item0, arr[0]->Item1, in the parser. Note that logic wise,
+#arr[0] will become a tuple so this functionality only needs to be added to Tuples in the logic stage
+
+# Array assignment
+[Cow, Bam] a :: nflv
+[Cow, Bam] a :: flavorless
+[Cow, Bam] a :: [Cow, Bam](4)
+flavor a :: [Cow, Bam](4)
+
+# Multi-dimensional arrays
+[[[Cow]]] a :: nflv
+[[[Cow]]] a :: [[Cow]](4)

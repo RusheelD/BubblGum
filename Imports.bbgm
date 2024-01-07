@@ -1,0 +1,12 @@
+Chew cat->dog
+Chew joe
+Chew "./Other/Billy.bbgm" #this worked :)
+Chew "../Lexer_Parser/Imports.bbgm"
+
+stock bob
+
+Gum thing {
+ sugar a :: 2
+}
+
+Gum thing: NiceInterface {}

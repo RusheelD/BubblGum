@@ -1,0 +1,10 @@
+recipe: HelloWorld() <sugar, kcal b, carb, [sugar] a, kcal d, carb e...> {
+    <sugar milk, sugar lives> Cow :: 4
+    <sugar, sugar> Cow :: 4
+    <sugar, sugar> Cow :: <4,4>
+    <sugar, sugar> Cow :: <"woah",4, [bob](4)>
+    <sugar a, sugar, kcal d, Cow e> Cow :: <"woah",4, [bob](4), "moo", "moo">
+    <sugar, sugar> Cow :: <4,4>
+    <sugar, sugar> Cow :: nflv
+    <sugar, sugar> Cow :: flavorless
+}

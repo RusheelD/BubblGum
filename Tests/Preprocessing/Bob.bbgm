@@ -1,0 +1,14 @@
+Chew cat->dog
+Chew cat from "./Other"
+Chew jonahill
+Chew "./Other/nonexistentpath"
+
+stock bob
+
+Gum thing {
+ sugar a :: 2
+}
+
+Wrapper thing: NiceInterface {}
+
+candy : a {}
