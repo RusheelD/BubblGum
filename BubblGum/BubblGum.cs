@@ -11,15 +11,20 @@ using AST;
 using System.Diagnostics;
 using System.Xml.Linq;
 using Microsoft.VisualBasic;
+using System.Text.Json;
 
 public class BubblGum
 {
 
-    // print compiler messages to output file if debugging, Console.Out if not debugging
+    // If debugging, print compiler messages to output file. Else print to Console.Out
     private const bool DEBUG_MODE = false;
+
+    // Directory of the entry point file for the compiler
+    private static string? directoryPrefix;
 
     private const string OUTPUT_FILE = "./Main/Output.txt";
     private const string ERROR_MSG = "Please specify a valid mode (-P) to parse file and a file to scan";
+
 
     public static void Execute(string[] args)
     {
@@ -62,30 +67,15 @@ public class BubblGum
             Console.Error.WriteLine("Specified compiler mode not yet implemented");
     }
 
-    public static (bool, HashSet<string>?) ExecuteHeaderParser(string filePath, TextWriter outStream) {
-
-        // directory_prefix (get directory name of filepath typed in compiler when running)
-        // import path relative to the entry point directory
-        // store path with dot dots if it goes outside
-
-        // file's path relative to the entry point -> GetRelativePath(directory_prefix,path)
-        // import statement (very specific path import relative to file)  ex. ./Other/Joe.bbgm -> n.Path
-
-        // import physics
-        // import physicsExt
-
-        // import a and b
-
-        // import physics from "location" // in case namespace is imported outside
-        // import file // import file (inside or outside)
-
+    public static (bool, HashSet<string>?) ExecuteHeaderParser(string filePath, TextWriter outStream) 
+    {
         if (!File.Exists(filePath))
         {
             Console.Error.WriteLine($"Invalid entry point for the compiler");
             return (false, null);
         }
         
-        string? directoryPrefix = Path.GetDirectoryName(filePath);
+        directoryPrefix = Path.GetDirectoryName(filePath);
         if (directoryPrefix == null) {
             Console.Error.WriteLine("Directory of entry file could not be established");
             return (false, null);
@@ -93,62 +83,20 @@ public class BubblGum
         else if (directoryPrefix.Equals(string.Empty))
             directoryPrefix = ".";
 
-        filePath = Path.GetRelativePath(directoryPrefix, filePath);
-
         // update outstream
         var originalOutStream = Console.Out;
         Console.SetOut(outStream);
 
-        // add all file paths recursively in main file's directory + subdirectories
-        string requiredFileEnding = "*" + Constants.FILE_EXTENSION;
-        var filePathsFound = new List<string>();
+        filePath = Path.GetRelativePath(directoryPrefix, filePath);
+        List<string>filePathsFound = getFilePathsRecursively();
 
-        var directoriesToSearch = new Queue<string>();
-        directoriesToSearch.Enqueue(directoryPrefix);
-
-        while (directoriesToSearch.Count > 0)
-        {
-            string currDirectory = directoriesToSearch.Dequeue();
-            string[] files = Directory.GetFiles(currDirectory, requiredFileEnding);
-            filePathsFound.AddRange(files);
-
-            string[] directories = Directory.GetDirectories(currDirectory);
-            foreach (var dir in directories)
-                directoriesToSearch.Enqueue(dir);
-        }
-
-        // store namespace info for all files in a tree
         var baseNamespace = new Namespace("");
-
-        // map a file path to a program containing it's namespace (if applicable) and it's imports
         var filePathToProgram = new Dictionary<string, Program>();
-        foreach (string path in filePathsFound)
-        {
-            var inputTxt = File.ReadAllText(path);
-
-            #pragma warning disable
-            AntlrInputStream input = new AntlrInputStream(inputTxt);
-            BubblGumHeaderLexer lexer = new BubblGumHeaderLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            BubblGumHeaderParser parser = new BubblGumHeaderParser(tokens);
-            BubblGumHeaderParser.ProgramContext programContext = parser.program();
-            #pragma warning restore
-
-            if (parser.NumberOfSyntaxErrors > 0)
-            {
-                Console.SetOut(originalOutStream);
-                Console.Error.WriteLine($"Parsing failed for file {path} due to syntax errors.");
-                return (false, null);
-            }
-
-            var createASTHeader = new CreateHeaderAST();
-            Program program = createASTHeader.Visit(programContext);
-            
-            var shortenedPath = Path.GetRelativePath(directoryPrefix, path);
-            filePathToProgram[shortenedPath] = program;
-
-            var gatherNamespaces = new GatherNamespaces();
-            gatherNamespaces.Execute(program, baseNamespace, shortenedPath);
+        (bool success, string errorPath) = updateNamespaceAndPrograms(baseNamespace, filePathToProgram, filePathsFound);
+        if (!success) {
+            Console.SetOut(originalOutStream);
+            Console.Error.WriteLine($"Parsing failed for file {errorPath} due to syntax errors.");
+            return (false, null);
         }
 
         // generate list of all files used
@@ -159,7 +107,6 @@ public class BubblGum
 
         // setup import scanning
         var scanImports = new ScanImports(baseNamespace, filePathToProgram, allFilesUsed);
-
         int errorCount = 0;
         while (filesToScan.Count > 0)
         {
@@ -178,8 +125,8 @@ public class BubblGum
         Console.Out.Close();
         Console.SetOut(originalOutStream);
 
-        bool success = errorCount == 0;
-        return (success, allFilesUsed);
+        success = errorCount == 0;
+        return (errorCount == 0, allFilesUsed);
     }
 
     // Takes in an outstream to print compiler messages to, and a file to parse
@@ -287,5 +234,91 @@ public class BubblGum
             if (tree.ChildCount == 0)
                 Console.Out.Write(tree.GetText() + " ");
         }
+    }
+
+    private static void parseConfigs(string[] configs, Queue<string> directoriesToSearch, string currDirectory) {
+        if (configs.Length != 0) {
+            foreach (var config in configs) {
+                string readJSONString = File.ReadAllText(config);
+                try {
+                    Config? deserializedConfig = JsonSerializer.Deserialize<Config>(readJSONString);
+
+                    if (deserializedConfig != null && deserializedConfig.directories != null) {
+                        foreach (var dir in deserializedConfig.directories) {
+                            var fullDir = Path.Combine(currDirectory, dir);
+                            if (Directory.Exists(fullDir))
+                                directoriesToSearch.Enqueue(fullDir);
+                            else
+                                Console.Error.WriteLine($"External directory {{{dir}}} could not be imported in {{{config}}}");
+                        }
+                    }
+                    else
+                        Console.Error.WriteLine("???");
+                } catch {
+                    var shortenedConfig = Path.GetRelativePath(currDirectory, config);
+                    Console.Error.WriteLine($"Error parsing {{{shortenedConfig}}} in {{{currDirectory}}}");
+                }
+            }
+        }
+    }
+
+    // add all file paths recursively in main file's directory + subdirectories
+    private static List<string> getFilePathsRecursively() 
+    {
+        string requiredFileEnding = "*" + Constants.FILE_EXTENSION;
+        string requiredConfigEnding = "*" + Constants.CONFIG_EXTENSION;
+        var filePathsFound = new List<string>();
+
+        var directoriesToSearch = new Queue<string>();
+        directoriesToSearch.Enqueue(directoryPrefix);
+
+        while (directoriesToSearch.Count > 0)
+        {
+            string currDirectory = directoriesToSearch.Dequeue();
+
+            string[] files = Directory.GetFiles(currDirectory, requiredFileEnding);
+            foreach (var file in files)
+                filePathsFound.Add(Path.GetRelativePath(directoryPrefix, file));
+
+            string[] configs = Directory.GetFiles(currDirectory, requiredConfigEnding);
+            parseConfigs(configs, directoriesToSearch, currDirectory);
+
+            string[] directories = Directory.GetDirectories(currDirectory);
+            foreach (var dir in directories)
+                directoriesToSearch.Enqueue(dir);
+        }
+
+        return filePathsFound;
+    }
+
+    private static (bool, string) updateNamespaceAndPrograms(Namespace baseNamespace, 
+        Dictionary<string, Program> filePathToProgram, List<string> filePathsFound)
+    {
+        
+        foreach (string path in filePathsFound)
+        {
+            var inputTxt = File.ReadAllText(Path.Combine(directoryPrefix, path));
+
+            #pragma warning disable
+            AntlrInputStream input = new AntlrInputStream(inputTxt);
+            BubblGumHeaderLexer lexer = new BubblGumHeaderLexer(input);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            BubblGumHeaderParser parser = new BubblGumHeaderParser(tokens);
+            BubblGumHeaderParser.ProgramContext programContext = parser.program();
+            #pragma warning restore
+
+            if (parser.NumberOfSyntaxErrors > 0)
+                return (false, path);
+
+            var createASTHeader = new CreateHeaderAST();
+            Program program = createASTHeader.Visit(programContext);
+            
+            filePathToProgram[path] = program;
+
+            var gatherNamespaces = new GatherNamespaces();
+            gatherNamespaces.Execute(program, baseNamespace, path);
+        }
+        
+        return (true, "");
     }
 }

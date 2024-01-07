@@ -56,6 +56,40 @@ namespace AST
                     visit((ChewNames)node);
                 else if (node is ChewPath)
                     visit((ChewPath)node);
+                else if (node is Stock) {
+                    visit((Stock)node);
+                }
+            }
+        }
+
+        private void visit(Stock n) {
+            Namespace currNamespace = baseNamespace;
+            foreach (string name in n.Names)
+            {
+                if (!currNamespace.ChildNamespaces.ContainsKey(name))
+                    Console.Error.WriteLine("this error should never appear");
+
+                currNamespace = currNamespace.ChildNamespaces[name];
+            }
+
+            if (currNamespace.IsImported)
+                return;
+
+            var namespacesToAdd = new Queue<Namespace>();
+            namespacesToAdd.Enqueue(currNamespace);
+            while (namespacesToAdd.Count > 0) {
+                var tempNamespace = namespacesToAdd.Dequeue();
+                tempNamespace.IsImported = true;
+
+                foreach (string path in tempNamespace.FilePaths) {
+                    if (!filesUsed.Contains(path))
+                        newFilesToImport.Add(path);
+                }
+
+                foreach (var childNamespace in tempNamespace.ChildNamespaces.Values) {
+                    if (!childNamespace.IsImported)
+                        namespacesToAdd.Enqueue(childNamespace);
+                }
             }
         }
 

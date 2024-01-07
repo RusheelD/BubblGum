@@ -1,6 +1,7 @@
 Chew cat->dog
 Chew joe
 Chew "./Other/Billy.bbgm" #this worked :)
+Chew "../Lexer_Parser/Loops.bbgm"
 
 stock bob
 

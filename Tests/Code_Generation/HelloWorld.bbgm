@@ -1,3 +1,5 @@
+stock helloWorld
+
 a :: 1 * 2 + (3 - 4)* 4 + 2
 kcal a :: 2 * 3 - 34 + ++2 * (3 << 3) - 21 % 6 ** 3 
 kcal pack b

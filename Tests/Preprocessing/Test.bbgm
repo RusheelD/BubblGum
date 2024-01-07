@@ -1,0 +1,8 @@
+
+stock bob
+
+Gum thing {
+ sugar a :: 2
+}
+
+Gum thing: NiceInterface {}
