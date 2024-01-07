@@ -14,9 +14,13 @@ namespace AST
     {
        public static int numErrors = 0;
 
-       public static void duplicateClass() {
-          Console.Error.WriteLine("Duplicate class error");
-          numErrors++;
+       public static void DuplicateClassInNamespace(string namespaceName, string className, string fileName, int line) {
+         if (namespaceName != "")
+            Console.Error.WriteLine($"Duplicate class {className} in namespace {namespaceName} at file {fileName} on line {line}");
+         else
+            Console.Error.WriteLine($"Duplicate class {className} in global namespace at file {fileName} on line {line}");
+         
+         numErrors++;
        }
     }
 }

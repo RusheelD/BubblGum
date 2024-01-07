@@ -138,7 +138,8 @@ public class BubblGum
 
         foreach (var path in filePaths)
         {
-            var inputTxt = File.ReadAllText(path);
+            string finalPath =  (directoryPrefix == null) ? path : Path.Combine(directoryPrefix, path);
+            string inputTxt = File.ReadAllText(finalPath);
 
             #pragma warning disable
             AntlrInputStream input = new AntlrInputStream(inputTxt);
@@ -151,7 +152,7 @@ public class BubblGum
             if (parser.NumberOfSyntaxErrors > 0)
             {
                 Console.SetOut(originalOutStream);
-                Console.WriteLine("Parsing failed due to syntax errors.");
+                Console.WriteLine($"Parsing failed in {finalPath} due to syntax errors.");
                 return false;
             }
 

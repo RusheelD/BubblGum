@@ -13,9 +13,9 @@ namespace AST
         public bool IsSticky;
 
         public GumRecipeTable ( Visbility visibility, bool isSticky,
-            string name,List<FlavorInfo> parameters,
+            string name,List<RecipeFlavorInfo> parameters,
              Dictionary<string, FlavorInfo> flavors, 
-            List<FlavorInfo> outputs, int line, int col) 
+            List<RecipeFlavorInfo> outputs, int line, int col) 
         : base(name, parameters, flavors, outputs, line, col )
         {
             Visibility = visibility;

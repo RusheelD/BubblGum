@@ -14,8 +14,8 @@ namespace AST
 
 
         public GumFlavorInfo(Visbility get, Visbility set, bool isSticky,
-            string name, AnyType type, bool isEmpty, bool isImmutable, int line, int col) 
-            : base(name, type, isEmpty, isImmutable, line, col)
+            string name, AnyType type, bool isImmutable, int line, int col) 
+            : base(name, type, isImmutable, line, col)
         {
            Get = get;
            Set = set;

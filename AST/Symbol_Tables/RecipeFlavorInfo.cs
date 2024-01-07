@@ -7,31 +7,27 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class FlavorInfo : Info
+    public class RecipeFlavorInfo : FlavorInfo
     {
-        public string Name;
-        public bool IsEmpty, IsImmutable;
-        
-        public Origin origin;
+        public bool HasEllipses;
 
-        public AnyType Type = new FlavorType();
-         
-        public int LineNum {get; set;} = 0;
-        public int Column {get; set;} = 0;
-
-        public FlavorInfo(string name, AnyType type, bool isImmutable, int line, int col)
+        public RecipeFlavorInfo(string name, AnyType type, bool isImmutable,   bool hasEllipses, int line, int col)
+        : base(name, type, isImmutable, line, col)
         {
             Name = name;
             Type = type;
             IsImmutable = isImmutable;
+            HasEllipses = hasEllipses;
             LineNum = line;
             Column = col;
         }
 
-        public FlavorInfo(string name, bool isImmutable, int line, int col)
+        public RecipeFlavorInfo(string name, bool isImmutable, bool hasEllipses, int line, int col)
+          : base(name, isImmutable, line, col)
         {
             Name = name;
             IsImmutable = isImmutable;
+            HasEllipses = hasEllipses;
             LineNum = line;
             Column = col;
         }

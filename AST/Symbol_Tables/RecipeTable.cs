@@ -7,20 +7,20 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class RecipeTable
+    public class RecipeTable : Info
     {
         public string Name;
         public Origin Origin;
-        public List<FlavorInfo> Parameters;
+        public List<RecipeFlavorInfo> Parameters;
         public Dictionary<string, FlavorInfo> Flavors;
-        public List<FlavorInfo> Outputs;
+        public List<RecipeFlavorInfo> Outputs;
         
         public int LineNum {get; set;} = 0;
         public int Column {get; set;} = 0;
 
-       public RecipeTable(string name,List<FlavorInfo> parameters,
+       public RecipeTable(string name,List<RecipeFlavorInfo> parameters,
              Dictionary<string, FlavorInfo> flavors, 
-            List<FlavorInfo> outputs, int line, int col)
+            List<RecipeFlavorInfo> outputs, int line, int col)
         {
             Name = name;
 

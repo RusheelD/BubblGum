@@ -26,6 +26,7 @@ public class Run
                 foreach (string path in filePath)
                     Console.WriteLine(path);
             }
+            Console.WriteLine(success);
         }
     }
 }

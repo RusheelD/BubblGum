@@ -11,7 +11,7 @@ namespace AST
 {
     public class FileTable
     {   
-        public string Filename;
+        public string Name;
         public string Namespace = ""; // empty means no namespace
 
         public Dictionary<string, WrapperTable> Interfaces; // interfaces
@@ -20,15 +20,21 @@ namespace AST
         public Dictionary<string, RecipeTable> Functions; // global methods
         public Dictionary<string, FlavorInfo> Vars; // global vars
 
+        public List<StockTable> ImportedNamespaces;
+        public List<FileTable> ImportedFiles;
+
         public FileTable(string filename)
         {
-            Filename = filename;
+            Name = filename;
             
             Interfaces = new();
             Classes = new();
             Structs = new();
             Functions = new();
             Vars = new();
+
+            ImportedNamespaces = new();
+            ImportedFiles = new();
         }
     }
 }

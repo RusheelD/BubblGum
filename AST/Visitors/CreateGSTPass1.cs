@@ -13,18 +13,26 @@ namespace AST
     public class CreateGSTPass1 : Visitor, TypeVisitor
     {
         private GlobalSymbolTable gst;
+
+        private StockTable namespace_;
+        private FileTable file;
+        private string filePath;
+
         private GumTable currClass;
         private RecipeTable currFunction;
         private FlavorInfo currVariable;
         private WrapperTable currInterface;
         private CandyTable currStruct;
-        private StockTable currNamespace;
 
-        public GlobalSymbolTable Generate(Program n)
+        public void Execute(string filePath, Program n, GlobalSymbolTable gst)
         {
-           gst = new GlobalSymbolTable();
-           Visit(n);
-           return gst;
+            this.gst = gst;
+            this.filePath = filePath;
+            file = new FileTable(filePath);
+            gst.Files[filePath] = file;
+
+            namespace_ = gst.Namespaces[""];
+            Visit(n);
         }
 
         public void Visit(Program n)
@@ -35,26 +43,130 @@ namespace AST
 
         public void Visit(Stock n)
         {
-            throw new NotImplementedException();
+            if (n.Names.Count == 0)
+                return;
+
+            var sb = new StringBuilder();
+            sb.Append(n.Names[0]);
+            for (int i = 1; i < n.Names.Count; i++)
+            {
+                sb.Append("->");
+                sb.Append(n.Names[i]);
+            }
+
+            string name = sb.ToString();
+
+            if (gst.Namespaces.ContainsKey(name))
+                namespace_ = gst.Namespaces[name];
+            else {
+                namespace_ = new StockTable(name);
+                gst.Namespaces[name] = namespace_;
+            }
         }
+        
+        public void Visit(ChewNames n) {}
+
+        public void Visit(ChewPath n) {}
 
         public void Visit(Class n)
          {
-        //     public bool IsSticky;
-        // public Visbility Visbility;
-        // public string Name;
-        // public List<string> InterfacesAndParentClasses;
+            currClass = new GumTable(n.Visbility, n.IsSticky, n.Name, n.LineNumber, n.StartCol);
 
-        // // IsSticky, GetScope, SetScope, ClassMember
-        // public List<(bool, Visbility, Visbility, AstNode)> ClassMemberInfo;
-           
-            var newClass = new GumTable(n.Visbility, n.IsSticky, n.Name, n.LineNumber, n.StartCol);
-            
+            /*
+        // IsSticky, GetScope, SetScope, ClassMember
+        public List<(bool, Visbility, Visbility, AstNode)> ClassMemberInfo;
+            */
+
+        // public Dictionary<string, GumRecipeTable> Recipes;
+
+        // public Dictionary<string, GumFlavorInfo> Flavors;
+
+            foreach (var info in n.ClassMemberInfo) {
+                // IsSticky, GetScope, SetScope, ClassMember
+                if (info.Item4 is Function) {
+                    
+                    Function node = (Function)info.Item4;
+                    (string name, List<RecipeFlavorInfo> parameters, List<RecipeFlavorInfo> outputs) = 
+                    parseHeader(node.Header);
+
+                    // fix this
+                    currFunction = new GumRecipeTable(info.Item2, info.Item1, name, parameters, new Dictionary<string, FlavorInfo>(), 
+                        outputs, node.LineNumber, node.StartCol);
+
+                    Visit((Function)info.Item4);
+                }
+                else if (info.Item4 is PrimitiveDeclaration1) {
+                    PrimitiveDeclaration1 node = (PrimitiveDeclaration1)info.Item4;
+
+                    // add every var to the class
+                    foreach (string name in node.Variables) {
+                        var newVar = new GumFlavorInfo(info.Item2, info.Item3, info.Item1, name, 
+                            new PrimitiveType(node.TypeInfo), false, node.LineNumber, node.StartCol);
+                        currClass.Flavors.Add(name, newVar);
+                    }
+                }
+                else if (info.Item4 is PrimitiveDeclaration2) {
+                    PrimitiveDeclaration2 node = (PrimitiveDeclaration2)info.Item4;
+
+                    // add every var to the class
+                    foreach (var pair in node.TypeVarPair) {
+                        PrimitiveType type = new PrimitiveType(pair.Item1);
+                        string name = pair.Item2;
+
+                        var newVar = new GumFlavorInfo(info.Item2, info.Item3, info.Item1, name, 
+                           type, false, node.LineNumber, node.StartCol);
+                        currClass.Flavors.Add(name, newVar);
+                    }
+                }
+                else if (info.Item4 is Assignment) {
+                     Assignment node = (Assignment)info.Item4;
+
+                    // we only care about new vars being assigned
+                    foreach (var assignee in node.Assignees) {
+                        if (assignee is AssignDeclLHS) {
+                            var varInfo = (AssignDeclLHS) assignee;
+                            var newVar = new GumFlavorInfo(info.Item2, info.Item3, info.Item1, varInfo.VarName, 
+                            varInfo.Type, varInfo.IsImmutable, node.LineNumber, node.StartCol);
+
+                            currClass.Flavors.Add(varInfo.VarName, newVar);
+                        }
+                    }
+                }
+            }
+             
+
+            if (namespace_.Classes.ContainsKey(n.Name) || namespace_.Interfaces.ContainsKey(n.Name)
+                || namespace_.Structs.ContainsKey(n.Name)) {
+                Errors.DuplicateClassInNamespace(namespace_.Name, n.Name, filePath, n.LineNumber);
+            }
+            else {
+                namespace_.Classes.Add(n.Name, currClass);
+                file.Classes.Add(n.Name, currClass);
+            }
+        }
+
+        private (string, List<RecipeFlavorInfo>, List<RecipeFlavorInfo>) parseHeader(FunctionHeader n) 
+        {
+            var parameters = new List<RecipeFlavorInfo>();
+            var outputs = new List<RecipeFlavorInfo>();
+            foreach (var param in n.Params) {
+                var flavorinfo = new RecipeFlavorInfo(param.Item3, param.Item2, param.Item1, param.Item4, n.LineNumber, n.StartCol);
+                parameters.Add(flavorinfo);
+            }
+
+            foreach (var output in n.Outputs) {
+                var flavorinfo = new RecipeFlavorInfo(output.Item2, output.Item1, false, output.Item3,  n.LineNumber, n.StartCol);
+                outputs.Add(flavorinfo);
+            }
+
+            return (n.Name, parameters, outputs);
         }
 
         public void Visit(Function n)
         {
-            throw new NotImplementedException();
+            foreach (AstNode statement in n.Statements) {
+                statement.Accept(this);
+            }
         }
 
         public void Visit(FunctionHeader n)
@@ -147,15 +259,6 @@ namespace AST
             throw new NotImplementedException();
         }
 
-        public void Visit(ChewNames n)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Visit(ChewPath n)
-        {
-            throw new NotImplementedException();
-        }
 
         public void Visit(GlobalAccess n)
         {

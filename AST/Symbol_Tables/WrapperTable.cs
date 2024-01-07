@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
-    public class WrapperTable
+    public class WrapperTable : Info
     {
         public string Name;
         public Visbility Visibility;

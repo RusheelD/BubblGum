@@ -11,7 +11,8 @@ namespace AST
 {
     public class StockTable
     {
-        public string Namespace;
+        public StockTable ParentTable;
+        public string Name; // namespace name
 
         public Dictionary<string, WrapperTable> Interfaces; // interfaces
         public Dictionary<string, GumTable> Classes; // classes
@@ -19,9 +20,10 @@ namespace AST
         public Dictionary<string, RecipeTable> Functions; // global methods
         public Dictionary<string, FlavorInfo> Vars; // global vars
 
-        public StockTable(string _namespace)
+
+        public StockTable(string name)
         {
-            Namespace = _namespace;
+            Name = name;
             Interfaces = new();
             Classes = new();
             Structs = new();

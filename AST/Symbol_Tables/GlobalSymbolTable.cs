@@ -11,16 +11,33 @@ namespace AST
 {
     public class GlobalSymbolTable
     {
-        // files to their info
-        public Dictionary<string, FileTable> Files; // files
+        // map of files, key is name
+        public Dictionary<string, FileTable> Files;
 
-        // namespaces to all their info
-        public Dictionary<string, StockTable> Namespaces; // namespaces
+        // map of namespaces, key is name
+        public Dictionary<string, StockTable> Namespaces;
 
         public GlobalSymbolTable()
         {
             Files = new();
             Namespaces = new();
+
+            // represents true global (entities without a namespace)
+            Namespaces[""] = new StockTable("");
         }
+
+        // namespaces -> files
+           // list of files:
+
+        // files (not in namespaces) 
+          // classes
+          // functions
+          // vars
+          // interfaces
+          // structs
+          
+           // we don't want duplicate class names, interfaces, structs
+           // we don't want duplicate function names
+           // we don't want duplicate var names
     }
 }
