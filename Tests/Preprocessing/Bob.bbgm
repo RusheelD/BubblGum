@@ -1,4 +1,7 @@
 Chew cat->dog
+Chew cat from "./Other"
+Chew jonahill
+Chew "./Other/nonexistentpath"
 
 stock bob
 
@@ -8,4 +11,4 @@ Gum thing {
 
 Wrapper thing: NiceInterface {}
 
-Candy a {}
+candy : a {}

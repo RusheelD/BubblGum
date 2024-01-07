@@ -8,4 +8,5 @@ using System.Text.RegularExpressions;
 public static class Constants
 {
     public const string FILE_EXTENSION = ".bbgm";
+    public const string CONFIG_EXTENSION = ".bbgm.config";
 }

@@ -3,7 +3,7 @@ grammar BubblGumHeader;
 program: chew_import* define_stock? (ANYCHAR|IDENTIFIER|STRING_LITERAL|THIN_ARROW|STOCK|CHEW|ESCAPE_SEQUENCE|FROM)* EOF;
 
 define_stock: STOCK (IDENTIFIER) (THIN_ARROW IDENTIFIER)*;
-chew_import: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL) (FROM STRING_LITERAL)?;
+chew_import: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL);
 
 /* ------------------------ TOKENS ------------------------*/
 // keywords

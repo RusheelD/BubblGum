@@ -3,7 +3,7 @@ grammar BubblGum;
 program: chew_import* define_stock? (class | interface | function | struct | statement)* EOF;
 
 define_stock: STOCK IDENTIFIER (THIN_ARROW IDENTIFIER)*;
-chew_import: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL) (FROM STRING_LITERAL)?;
+chew_import: CHEW ((IDENTIFIER (THIN_ARROW IDENTIFIER)*) | STRING_LITERAL);
 
 class: STICKY? visibility? GUM IDENTIFIER (COLON IDENTIFIER (COMMA IDENTIFIER)*)? 
     LEFT_CURLY_BRACKET class_member* RIGHT_CURLY_BRACKET;

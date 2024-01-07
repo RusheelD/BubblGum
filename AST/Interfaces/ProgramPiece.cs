@@ -8,6 +8,5 @@ namespace AST
 {
     public interface ProgramPiece
     {
-
     }
 }

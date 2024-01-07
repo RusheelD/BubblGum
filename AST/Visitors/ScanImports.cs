@@ -16,7 +16,7 @@ namespace AST
         private Dictionary<string, Program> filePathToProgram;
         private List<string>? newFilesToImport;
         private HashSet<string> filesUsed;
-        private string? currFilePath, mainDirectory;
+        private string currFilePath, directoryPrefix;
         private bool success;
 
 
@@ -36,10 +36,10 @@ namespace AST
         /// Returns whether import scanning was a success (0 errors),
         /// and a list of all new files that should be imported because of the provided file.
         /// </summary>
-        public (bool, List<string>) Execute(string currFilePath, string mainDirectory)
+        public (bool, List<string>) Execute(string currFilePath, string directoryPrefix)
         {
             this.currFilePath = currFilePath;
-            this.mainDirectory = mainDirectory;
+            this.directoryPrefix = directoryPrefix;
             
             success = true;
             newFilesToImport = new();
@@ -47,7 +47,7 @@ namespace AST
             visit(filePathToProgram[currFilePath]);
             return (success, newFilesToImport);
         }
-
+        
         private void visit(Program n)
         {
             foreach (var node in n.Pieces)
@@ -65,7 +65,7 @@ namespace AST
             foreach (string name in n.Names)
             {
                 if (!currNamespace.ChildNamespaces.ContainsKey(name)) {
-                    Console.Error.WriteLine($"Namespace {name} not found in file {currFilePath}");
+                    Console.Error.WriteLine($"Invalid Namespace {name} in {directoryPrefix}\\{currFilePath}");
                     success = false;
                     return;
                 }
@@ -93,18 +93,27 @@ namespace AST
                 }
             }
         }
-
+        
         private void visit(ChewPath n)
         {
-            string fileUsedFullPath = Path.GetFullPath(Path.Combine(mainDirectory, n.Path));
+            string? shortDirectory = Path.GetDirectoryName(currFilePath);
+            if (shortDirectory == null)
+            {
+                success = false;
+                return;
+            }
+            else if (shortDirectory.Equals(string.Empty))
+                shortDirectory = "";
+
+            var fullPath = Path.Combine(Path.Combine(directoryPrefix, shortDirectory), n.Path);
+            var key = Path.GetRelativePath(directoryPrefix, fullPath);
 
             var sb = new StringBuilder();
-            sb.Append(Path.GetRelativePath(mainDirectory, fileUsedFullPath));
-            var file = sb.ToString();
-            if (filePathToProgram.ContainsKey(file) && !filesUsed.Contains(file))
-                newFilesToImport.Add(file);
+
+            if (filePathToProgram.ContainsKey(key) && !filesUsed.Contains(key))
+                newFilesToImport.Add(key);
             else {
-                Console.Error.WriteLine($"File {mainDirectory}\\{file} not found in file {mainDirectory}\\{currFilePath}");
+                Console.Error.WriteLine($"Invalid import {n.Path} in {directoryPrefix}\\{currFilePath}");
                 success = false;
             }
         }

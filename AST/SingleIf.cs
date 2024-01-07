@@ -11,7 +11,7 @@ namespace AST
         public Exp Cond;
         public List<AstNode> Statements;
 
-        public SingleIf(Exp cond,  List<AstNode> statements, int lineNumber, int startCol)
+        public SingleIf(Exp cond, List<AstNode> statements, int lineNumber, int startCol)
         {
             Cond = cond;
             Statements = statements;

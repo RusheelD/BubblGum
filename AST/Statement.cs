@@ -8,6 +8,6 @@ namespace AST
 {
     public interface Statement : Printable, ProgramPiece
     {
-
+        
     }
 }

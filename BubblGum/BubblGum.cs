@@ -62,30 +62,49 @@ public class BubblGum
             Console.Error.WriteLine("Specified compiler mode not yet implemented");
     }
 
-    
     public static (bool, HashSet<string>?) ExecuteHeaderParser(string filePath, TextWriter outStream) {
 
+        // directory_prefix (get directory name of filepath typed in compiler when running)
+        // import path relative to the entry point directory
+        // store path with dot dots if it goes outside
+
+        // file's path relative to the entry point -> GetRelativePath(directory_prefix,path)
+        // import statement (very specific path import relative to file)  ex. ./Other/Joe.bbgm -> n.Path
+
+        // import physics
+        // import physicsExt
+
+        // import a and b
+
+        // import physics from "location" // in case namespace is imported outside
+        // import file // import file (inside or outside)
+
         if (!File.Exists(filePath))
+        {
+            Console.Error.WriteLine($"Invalid entry point for the compiler");
             return (false, null);
+        }
         
-        string? mainDirectory = Path.GetDirectoryName(filePath);
-        if (mainDirectory == null || mainDirectory.Equals(string.Empty)) {
+        string? directoryPrefix = Path.GetDirectoryName(filePath);
+        if (directoryPrefix == null) {
             Console.Error.WriteLine("Directory of entry file could not be established");
             return (false, null);
         }
+        else if (directoryPrefix.Equals(string.Empty))
+            directoryPrefix = ".";
 
-        filePath = Path.GetRelativePath(mainDirectory, filePath);
+        filePath = Path.GetRelativePath(directoryPrefix, filePath);
 
         // update outstream
         var originalOutStream = Console.Out;
         Console.SetOut(outStream);
 
         // add all file paths recursively in main file's directory + subdirectories
-        string requiredFileEnding = "*" + Constants.FILE_EXTENSION;  
+        string requiredFileEnding = "*" + Constants.FILE_EXTENSION;
         var filePathsFound = new List<string>();
 
         var directoriesToSearch = new Queue<string>();
-        directoriesToSearch.Enqueue(mainDirectory);
+        directoriesToSearch.Enqueue(directoryPrefix);
 
         while (directoriesToSearch.Count > 0)
         {
@@ -125,7 +144,7 @@ public class BubblGum
             var createASTHeader = new CreateHeaderAST();
             Program program = createASTHeader.Visit(programContext);
             
-            var shortenedPath = $"{Path.GetRelativePath(mainDirectory, path)}";
+            var shortenedPath = Path.GetRelativePath(directoryPrefix, path);
             filePathToProgram[shortenedPath] = program;
 
             var gatherNamespaces = new GatherNamespaces();
@@ -147,7 +166,7 @@ public class BubblGum
             var path = filesToScan.Dequeue();
             allFilesUsed.Add(path);
 
-            (bool noErrors, var newFilesToImport) = scanImports.Execute(path, mainDirectory);
+            (bool noErrors, var newFilesToImport) = scanImports.Execute(path, directoryPrefix);
 
             if (!noErrors)
                 errorCount++;

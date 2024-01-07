@@ -265,7 +265,7 @@ namespace AST
 
         public void Visit(PopLoop n)
         {
-            Console.Write($"pop flavors {n.VarName} in (");
+            Console.Write($"pop {n.VarName} from (");
             n.Exp.Accept(this);
             Console.Write(") => ");
 
@@ -413,12 +413,17 @@ namespace AST
             for (int i = 1; i < n.Names.Count; i++) 
                 Console.Write("->" + n.Names[i]);
 
+            if (n.SpecifiedFrom)
+                Console.Write($" from {n.ImportPath}");
             endStatement();
         }
 
         public void Visit(ChewPath n)
         {
             Console.Write($"Chew \"{n.Path}\"");
+            if (n.SpecifiedFrom)
+                Console.Write($" from {n.ImportPath}");
+
             endStatement();
         }
 
