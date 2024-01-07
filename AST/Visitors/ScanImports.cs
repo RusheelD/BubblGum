@@ -71,26 +71,8 @@ namespace AST
 
                 currNamespace = currNamespace.ChildNamespaces[name];
             }
-
-            if (currNamespace.IsImported)
-                return;
-
-            var namespacesToAdd = new Queue<Namespace>();
-            namespacesToAdd.Enqueue(currNamespace);
-            while (namespacesToAdd.Count > 0) {
-                var tempNamespace = namespacesToAdd.Dequeue();
-                tempNamespace.IsImported = true;
-
-                foreach (string path in tempNamespace.FilePaths) {
-                    if (!filesUsed.Contains(path))
-                        newFilesToImport.Add(path);
-                }
-
-                foreach (var childNamespace in tempNamespace.ChildNamespaces.Values) {
-                    if (!childNamespace.IsImported)
-                        namespacesToAdd.Enqueue(childNamespace);
-                }
-            }
+            
+           importNamespace(currNamespace);
         }
 
         private void visit(ChewNames n) 
@@ -107,25 +89,7 @@ namespace AST
                 currNamespace = currNamespace.ChildNamespaces[name];
             }
             
-            if (currNamespace.IsImported)
-                return;
-
-            var namespacesToAdd = new Queue<Namespace>();
-            namespacesToAdd.Enqueue(currNamespace);
-            while (namespacesToAdd.Count > 0) {
-                var tempNamespace = namespacesToAdd.Dequeue();
-                tempNamespace.IsImported = true;
-
-                foreach (string path in tempNamespace.FilePaths) {
-                    if (!filesUsed.Contains(path))
-                        newFilesToImport.Add(path);
-                }
-
-                foreach (var childNamespace in tempNamespace.ChildNamespaces.Values) {
-                    if (!childNamespace.IsImported)
-                        namespacesToAdd.Enqueue(childNamespace);
-                }
-            }
+           importNamespace(currNamespace);
         }
         
         private void visit(ChewPath n)
@@ -149,6 +113,28 @@ namespace AST
             else {
                 Console.Error.WriteLine($"Invalid import {n.Path} in {directoryPrefix}\\{currFilePath}");
                 success = false;
+            }
+        }
+
+        private void importNamespace(Namespace currNamespace) {
+            if (currNamespace.IsImported)
+                return;
+
+            var namespacesToAdd = new Queue<Namespace>();
+            namespacesToAdd.Enqueue(currNamespace);
+            while (namespacesToAdd.Count > 0) {
+                var tempNamespace = namespacesToAdd.Dequeue();
+                tempNamespace.IsImported = true;
+
+                foreach (string path in tempNamespace.FilePaths) {
+                    if (!filesUsed.Contains(path))
+                        newFilesToImport.Add(path);
+                }
+
+                foreach (var childNamespace in tempNamespace.ChildNamespaces.Values) {
+                    if (!childNamespace.IsImported)
+                        namespacesToAdd.Enqueue(childNamespace);
+                }
             }
         }
     }
