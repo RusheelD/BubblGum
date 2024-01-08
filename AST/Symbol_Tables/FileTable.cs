@@ -34,7 +34,6 @@ namespace AST
             OuterScope = new();
 
             ImportedNamespaces = new();
-            ImportedFiles = new();
         }
     }
 }

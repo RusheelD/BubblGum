@@ -15,6 +15,7 @@ namespace AST
         public void Visit(ArrayType n);
         public void Visit(FlavorType n);
         public void Visit(ObjectType n);
+        public void Visit(NamespaceObjectType n);
         public void Visit(PackType n);
         public void Visit(PrimitiveType n);
         public void Visit(SingularArrayType n);

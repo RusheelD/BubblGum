@@ -51,6 +51,7 @@ namespace AST
         public void Visit(GlobalAccess n);
         public void Visit(MemberAccess n);
         public void Visit(MethodCall n);
+        public void Visit(NamespaceAccess n);
 
         // value expressions
         public void Visit(Bool n);

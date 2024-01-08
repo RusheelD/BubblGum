@@ -442,6 +442,13 @@ namespace AST
             n.E2.Accept(this);
         }
 
+        public void Visit(NamespaceAccess n)
+        {
+            n.E1.Accept(this);
+            Console.Write(".");
+            n.E2.Accept(this);
+        }
+
         public void Visit(MethodCall n)
         {
             n.Lhs.Accept(this);
@@ -774,6 +781,13 @@ namespace AST
                 Console.Write(" pack");
         }
 
+        public void Visit(NamespaceObjectType n)
+        {
+            Console.Write($"{n.HomeNamespace}.{n.Name}");
+
+            if (n.IsPack)
+                Console.Write(" pack");
+        }
         public void Visit(PackType n)
         {
             Console.Write(n.Type.ToString().ToLower());

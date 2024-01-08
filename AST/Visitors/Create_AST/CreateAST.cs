@@ -834,7 +834,13 @@ namespace AST
                 if (child0 is ExpressionContext)
                 {
                     Exp e1 = visit((ExpressionContext)child0);
-                    return new MemberAccess(e1, e2, e1.LineNumber, e1.StartCol);
+                    MemberAccess access = new MemberAccess(e1, e2, e1.LineNumber, e1.StartCol);
+                    if (n.ChildCount == 2)
+                        return access;
+                    else {
+                        Exp e3 = visit((ExpressionContext)n.children[3]);
+                        return new NamespaceAccess(access, e3, access.LineNumber, access.StartCol);
+                    }
                 }
                 else if (child0.Payload is IToken)
                 {

@@ -67,9 +67,9 @@ pop_loop: POP IDENTIFIER FROM expression THICK_ARROW (single_statement | scope_b
 expression: LEFT_PAREN expression RIGHT_PAREN |
               SWEETS access | // global access
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
-              expression access (DOT expression)? | // member access
+              expression access (DOT expression)? | // member access or namespace access
               expression method_call | // method call or new object
-              array LEFT_PAREN expression RIGHT_PAREN | // new array
+              (array | FLAVORPACK) LEFT_PAREN expression RIGHT_PAREN | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
               expression THICK_ARROW (primitive | IDENTIFIER) | // cast
               (NOT | NOT_OP) expression |
@@ -85,7 +85,7 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
               boolean |
               identifier |
               double |
-              int | 
+              int |
               MINTPACK |
               STRING_LITERAL |
               CHAR_LITERAL |
@@ -105,8 +105,9 @@ boolean: YUP | NOPE;
 //// identifier: any identifier you can find in code
 identifier: (IDENTIFIER | THIS);
 
-type: primitive | array | tuple | ((IDENTIFIER (THIN_ARROW IDENTIFIER)* DOT)? IDENTIFIER);
-array: primitive_pack | any_array | IDENTIFIER PACK;
+// Note: type pack isn't defined in terminal array because we don't want that notation when constructing a new array
+type: primitive | array | tuple | ((IDENTIFIER (THIN_ARROW IDENTIFIER)* DOT)? IDENTIFIER) | type PACK;
+array: primitive_pack | any_array;
 primitive: SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
 tuple: LEFT_ANGLE_BRACKET (type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)* RIGHT_ANGLE_BRACKET;
 primitive_pack: SUGARPACK | CARBPACK | CALPACK | KCALPACK | YUMPACK | (PURE SUGARPACK);
@@ -120,7 +121,7 @@ SWEETS: 'sweets';       // file namespace
 STOCK: 'stock';         // define new namespace
 RECIPE: 'recipe';       // method
 CANDY: 'candy';         // struct
-GUM: 'Gum';             // class 
+GUM: 'Gum';             // class
 CHEW: 'Chew';           // using/import
 FLAVOR: 'flavor';       // var
 FLAVORS: 'flavors';     // keyword
@@ -137,13 +138,14 @@ PURE: 'pure';           // unsinged
 STICKY: 'sticky';       // static
 WRAPPER: 'Wrapper';     // interface
 MINTPACK: 'mintpack';   // args
-     
+
 PACK: 'pack';
 SUGARPACK: 'sugarpack';
 CARBPACK: 'carbpack';
 CALPACK: 'calpack';
 KCALPACK: 'kcalpack';
 YUMPACK: 'yumpack';
+FLAVORPACK: 'flavorpack';
 
 YUP: 'yup';
 NOPE: 'nope';
