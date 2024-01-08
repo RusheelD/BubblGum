@@ -361,16 +361,6 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitMethod_call([NotNull] BubblGumParser.Method_callContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="BubblGumParser.access"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterAccess([NotNull] BubblGumParser.AccessContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="BubblGumParser.access"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitAccess([NotNull] BubblGumParser.AccessContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.double"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -420,6 +410,16 @@ public interface IBubblGumListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitType([NotNull] BubblGumParser.TypeContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="BubblGumParser.object"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterObject([NotNull] BubblGumParser.ObjectContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="BubblGumParser.object"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitObject([NotNull] BubblGumParser.ObjectContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="BubblGumParser.array"/>.
 	/// </summary>
