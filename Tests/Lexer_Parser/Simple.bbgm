@@ -33,9 +33,9 @@
 	}
 
 	
-pop flavors a in z => c +: a
+pop a from z => c +: a
 
-pop flavors dist in loc => {
+pop dist from loc => {
     d : repeatDown (c, d) {
         (d)!
     }

@@ -11,11 +11,13 @@ recipe: SomeFunc() <sugar, [BubbleGum, Backpack]>  {
         pop a
 }
 
-recipe: SomeFunc() flavorpack {
-        flavor a :: flavorpack(SIZE)
+recipe: SomeFunc() sugarpack {
+        sugarpack a :: flavorpack(SIZE)
         a[0] :: 17
         idx: repeatUp(0, 16):
                 a[idx] :: idx
+
+        pop a
 }
 
 recipe: SomeFunc1() <carb...> {
@@ -25,13 +27,13 @@ recipe: SomeFunc1() <carb...> {
 }
 
 recipe: SomeFunc2(carb a) kcal {
-        pop flavors x in a => {
+        pop x from a => {
             (pop x*x)!
         }
 }
 
 recipe: SomeFunc2(carb a) <kcal d> {
-        pop flavors x in a => {
+        pop x from a => {
             (pop x*x)!
         }
 }

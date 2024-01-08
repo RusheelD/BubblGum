@@ -1,0 +1,16 @@
+#>
+a :: [sugar](3)
+b :: calpack(4)
+sweets->bob() :: 2
+a :: [1,2,3,4]
+
+flavor a :: flavorpack(4)
+Physics->Collisions :: 2
+Physics->Collisions.Cow a :: Cow("milk")
+
+Physics->Collisions.Cow a :: Cow("milk")
+<#
+a :: Physics->Collisions.Cow->milk
+a :: [Physics->Colissions.Cow](4)
+
+Physics->Colissions.Cow pack a :: flavorpack(4)

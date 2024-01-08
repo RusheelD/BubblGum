@@ -21,13 +21,3 @@ recipe: SomeFunc1(kcal d, kcal d..., sugar a...) <carb..., sugar...> {
 
 # single line function
 recipe: SingleLine(kcal d) kcal : pop "woah" + d
-
-# flavorpack is now an object!
-Gum Line2D {
-    recipe: SomeFunc() flavorpack {
-            flavor a :: flavorpack(SIZE)
-            a[0] :: 17
-            idx: repeatUp(0, 16):
-                    a[idx] :: idx
-    }
-}

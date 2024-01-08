@@ -5,7 +5,7 @@ recipe: HelloWorld() [Yeet] {}
 
 # pack arrays
 sugarpack a :: sugarpack(4)
-Cow pack a :: Cow pack(4)
+Cow pack a :: flavorpack(4)
 Cow pack b :: [Cow](4)
 flavor a :: [Cow](4)
 

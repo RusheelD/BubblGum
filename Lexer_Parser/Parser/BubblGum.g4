@@ -65,12 +65,14 @@ pop_loop: POP IDENTIFIER FROM expression THICK_ARROW (single_statement | scope_b
 
 // operator precedence loosely based off https://introcs.cs.princeton.edu/java/11precedence/
 expression: LEFT_PAREN expression RIGHT_PAREN |
-              SWEETS access | // global access
+              SWEETS THIN_ARROW expression | // global access
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
-              expression access (DOT expression)? | // member access or namespace access
+              expression THIN_ARROW expression | // member access
+              IDENTIFIER (THIN_ARROW IDENTIFIER)* DOT expression | // namespace access
               expression method_call | // method call or new object
-              (array | FLAVORPACK) LEFT_PAREN expression RIGHT_PAREN | // new array
+              (array | FLAVORPACK) LEFT_PAREN expression RIGHT_PAREN | // new array with size
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
+              LEFT_SQUARE_BRACKET expression (COMMA expression)* RIGHT_SQUARE_BRACKET | // new array with elements
               expression THICK_ARROW (primitive | IDENTIFIER) | // cast
               (NOT | NOT_OP) expression |
               expression (POWER | MODULO) expression |
@@ -93,7 +95,6 @@ expression: LEFT_PAREN expression RIGHT_PAREN |
 
 // method call
 method_call: LEFT_PAREN (expression? | (expression (COMMA expression)*))  RIGHT_PAREN;
-access: THIN_ARROW expression;
 
 double : (PLUS | MINUS)? INTEGER_LITERAL DOT INTEGER_LITERAL?;
 int : (PLUS | MINUS)? INTEGER_LITERAL;
@@ -106,7 +107,8 @@ boolean: YUP | NOPE;
 identifier: (IDENTIFIER | THIS);
 
 // Note: type pack isn't defined in terminal array because we don't want that notation when constructing a new array
-type: primitive | array | tuple | ((IDENTIFIER (THIN_ARROW IDENTIFIER)* DOT)? IDENTIFIER) | type PACK;
+type: primitive | array | tuple | object | type PACK;
+object: (IDENTIFIER (THIN_ARROW IDENTIFIER)* DOT)? IDENTIFIER;
 array: primitive_pack | any_array;
 primitive: SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
 tuple: LEFT_ANGLE_BRACKET (type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)* RIGHT_ANGLE_BRACKET;
