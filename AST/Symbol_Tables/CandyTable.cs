@@ -12,14 +12,17 @@ namespace AST
     public class CandyTable : Info
     {
         public string Name;
+        public Visbility Visibility;
         public Dictionary<string, FlavorInfo> Variables;
         public int LineNum {get; set;} = 0;
         public int Column {get; set;} = 0;
 
-        public CandyTable(string name, int line, int column)
+        public CandyTable(string name, Visbility visibility, int line, int column)
         {
             Variables = new();
+            
             Name = name;
+            Visibility = visibility;
             LineNum = line;
             Column = column;
         }

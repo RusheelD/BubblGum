@@ -145,7 +145,8 @@ namespace AST
         public void Visit(Struct n)
         {
             tab();
-            Console.Write($"candy : {n.Name} ");
+            Console.Write(n.Visibility.ToString().ToLower());
+            Console.Write($" candy : {n.Name} ");
 
             acceptList(n.Statements);
             Console.WriteLine();

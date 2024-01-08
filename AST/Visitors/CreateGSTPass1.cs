@@ -38,8 +38,22 @@ namespace AST
 
         public void Visit(Program n)
         {
-            foreach (var piece in n.Pieces)
-                piece.Accept(this);
+            foreach (var piece in n.Pieces) {
+                if (piece is Function) {
+                    var node = (Function)piece;
+                    (string name, List<RecipeFlavorInfo> parameters, List<RecipeFlavorInfo> outputs) = parseHeader(node.Header);
+                    currFunction = new RecipeTable(name, parameters, outputs, piece.LineNumber, piece.StartCol);
+                    piece.Accept(this);
+
+                    if (namesspace.Functions.ContainsKey(name))
+                        Errors.DuplicateRecipeInNamespace(name, namesspace.Name, file.Name, currFunction.LineNum);
+                    else {
+                        file.Functions[name] = currFunction;
+                        namesspace.Functions[name] = currFunction;
+                    }
+                } else
+                    piece.Accept(this);
+            }
         }
 
         public void Visit(Stock n)
@@ -84,6 +98,12 @@ namespace AST
                     Function node = (Function)info.Item4;
                     (string name, List<RecipeFlavorInfo> parameters, List<RecipeFlavorInfo> outputs) = parseHeader(node.Header);
                     
+                    // duplicate function in class check
+                    if (currClass.Recipes.ContainsKey(name)) {
+                        Errors.DuplicateRecipeInClass(name, currClass.Name, filePath, node.LineNumber);
+                        continue;
+                    }
+
                     currFunction = new GumRecipeTable(info.Item2, info.Item1, name, parameters, outputs, 
                         node.LineNumber, node.StartCol);
                     Visit((Function)info.Item4);
@@ -105,9 +125,10 @@ namespace AST
             
             currScope = currScope!.ParentScope;
 
-            if (namesspace!.Classes.ContainsKey(n.Name) || namesspace.Interfaces.ContainsKey(n.Name)
+            if (namesspace!.Classes.ContainsKey(n.Name) 
+                || namesspace.Interfaces.ContainsKey(n.Name)
                 || namesspace.Structs.ContainsKey(n.Name)) {
-                Errors.DuplicateClassInNamespace(namesspace.Name, n.Name, filePath, n.LineNumber);
+                Errors.DuplicateClassInNamespace(n.Name, namesspace.Name, filePath, n.LineNumber);
             }
             else {
                 namesspace.Classes.Add(n.Name, currClass);
@@ -150,10 +171,10 @@ namespace AST
             
             currScope = ogScope;
 
-            //  fix this ---
-            if (namesspace!.Classes.ContainsKey(n.Name) || namesspace.Interfaces.ContainsKey(n.Name)
+            if (namesspace!.Classes.ContainsKey(n.Name) 
+                || namesspace.Interfaces.ContainsKey(n.Name)
                 || namesspace.Structs.ContainsKey(n.Name)) {
-                Errors.DuplicateClassInNamespace(namesspace.Name, n.Name, filePath, n.LineNumber);
+                Errors.DuplicateInterfaceInNamespace(n.Name, namesspace.Name, filePath, n.LineNumber);
             }
             else {
                 namesspace.Interfaces.Add(n.Name, currInterface);
@@ -163,40 +184,40 @@ namespace AST
 
         
         public void Visit(Struct n) {
-            currStruct = new CandyTable(n.Name, n.LineNumber, n.StartCol);
-            
-            ScopeTable ogScope = currScope;
+            currStruct = new CandyTable(n.Name, n.Visibility, n.LineNumber, n.StartCol);
+
+            ScopeTable ogScope = currScope!;
             currScope = new ScopeTable();
 
             foreach (var info in n.Statements) {
                 if (info is PrimitiveDeclaration1) {
-                    PrimitiveDeclaration1 node = (PrimitiveDeclaration1)info.Item4;
-                    addToScope(node, info.Item2, info.Item3, info.Item1);
+                    PrimitiveDeclaration1 node = (PrimitiveDeclaration1)info;
+                    Visit(node);
                 }
-                else if (info.Item4 is PrimitiveDeclaration2) {
-                    PrimitiveDeclaration2 node = (PrimitiveDeclaration2)info.Item4;
-                    addToScope(node, info.Item2, info.Item3, info.Item1);
+                else if (info is PrimitiveDeclaration2) {
+                    PrimitiveDeclaration2 node = (PrimitiveDeclaration2)info;
+                    Visit(node);
                 }
-                else if (info.Item4 is Assignment) {
-                    Assignment node = (Assignment)info.Item4;
-                    addToScope(node, info.Item2, info.Item3, info.Item1);
+                else if (info is Assignment) {
+                    Assignment node = (Assignment)info;
+                    Visit(node);
                 }
             }
             
             // copy over all flavors/vars found to the interface's map
             foreach (var pair in currScope.Vars)
-                currInterface.Flavors[pair.Key] = (GumFlavorInfo)pair.Value;
+                currStruct.Variables[pair.Key] = pair.Value;
             
             currScope = ogScope;
-
-            //  fix this ---
-            if (namesspace!.Classes.ContainsKey(n.Name) || namesspace.Interfaces.ContainsKey(n.Name)
+            
+            if (namesspace!.Classes.ContainsKey(n.Name) 
+                || namesspace.Interfaces.ContainsKey(n.Name)
                 || namesspace.Structs.ContainsKey(n.Name)) {
-                Errors.DuplicateClassInNamespace(namesspace.Name, n.Name, filePath, n.LineNumber);
+                Errors.DuplicateStructInNamespace(n.Name, namesspace.Name, filePath, n.LineNumber);
             }
             else {
-                namesspace.Interfaces.Add(n.Name, currInterface);
-                file!.Interfaces.Add(n.Name, currInterface);
+                namesspace.Structs.Add(n.Name, currStruct);
+                file!.Structs.Add(n.Name, currStruct);
             }
         }
 
@@ -232,7 +253,11 @@ namespace AST
             foreach (string name in node.Variables) {
                 var newVar = new GumFlavorInfo(get, set, isSticky, name, 
                     new PrimitiveType(node.TypeInfo), false, node.LineNumber, node.StartCol);
-                currScope!.Vars.Add(name, newVar);
+
+                if (currScope!.Vars.ContainsKey(name))
+                    Errors.DuplicateVarInScope(name, filePath, node.LineNumber);
+                else
+                    currScope!.Vars.Add(name, newVar);
             }
         }
          private void addToScope(PrimitiveDeclaration2 node, Visbility get, Visbility set, bool isSticky) {
@@ -242,7 +267,10 @@ namespace AST
                 var newVar = new GumFlavorInfo(get, set, isSticky, name, 
                     type, false, node.LineNumber, node.StartCol);
                 
-                currScope!.Vars.Add(name, newVar);
+                if (currScope!.Vars.ContainsKey(name))
+                    Errors.DuplicateVarInScope(name, filePath, node.LineNumber);
+                else
+                    currScope!.Vars.Add(name, newVar);
             }
         }
         private void addToScope(Assignment node, Visbility get, Visbility set, bool isSticky) {
@@ -252,8 +280,11 @@ namespace AST
                     var varInfo = (AssignDeclLHS) assignee;
                     var newVar = new GumFlavorInfo(get, set, isSticky, varInfo.VarName, 
                     varInfo.Type, varInfo.IsImmutable, node.LineNumber, node.StartCol);
-
-                    currScope!.Vars.Add(varInfo.VarName, newVar);
+                    
+                    if (currScope!.Vars.ContainsKey(varInfo.VarName))
+                        Errors.DuplicateVarInScope(varInfo.VarName, filePath, varInfo.LineNumber);
+                    else
+                        currScope!.Vars.Add(varInfo.VarName, newVar);
                 }
             }
         }
@@ -270,7 +301,11 @@ namespace AST
                     var varInfo = (AssignDeclLHS) assignee;
                     var newVar = new FlavorInfo(varInfo.VarName, varInfo.Type, 
                         varInfo.IsImmutable, n.LineNumber, n.StartCol);
-                    currScope!.Vars.Add(varInfo.VarName, newVar);
+                    
+                    if (currScope!.Vars.ContainsKey(varInfo.VarName))
+                        Errors.DuplicateVarInScope(varInfo.VarName, filePath, varInfo.LineNumber);
+                    else
+                        currScope!.Vars.Add(varInfo.VarName, newVar);
                 }
             }
         }
@@ -279,7 +314,11 @@ namespace AST
         {
             foreach (string name in n.Variables) {
                 var newVar = new FlavorInfo(name, new PrimitiveType(n.TypeInfo), false, n.LineNumber, n.StartCol);
-                currScope!.Vars.Add(name, newVar);
+                
+                if (currScope!.Vars.ContainsKey(name))
+                    Errors.DuplicateVarInScope(name, filePath, n.LineNumber);
+                else
+                    currScope!.Vars.Add(name, newVar);
             }
         }
 
@@ -289,7 +328,11 @@ namespace AST
                 PrimitiveType type = new PrimitiveType(pair.Item1);
                 string name = pair.Item2;
                 var newVar = new FlavorInfo(name, type, false, n.LineNumber, n.StartCol);
-                currScope!.Vars.Add(name, newVar);
+
+                if (currScope!.Vars.ContainsKey(name))
+                    Errors.DuplicateVarInScope(name, filePath, n.LineNumber);
+                else
+                    currScope!.Vars.Add(name, newVar);
             }
         }
 

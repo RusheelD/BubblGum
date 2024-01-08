@@ -10,12 +10,14 @@ namespace AST
     public class Struct : AstNode, ProgramPiece
     {
         public string Name;
+        public Visbility Visibility;
         public List<AstNode> Statements;
 
-        public Struct(string name, List<AstNode> statements, int lineNumber, int startCol)
+        public Struct(string name, Visbility visibility, List<AstNode> statements, int lineNumber, int startCol)
         {
             Name = name;
             Statements = statements;
+            Visibility = visibility;
 
             LineNumber = lineNumber;
             StartCol = startCol;

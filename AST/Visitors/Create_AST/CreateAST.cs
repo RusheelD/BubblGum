@@ -359,14 +359,25 @@ namespace AST
 
         private Struct visit(StructContext n)
         {
-            IToken candy = (IToken)n.children[0].Payload;
-            IToken identifier = (IToken)n.children[2].Payload;
+            Visbility visibility = Visbility.Bold;
+            IToken vis = null; 
+
+            if (n.visibility() != null) {
+                VisibilityContext visContext = (VisibilityContext)n.children[0];
+                visibility = visit(visContext);
+                vis = (IToken)visContext.children[0].Payload;
+            }
+
+            int offset = n.visibility() != null ? 1 : 0;
+
+            IToken candy = (IToken)n.children[offset].Payload;
+            IToken identifier = (IToken)n.children[offset + 2].Payload;
             string name = identifier.Text;
-            int lineNumber = candy.Line;
-            int startCol = candy.Column;
+            int lineNumber =  vis != null ? vis.Line : candy.Line;
+            int startCol = vis != null ? vis.Column : candy.Column;
             var statements = new List<AstNode>();
             
-            for(int i = 4; i < n.ChildCount; i++)
+            for(int i = 4 + offset; i < n.ChildCount; i++)
             {
                 dynamic childi = n.children[i];
                 if(childi is Primitive_declarationContext || childi is AssignmentContext)
@@ -375,7 +386,7 @@ namespace AST
                 }
             }
 
-            return new Struct(name, statements, lineNumber, startCol);
+            return new Struct(name, visibility, statements, lineNumber, startCol);
         }
 
         private StatementList visit(Scope_bodyContext n) => visit((dynamic)n.children[1]);
