@@ -7,6 +7,9 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary>
+    /// Stores info for a variable used a parameter or output of a function
+    /// </summary>
     public class RecipeFlavorInfo : FlavorInfo
     {
         public bool HasEllipses;

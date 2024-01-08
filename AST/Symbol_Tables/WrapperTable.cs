@@ -7,6 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary> Stores info for an interface's symbols </summary>
     public class WrapperTable : Info
     {
         public string Name;

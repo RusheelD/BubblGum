@@ -67,7 +67,7 @@ pop_loop: POP IDENTIFIER FROM expression THICK_ARROW (single_statement | scope_b
 expression: LEFT_PAREN expression RIGHT_PAREN |
               SWEETS access | // global access
               expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET | // array access
-              expression access | // member access
+              expression access (DOT expression)? | // member access
               expression method_call | // method call or new object
               array LEFT_PAREN expression RIGHT_PAREN | // new array
               LEFT_ANGLE_BRACKET expression (COMMA expression)* RIGHT_ANGLE_BRACKET | // new tuple object
@@ -105,7 +105,7 @@ boolean: YUP | NOPE;
 //// identifier: any identifier you can find in code
 identifier: (IDENTIFIER | THIS);
 
-type: primitive | array | tuple | IDENTIFIER;
+type: primitive | array | tuple | ((IDENTIFIER (THIN_ARROW IDENTIFIER)* DOT)? IDENTIFIER);
 array: primitive_pack | any_array | IDENTIFIER PACK;
 primitive: SUGAR | CARB | CAL | KCAL | YUM | (PURE SUGAR);
 tuple: LEFT_ANGLE_BRACKET (type | FLAVOR) IDENTIFIER? (COMMA (type | FLAVOR) IDENTIFIER?)* RIGHT_ANGLE_BRACKET;

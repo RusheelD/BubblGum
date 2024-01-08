@@ -9,6 +9,9 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary>
+    /// Stores all book-keeping info for the semantic analysis stage of the compiler
+    /// </summary>
     public class GlobalSymbolTable
     {
         // map of files, key is name

@@ -9,6 +9,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary> Stores info about a file's symbols </summary>
     public class FileTable
     {   
         public string Name;
@@ -17,11 +18,10 @@ namespace AST
         public Dictionary<string, WrapperTable> Interfaces; // interfaces
         public Dictionary<string, GumTable> Classes; // classes
         public Dictionary<string, CandyTable> Structs; // structs
-        public Dictionary<string, RecipeTable> Functions; // global methods
-        public Dictionary<string, FlavorInfo> Vars; // global vars
+        public Dictionary<string, RecipeTable> Functions; // global functions
+        public ScopeTable OuterScope; // outermost scope
 
         public List<StockTable> ImportedNamespaces;
-        public List<FileTable> ImportedFiles;
 
         public FileTable(string filename)
         {
@@ -31,7 +31,7 @@ namespace AST
             Classes = new();
             Structs = new();
             Functions = new();
-            Vars = new();
+            OuterScope = new();
 
             ImportedNamespaces = new();
             ImportedFiles = new();

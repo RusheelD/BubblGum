@@ -7,6 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary> Stores info for a local variable of a class </summary>
     public class GumFlavorInfo : FlavorInfo
     {
         public Visbility Get, Set;

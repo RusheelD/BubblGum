@@ -7,6 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary> Stores info for a class' symbols </summary>
     public class GumTable : Info
     {
         public string Name;

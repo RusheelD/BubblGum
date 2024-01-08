@@ -9,6 +9,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary> Stores info for a namespace's symbols </summary>
     public class StockTable
     {
         public StockTable ParentTable;
@@ -17,9 +18,8 @@ namespace AST
         public Dictionary<string, WrapperTable> Interfaces; // interfaces
         public Dictionary<string, GumTable> Classes; // classes
         public Dictionary<string, CandyTable> Structs; // structs
-        public Dictionary<string, RecipeTable> Functions; // global methods
-        public Dictionary<string, FlavorInfo> Vars; // global vars
-
+        public Dictionary<string, RecipeTable> Functions; // global functions
+        public Dictionary<string, FlavorInfo> Vars; // global vars (outermost scope)
 
         public StockTable(string name)
         {

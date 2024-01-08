@@ -7,6 +7,8 @@ using System.Xml.Linq;
 
 namespace AST
 {
+
+    /// <summary> Stores info about a struct's symbols </summary>   
     public class CandyTable : Info
     {
         public string Name;

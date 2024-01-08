@@ -7,6 +7,9 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary>
+    /// Stores info about a typical variable (declared outside of classes, inside functions, etc.)
+    /// </summary>
     public class FlavorInfo : Info
     {
         public string Name;

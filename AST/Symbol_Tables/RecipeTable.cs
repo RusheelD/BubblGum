@@ -7,25 +7,28 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary>
+    /// Stores info for a standalone function (non-object oriented development)
+    /// </summary>
     public class RecipeTable : Info
     {
         public string Name;
         public Origin Origin;
+        
         public List<RecipeFlavorInfo> Parameters;
-        public Dictionary<string, FlavorInfo> Flavors;
+        public ScopeTable OutermostScope;
         public List<RecipeFlavorInfo> Outputs;
         
         public int LineNum {get; set;} = 0;
         public int Column {get; set;} = 0;
 
        public RecipeTable(string name,List<RecipeFlavorInfo> parameters,
-             Dictionary<string, FlavorInfo> flavors, 
             List<RecipeFlavorInfo> outputs, int line, int col)
         {
             Name = name;
 
             Parameters = parameters;
-            Flavors = flavors;
+            OutermostScope = new();
             Outputs = outputs;
             
             LineNum = line;

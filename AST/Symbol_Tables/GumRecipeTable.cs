@@ -7,6 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary> Stores info for a function in a class </summary>
     public class GumRecipeTable : RecipeTable
     {
         public Visbility Visibility;
@@ -14,9 +15,8 @@ namespace AST
 
         public GumRecipeTable ( Visbility visibility, bool isSticky,
             string name,List<RecipeFlavorInfo> parameters,
-             Dictionary<string, FlavorInfo> flavors, 
             List<RecipeFlavorInfo> outputs, int line, int col) 
-        : base(name, parameters, flavors, outputs, line, col )
+        : base(name, parameters, outputs, line, col )
         {
             Visibility = visibility;
             IsSticky = isSticky;
