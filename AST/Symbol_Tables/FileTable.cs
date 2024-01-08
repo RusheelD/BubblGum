@@ -13,15 +13,16 @@ namespace AST
     public class FileTable
     {   
         public string Name;
-        public string Namespace = ""; // empty means no namespace
+        public StockTable? Namespace;
 
-        public Dictionary<string, WrapperTable> Interfaces; // interfaces
-        public Dictionary<string, GumTable> Classes; // classes
-        public Dictionary<string, CandyTable> Structs; // structs
-        public Dictionary<string, RecipeTable> Functions; // global functions
-        public ScopeTable OuterScope; // outermost scope
+        public Dictionary<string, WrapperTable> Interfaces;
+        public Dictionary<string, GumTable> Classes; 
+        public Dictionary<string, CandyTable> Structs; 
+        public Dictionary<string, RecipeTable> Functions;
+        public ScopeTable OuterScope;
 
         public List<StockTable> ImportedNamespaces;
+        public List<FileTable> ImportedFiles;
 
         public FileTable(string filename)
         {
@@ -34,6 +35,7 @@ namespace AST
             OuterScope = new();
 
             ImportedNamespaces = new();
+            ImportedFiles = new();
         }
     }
 }

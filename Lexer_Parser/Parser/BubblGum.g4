@@ -24,7 +24,7 @@ visibility: BOLD | SUBTLE | BLAND;
 // is it a statement right now?
 // makes sense
 
-struct: CANDY COLON IDENTIFIER LEFT_CURLY_BRACKET (primitive_declaration | assignment)* RIGHT_CURLY_BRACKET;
+struct: visibility? CANDY COLON IDENTIFIER LEFT_CURLY_BRACKET (primitive_declaration | assignment)* RIGHT_CURLY_BRACKET;
 function: function_header ((COLON single_statement) | scope_body);
 function_header: RECIPE COLON IDENTIFIER parameters (outputs | type)?; // outputStream | singleOutput
 parameters: LEFT_PAREN (IMMUTABLE? type IDENTIFIER ELLIPSES? (COMMA IMMUTABLE? type IDENTIFIER ELLIPSES?)*)? RIGHT_PAREN;

@@ -9,6 +9,7 @@ namespace AST
 {
     public static class RecipeKeys
     {
+        // note that - and > are taken
         private static char ellipses = '~';
         private static char seperator = '|';
         private static char weakSeparator = '\\';
@@ -16,6 +17,8 @@ namespace AST
         private static char flavor = '{';
         private static char tuple = '`';
         private static char array = '^';
+        private static char namesspace = '?';
+
 
         // Requires the recipe/method name, and its list of input parameters
         // Returns a unique string representing that recipe/method
@@ -54,9 +57,13 @@ namespace AST
                 // starts with _ or letter
                 var obj = (ObjectType)type;
                 sb.Append(obj.Name);
-
-                if (obj.IsPack)
-                    sb.Append(pack);
+            }
+            else if (type is NamespaceObjectType)
+            {
+                var obj = (NamespaceObjectType)type;
+                sb.Append(obj.HomeNamespace);
+                sb.Append(namesspace);
+                sb.Append(obj.Name);
             }
             else if (type is SingularArrayType)
             {
@@ -67,7 +74,7 @@ namespace AST
                     int typeInt = (int)((PrimitiveType)arrayType).Type;
                     sb.Append(typeInt + size);
                 }
-                // [object] should output same code as object pack
+                // [object]
                 else
                 {
                     encodeVar(arrayType, false, sb, size, false);

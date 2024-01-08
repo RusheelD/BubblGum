@@ -14,6 +14,7 @@ namespace AST
     /// </summary>
     public class ScopeTable
     {
+        public ScopeTable? ParentScope;
         public List<ScopeTable> NestedScopes;
         public Dictionary<string, FlavorInfo> Vars;
 

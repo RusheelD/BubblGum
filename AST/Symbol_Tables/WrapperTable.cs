@@ -19,16 +19,14 @@ namespace AST
         public int LineNum {get; set;} = 0;
         public int Column {get; set;} = 0;
 
-        public WrapperTable(Visbility visibility, bool isStatic, string name,
-            Dictionary<string, GumRecipeTable> recipes, 
-            Dictionary<string, GumFlavorInfo> flavors, int line, int col)
+        public WrapperTable(Visbility visibility, bool isStatic, string name, int line, int col)
         {
             Visibility  = visibility;
             IsStatic = isStatic;
             Name = name;
 
-            Recipes = recipes;
-            Flavors = flavors;
+            Recipes = new();
+            Flavors = new();
             
             LineNum = line;
             Column = col;

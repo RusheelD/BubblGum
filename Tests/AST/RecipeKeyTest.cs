@@ -58,7 +58,7 @@ public static class RecipeKeyTest
     private static AnyType getRandomType(Random rand)
     {
         AnyType tip;
-        switch (rand.Next(0, 17))
+        switch (rand.Next(0, 19))
         {
             case 0:
                 tip = new PrimitiveType(TypeBI.Sugar);
@@ -85,10 +85,10 @@ public static class RecipeKeyTest
                 tip = new PackType(TypePack.PureSugarPack);
                 break;
             case 8:
-                tip = new ObjectType("Lucario_" + rand.Next(0,100), false);
+                tip = new ObjectType("Lucario_" + rand.Next(0,100));
                 break;
             case 9:
-                tip = new ObjectType("Eevee_" + rand.Next(0, 100), true);
+                tip = new ObjectType("Eevee_" + rand.Next(0, 100));
                 break;
             case 10:
                 tip = new FlavorType();
@@ -100,7 +100,7 @@ public static class RecipeKeyTest
                 tip = new SingularArrayType(new FlavorType());
                 break;
             case 13:
-                tip = new SingularArrayType(new ObjectType("Lucario", true));
+                tip = new SingularArrayType(new ObjectType("Lucario"));
                 break;
             case 14:
                 tip = new ArrayType(new TupleType(new List<(AnyType, string)> { (new FlavorType(), "Lucario") }));
@@ -110,6 +110,12 @@ public static class RecipeKeyTest
                 break;
             case 16:
                 tip = new TupleType(new List<(AnyType, string)> { (new FlavorType(), "Lucario"), (new FlavorType(), "Lucario") });
+                break;
+            case 17:
+                tip = new NamespaceObjectType("Lucario_" + rand.Next(0,100), "Physics->Collisions");
+                break;
+            case 18:
+                tip = new NamespaceObjectType("Eevee_" + rand.Next(0, 100), "Bob->Billy->Joe");
                 break;
             default:
                 tip = new FlavorType();

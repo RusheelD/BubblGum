@@ -21,7 +21,7 @@ namespace AST
         
         public Dictionary<string, GumRecipeTable> Recipes;
 
-        public Dictionary<string, GumFlavorInfo> Flavors;
+        public ScopeTable OutermostScope;
         
         public int LineNum {get; set;} = 0;
         public int Column {get; set;} = 0;
@@ -35,7 +35,7 @@ namespace AST
 
             ParentWrappers = new();
             Recipes = new();
-            Flavors = new();
+            OutermostScope = new();
             
             LineNum = line;
             Column = col;

@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AST
 {
-    public class NamespaceAccess : Exp
+    public class NewEmptyPack : Exp
     {
-        public Exp E1, E2;
+        public AnyType PackType;
+        public Exp Exp;
 
-        public NamespaceAccess(Exp e1, Exp e2, int lineNumber, int startCol)
+        public NewEmptyPack(AnyType type, Exp exp, int lineNumber, int startCol)
         {
-            E1 = e1;
-            E2 = e2;
+            PackType = type;
+            Exp = exp;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

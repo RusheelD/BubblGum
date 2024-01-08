@@ -19,6 +19,7 @@ namespace AST
         public void Visit(PackType n);
         public void Visit(PrimitiveType n);
         public void Visit(SingularArrayType n);
+        public void Visit(FlavorpackType n);
         public void Visit(TupleType n);
     }
 }

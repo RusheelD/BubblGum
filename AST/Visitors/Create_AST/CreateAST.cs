@@ -636,6 +636,27 @@ namespace AST
                     throw new Exception("Invalid type detected");
             }
 
+            if (n.children[0].Payload is IToken) {
+                IToken token0 = (IToken)n.children[0].Payload;
+                if (token0.Type == IDENTIFIER) {
+
+                    var sb = new StringBuilder(token0.Text);
+                    for (int i = 1; i < n.ChildCount; i++) {
+                        IToken tokeni = (IToken)n.children[i].Payload;
+
+                        if (tokeni.Type == IDENTIFIER) {
+                            sb.Append("->");
+                            sb.Append(tokeni.Text);
+                        }
+                        else if (tokeni.Type == DOT)
+                            break;
+                    }
+
+                    Exp e1 = visit((ExpressionContext)n.children[n.ChildCount-1]);
+                    return new NamespaceAccess(sb.ToString(), e1, token0.Line, token0.Column);
+                }
+            }
+
             dynamic child1 = n.children[1];
 
             if (child1.Payload is IToken)
@@ -776,13 +797,29 @@ namespace AST
                         else if (child2.Payload is IToken)
                         {
                             IToken token2 = (IToken)child2.Payload;
-                            castType = new ObjectType(token2.Text, false);
+                            castType = new ObjectType(token2.Text);
                         }
                         else
                             throw new Exception("invalid child2 type");
 
                         return new Cast(castType, e1, e1.LineNumber, e1.StartCol);
                     }
+                }
+                else if (token.Type == THIN_ARROW) {
+                    // global access
+                    // member access
+                    if (n.SWEETS() != null) {
+                        Exp e1 = visit((ExpressionContext)n.children[2]);
+                        IToken token0 = (IToken)n.children[0].Payload;
+                        return new GlobalAccess(e1, token0.Line, token0.Column);
+                    }
+                    else
+                    {
+                       Exp e1 = visit((ExpressionContext)n.children[0]);
+                       Exp e2 = visit((ExpressionContext)n.children[2]);
+                       return new MemberAccess(e1, e2, e1.LineNumber, e1.StartCol);
+                    }
+                    
                 }
                 else if (token.Type == LEFT_PAREN)
                 {
@@ -792,7 +829,12 @@ namespace AST
                     {
                         (AnyType type, int line, int col) = visit((ArrayContext)child0);
                         Exp e1 = visit((ExpressionContext)n.children[2]);
-                        return new NewPack(type, e1, line, col);
+                        return new NewEmptyPack(type, e1, line, col);
+                    }
+                    else if (child0.Payload is IToken) {
+                        IToken token0 = (IToken)child0.Payload;
+                        Exp e1 = visit((ExpressionContext)n.children[2]);
+                        return new NewEmptyPack(new FlavorpackType(), e1, token0.Line, token0.Column);
                     }
                 }
                 else if (token.Type == LEFT_SQUARE_BRACKET)
@@ -823,29 +865,19 @@ namespace AST
                         }
                         return new NewTuple(exps, token0.Line, token0.Column);
                     }
+                    else if (token0.Type == LEFT_SQUARE_BRACKET)
+                    {
+                        var exps = new List<Exp>();
+                        for (int i = 1; i < n.children.Count; i++)
+                        {
+                            var childi = n.children[i];
+                            if (childi is ExpressionContext)
+                                exps.Add(visit((ExpressionContext)childi));
+                        }
+                        return new NewPack(exps, token0.Line, token0.Column);
+                    }
                     else if (token0.Type == NOT | token0.Type == NOT_OP)
                         return new Not(visit(child1), token0.Line, token0.Column);
-                }
-            }
-            else if (child1 is AccessContext)
-            {
-                var child0 = n.children[0];
-                Exp e2 = visit((AccessContext)n.children[1]);
-                if (child0 is ExpressionContext)
-                {
-                    Exp e1 = visit((ExpressionContext)child0);
-                    MemberAccess access = new MemberAccess(e1, e2, e1.LineNumber, e1.StartCol);
-                    if (n.ChildCount == 2)
-                        return access;
-                    else {
-                        Exp e3 = visit((ExpressionContext)n.children[3]);
-                        return new NamespaceAccess(access, e3, access.LineNumber, access.StartCol);
-                    }
-                }
-                else if (child0.Payload is IToken)
-                {
-                    IToken token0 = (IToken)child0.Payload;
-                    return new GlobalAccess(e2, token0.Line, token0.Column);
                 }
             }
             else if (child1 is Method_callContext)
@@ -1080,8 +1112,6 @@ namespace AST
             return new Double(number * (negative ? -1 : 1), token.Line, token.Column);
         }
 
-        private Exp visit(AccessContext n) => visit((ExpressionContext)n.children[1]);
-
         private List<Exp> visit(Method_callContext n)
         {
             var args = new List<Exp>();
@@ -1099,15 +1129,41 @@ namespace AST
         {
             dynamic child = n.children[0];
 
-            if (child.Payload is IToken)
-            {
-                IToken token = (IToken)child.Payload;
-                return (new ObjectType(token.Text, false), token.Line, token.Column);
-            }
-
-            return visit(child);
+            if (n.ChildCount == 1)
+                return visit(child);
+            
+            (AnyType type, int line, int col) = visit((TypeContext)n.children[0]);
+            return (new SingularArrayType(type), line, col);    
         }
 
+        private (AnyType, int, int) visit(ObjectContext n)
+        {
+            IToken lastToken = (IToken)n.children[n.ChildCount-1].Payload;
+            string objName = lastToken.Text;
+
+            if (n.DOT() != null) {
+                IToken token0 = (IToken)n.children[0].Payload;
+                var sb = new StringBuilder(token0.Text);
+
+                for (int i = 1; i < n.ChildCount; i++) {
+                     IToken tokeni = (IToken)n.children[i].Payload;
+                     if (tokeni.Type == IDENTIFIER) {
+                        sb.Append("->");
+                        sb.Append(tokeni.Text);
+                     }
+                     else if (tokeni.Type == DOT)
+                        break;
+                }
+            
+                AnyType type = new NamespaceObjectType(objName, sb.ToString());
+                return (type, token0.Line, token0.Column);
+            }
+            else {
+                AnyType type = new ObjectType(objName);
+                return (type, lastToken.Line, lastToken.Column);
+            }
+        }
+        
         private (AnyType, int, int) visit(ArrayContext n)
         {
             var child = n.children[0];
@@ -1116,8 +1172,7 @@ namespace AST
             else if (child is Any_arrayContext)
                 return visit((Any_arrayContext)child);
 
-            var token = (IToken)child.Payload;
-            return (new ObjectType(token.Text, true), token.Line, token.Column);
+            throw new Exception("invalid array type defined");
         }
 
 

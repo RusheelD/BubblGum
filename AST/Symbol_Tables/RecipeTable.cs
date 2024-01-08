@@ -22,7 +22,7 @@ namespace AST
         public int LineNum {get; set;} = 0;
         public int Column {get; set;} = 0;
 
-       public RecipeTable(string name,List<RecipeFlavorInfo> parameters,
+       public RecipeTable(string name, List<RecipeFlavorInfo> parameters,
             List<RecipeFlavorInfo> outputs, int line, int col)
         {
             Name = name;

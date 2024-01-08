@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace AST
 {
-    public class Struct : AstNode, ProgramPiece
+    public class NamespaceAccess : Exp
     {
         public string Name;
-        public List<AstNode> Statements;
+        public Exp E1;
 
-        public Struct(string name, List<AstNode> statements, int lineNumber, int startCol)
+        public NamespaceAccess(string name, Exp e1, int lineNumber, int startCol)
         {
             Name = name;
-            Statements = statements;
-
+            E1 = e1;
             LineNumber = lineNumber;
             StartCol = startCol;
         }

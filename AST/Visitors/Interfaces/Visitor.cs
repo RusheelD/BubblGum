@@ -95,6 +95,7 @@ namespace AST
 
         // creation expressions and pack expressions
         public void Visit(NewPack n);
+        public void Visit(NewEmptyPack n);
         public void Visit(NewTuple n);
         public void Visit(IdentifierExp n);
         public void Visit(PackAccess n);

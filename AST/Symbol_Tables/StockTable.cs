@@ -12,7 +12,7 @@ namespace AST
     /// <summary> Stores info for a namespace's symbols </summary>
     public class StockTable
     {
-        public StockTable ParentTable;
+        public StockTable? ParentTable;
         public string Name; // namespace name
 
         public Dictionary<string, WrapperTable> Interfaces; // interfaces

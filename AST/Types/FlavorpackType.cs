@@ -6,13 +6,7 @@ using System.Threading.Tasks;
 
 namespace AST
 {
-   public class ObjectType : AnyType {
-        public String Name;
-
-        public ObjectType(String name) {
-            Name = name;
-        }
-
+   public class FlavorpackType : AnyType {
         public override void Accept(TypeVisitor v) => v.Visit(this);
     }
 }

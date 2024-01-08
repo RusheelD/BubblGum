@@ -1,5 +1,5 @@
 # functions with immutable parameters, outputs w/ and w/o names, and various pop styles
-recipe: HelloWorld($sugar a, kcal b, $[BubbleGum, Backpack] d) <sugar, kcal b, carb> {
+recipe: HelloWorld($sugar a, kcal b, $[BubbleGum, Back pack] d) <sugar, kcal b, carb> {
     a: repeatUp(0, 16):
        pop a
 

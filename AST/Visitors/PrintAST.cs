@@ -444,9 +444,8 @@ namespace AST
 
         public void Visit(NamespaceAccess n)
         {
+            Console.Write($"{n.Name}.");
             n.E1.Accept(this);
-            Console.Write(".");
-            n.E2.Accept(this);
         }
 
         public void Visit(MethodCall n)
@@ -719,6 +718,22 @@ namespace AST
 
         public void Visit(NewPack n)
         {
+            Console.Write("[");
+            
+            if (n.Elements.Count != 0) {
+                n.Elements[0].Accept(this);
+
+                for (int i = 1; i < n.Elements.Count; i++) {
+                    Console.Write(", ");
+                    n.Elements[i].Accept(this);
+                }
+            }
+
+            Console.Write("]");
+        }
+        
+        public void Visit(NewEmptyPack n)
+        {
             n.PackType.Accept(this);
             Console.Write("(");
             n.Exp.Accept(this);
@@ -776,21 +791,21 @@ namespace AST
         public void Visit(ObjectType n)
         {
             Console.Write(n.Name);
-
-            if (n.IsPack)
-                Console.Write(" pack");
         }
 
         public void Visit(NamespaceObjectType n)
         {
             Console.Write($"{n.HomeNamespace}.{n.Name}");
-
-            if (n.IsPack)
-                Console.Write(" pack");
         }
+
         public void Visit(PackType n)
         {
             Console.Write(n.Type.ToString().ToLower());
+        }
+        
+        public void Visit(FlavorpackType n)
+        {
+            Console.Write("flavorpack");
         }
 
         public void Visit(PrimitiveType n)
