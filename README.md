@@ -7,8 +7,9 @@
 - Config files with external directory imports
 - Namespaces
    - Child nested namespaces
+- Imports
    - Valid import scanning
-- Import specific namespaces OR individual files
+   - Import specific namespaces OR individual files
 - Global Symbol Table with nested scope tracking
 - Classes, Functions, Struct, Interfaces
 - Standalone functions/vars/statements (Classless development)
