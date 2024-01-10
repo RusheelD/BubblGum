@@ -7,14 +7,15 @@
 
 In Bubblgum, functions are called recipes. Here are some examples.
 ``` python
+# (exp) !! is a quick way to print exp to outstream
 recipe: FizzBuzz() {
     i :: repeatUp(0, 1000) {
        if (i % 3 = 0):
-           ("fizz") !! # prints "fizz"
+           ("fizz") !!
        if (i % 5 = 0):
-           ("buzz") !! # prints "buzz"
+           ("buzz") !!
 
-       ("") ! # print new line
+       ("") !  # prints new line
    }
 }
 
@@ -26,17 +27,18 @@ recipe: GetSquareOfNumbers([carb] nums) <carb...> {
    }
 }
 
+# operator :: represents assignment, -> is used to access members of a var
 recipe: MergeTwoSortedArrays([carb] l1, [carb] l2) [carb] {
-    [carb] merged :: [carb](l1->size + l2->size)
+    [carb] merged :: [carb](l1->size + l2->size) 
     sugar i, j, m
 
-    while (i < l1->size && j < l2->size) {
+    while (i < l1->size & j < l2->size) {
         if (l1[i] <= l2[j]) {
-            merged[m] = l1[i]
+            merged[m] :: l1[i]
             i +: 1
         }
         else {
-            merged[m] = l2[j]
+            merged[m] :: l2[j]
             j +: 1
         }
         m +: 1
@@ -84,20 +86,23 @@ The compiler is written primarily in C# and ANTLR:
 ## Types and Pop Features
 Primitive types:
 ```python
-SUGAR: 'sugar';         // int
-CARB: 'carb';           // double
-CAL: 'cal';             // char
-KCAL: 'kcal';           // string
-YUM: 'yum';             // bool
+SUGAR: 'sugar';         # int
+CARB: 'carb';           # double
+CAL: 'cal';             # char
+KCAL: 'kcal';           # string
+YUM: 'yum';             # bool
 
-YUP: 'yup';             // true value
-NOPE: 'nope';           // false value
+YUP: 'yup';             # true value
+NOPE: 'nope';           # false value
 ```
 
-Bubblgum supports immutable recipe parameters (preceeded with $). This recipe outputs a tuple (surrounded by <>). 
+Bubblgum supports immutable vars and parameters (preceeded with $). This recipe outputs a tuple (surrounded by <>). 
 ```python
 
 recipe: HelloWorld($[sugar] arr) <sugar a, sugar, sugar b> {
+
+    # define immutable number
+    $carb a :: 12.3
 
     # pop an output by idx
     pop arr[0] => 1
@@ -136,7 +141,7 @@ recipe: DetectOverlap([Physics->Collisions.CircleCollider] cols) yum {
              # if comparing two different colliders
               if (~(col1 is col2)) {
                   carb dist :: GetDistance(col1->center, col2->center)
-                  carb radiiSum:: col1->radius + col2->radius
+                  carb radiiSum :: col1->radius + col2->radius
                  
                   if (dist < radiiSum):
                      pop yup
@@ -200,8 +205,8 @@ Gum Line2D {
 }
 ```
 
-## Flavorless and nflv
-Bubblgum has no concept of null. If a reference should not be set yet, set it to flavorless or nflv.
+## Flavorless
+Bubblgum has no concept of null. If a reference should not be set yet, set it to flavorless or nflv (short for no flavor).
 
 ``` python
 Cow c :: nflv
