@@ -72,7 +72,7 @@ Scoll down for a more comprehensive syntax guide.
 - RepeatUp and RepeatDown loops (ie. for loops)
 - Pop loops (ie. foreach loops)
 - While loops, Single If, Multi If statements
-- Pop, Pop stream, Pop a from b (multi-output returns)
+- Pop, Pop stream, Pop by var name or idx (function returns and outputs)
 - Operators (arithmetic, bitwise, comparators)
 - Expressions and Literals
 
