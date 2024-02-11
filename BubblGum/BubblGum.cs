@@ -87,8 +87,12 @@ public class BubblGum
         var originalOutStream = Console.Out;
         Console.SetOut(outStream);
 
+        // add all file paths recursively in main file's directory + subdirectories
         filePath = Path.GetRelativePath(directoryPrefix, filePath);
         List<string>filePathsFound = getFilePathsRecursively();
+
+        foreach (string file in filePathsFound)
+            Console.WriteLine(file);
 
         var baseNamespace = new Namespace("");
         var filePathToProgram = new Dictionary<string, Program>();
@@ -237,32 +241,6 @@ public class BubblGum
         }
     }
 
-    private static void parseConfigs(string[] configs, Queue<string> directoriesToSearch, string currDirectory) {
-        if (configs.Length != 0) {
-            foreach (var config in configs) {
-                string readJSONString = File.ReadAllText(config);
-                try {
-                    Config? deserializedConfig = JsonSerializer.Deserialize<Config>(readJSONString);
-
-                    if (deserializedConfig != null && deserializedConfig.directories != null) {
-                        foreach (var dir in deserializedConfig.directories) {
-                            var fullDir = Path.Combine(currDirectory, dir);
-                            if (Directory.Exists(fullDir))
-                                directoriesToSearch.Enqueue(fullDir);
-                            else
-                                Console.Error.WriteLine($"External directory {{{dir}}} could not be imported in {{{config}}}");
-                        }
-                    }
-                    else
-                        Console.Error.WriteLine("???");
-                } catch {
-                    var shortenedConfig = Path.GetRelativePath(currDirectory, config);
-                    Console.Error.WriteLine($"Error parsing {{{shortenedConfig}}} in {{{currDirectory}}}");
-                }
-            }
-        }
-    }
-
     // add all file paths recursively in main file's directory + subdirectories
     private static List<string> getFilePathsRecursively() 
     {
@@ -322,4 +300,38 @@ public class BubblGum
         
         return (true, "");
     }
+
+    private static void parseConfigs(string[] configs, Queue<string> directoriesToSearch, string currDirectory)
+    {
+        foreach (var config in configs)
+        {
+            string readJSONString = File.ReadAllText(config);
+            try
+            {
+                Config? deserializedConfig = JsonSerializer.Deserialize<Config>(readJSONString);
+
+                if (deserializedConfig != null && deserializedConfig.paths != null)
+                {
+                    foreach (var dir in deserializedConfig.paths)
+                    {
+                        var fullPath = Path.Combine(currDirectory, dir);
+                        if (Directory.Exists(fullPath))
+                            directoriesToSearch.Enqueue(fullPath);
+                        else
+                            Console.Error.WriteLine($"External directory {{{dir}}} could not be imported in {{{config}}}");
+
+                        // check if it is a file after
+                    }
+                }
+                else
+                    Console.Error.WriteLine($"Invalid config file at {config}");
+            }
+            catch
+            {
+                var shortenedConfig = Path.GetRelativePath(currDirectory, config);
+                Console.Error.WriteLine($"Error parsing {{{shortenedConfig}}} in {{{currDirectory}}}");
+            }
+        }
+    }
+
 }

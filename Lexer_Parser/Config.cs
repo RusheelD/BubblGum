@@ -8,5 +8,5 @@ using System.Text.RegularExpressions;
 // Json config file parsed into this object
 public class Config
 {
-    public List<string> directories {get; set;}
+    public List<string> paths {get; set;}
 }

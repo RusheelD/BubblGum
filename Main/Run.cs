@@ -18,6 +18,7 @@ public class Run
 
         if (args[0] == "run")
             BubblGum.Execute(newArgs);
+
         else if (args[0] == "test")
         {
             (bool success, HashSet<string> filePath) = BubblGum.ExecuteHeaderParser(args[1], Console.Out);
