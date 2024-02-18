@@ -7,6 +7,7 @@ using System.Xml.Linq;
 
 namespace AST
 {
+    /// <summary> Generates a unique lookup key for a function/recipe <summary>
     public static class RecipeKeys
     {
         // note that - and > are taken

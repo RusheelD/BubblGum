@@ -13,7 +13,7 @@ namespace AST
         public string Name;
         public Visbility Visibility;
         public bool IsStatic;
-        public Dictionary<string, GumRecipeTable> Recipes; 
+        public Dictionary<string, Dictionary<string, GumRecipeTable>> Functions; // key = recipe name, second_key = recipe key
         public Dictionary<string, GumFlavorInfo> Flavors; 
         
         public int LineNum {get; set;} = 0;
@@ -25,7 +25,7 @@ namespace AST
             IsStatic = isStatic;
             Name = name;
 
-            Recipes = new();
+            Functions = new();
             Flavors = new();
             
             LineNum = line;

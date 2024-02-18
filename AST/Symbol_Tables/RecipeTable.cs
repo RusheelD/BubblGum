@@ -8,7 +8,7 @@ using System.Xml.Linq;
 namespace AST
 {
     /// <summary>
-    /// Stores info for a standalone function (non-object oriented development)
+    /// Stores symbol info for a standalone function (non-object oriented development)
     /// </summary>
     public class RecipeTable : Info
     {

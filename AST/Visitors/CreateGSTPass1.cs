@@ -10,6 +10,8 @@ using static BubblGumParser;
 
 namespace AST
 {
+    /// <summary> Initializes every needed symbol table in a specified file to the global symbol table.
+    /// Catch errors such as duplicate class/interface/struct/recipes or duplicate vars in the same scope, etc. </summary>
     public class CreateGSTPass1 : Visitor
     {
         private GlobalSymbolTable? gst;
@@ -25,6 +27,8 @@ namespace AST
 
         private ScopeTable? currScope;
 
+        // Adds every symbol table needed in a specified file to the global symbol table (GST)
+        // Requires the file path, the program of that file, and a GST reference
         public void Execute(string filePath, Program n, GlobalSymbolTable gst)
         {
             this.gst = gst;
@@ -36,31 +40,51 @@ namespace AST
             Visit(n);
         }
 
+        // fill in any GST references
         public void Visit(Program n)
         {
             foreach (var piece in n.Pieces) {
+
+                 // for a function, looks at its header and create a recipe table for it. add it to the GST
                 if (piece is Function) {
                     var node = (Function)piece;
-                    (string name, List<RecipeFlavorInfo> parameters, List<RecipeFlavorInfo> outputs) = parseHeader(node.Header);
+                    (string name, List<RecipeFlavorInfo> parameters, List<RecipeFlavorInfo> outputs) = getFunctionInfo(node.Header);
                     currFunction = new RecipeTable(name, parameters, outputs, piece.LineNumber, piece.StartCol);
                     piece.Accept(this);
 
-                    if (namesspace.Functions.ContainsKey(name))
+                    // create unique function key and add it to the function header node itself (in the AST)
+                    node.Header.Key = RecipeKeys.Generate(name, node.Header.Params);
+
+                    // if keys aren't unique, then functions are literal duplicates (same name, same parameters, etc.)
+                    if (namesspace.Functions.ContainsKey(node.Header.Key))
                         Errors.DuplicateRecipeInNamespace(name, namesspace.Name, file.Name, currFunction.LineNum);
+
+                    // update function inside file and namespace table in GST
                     else {
-                        file.Functions[name] = currFunction;
-                        namesspace.Functions[name] = currFunction;
+                        if (!file.Functions.ContainsKey(name))
+                            file.Functions[name] = new();
+                        file.Functions[name][node.Header.Key] = currFunction;
+
+                        if (!namesspace.Functions.ContainsKey(name))
+                            namesspace.Functions[name] = new();
+                        namesspace.Functions[name][node.Header.Key] = currFunction;
                     }
-                } else
+                } 
+                // for anything else, 
+                else
                     piece.Accept(this);
             }
         }
 
+        // set the namespace of a file in the GST
         public void Visit(Stock n)
         {
-            if (n.Names.Count == 0)
+            if (n.Names.Count == 0) { 
+                namesspace = null;
                 return;
+            }
 
+            // get name of namespace
             var sb = new StringBuilder();
             sb.Append(n.Names[0]);
             for (int i = 1; i < n.Names.Count; i++)
@@ -70,7 +94,8 @@ namespace AST
             }
 
             string name = sb.ToString();
-
+            
+            // add namesspace table by name to gst (if doesn't already exist)
             if (gst!.Namespaces.ContainsKey(name)) {
                 namesspace = gst.Namespaces[name];
             }
@@ -79,6 +104,7 @@ namespace AST
                 gst.Namespaces[name] = namesspace;
             }
             
+            // update file's corresponding namespace table
             file!.Namespace = namesspace;
         }
         
@@ -86,28 +112,39 @@ namespace AST
 
         public void Visit(ChewPath n) {}
 
+        // update current class table
         public void Visit(Class n)
          {
+            // update current class table (note it has various scopes inside it, starting from outermost scope)
             currClass = new GumTable(n.Visbility, n.IsSticky, n.Name, n.LineNumber, n.StartCol);
             currClass.OutermostScope.ParentScope = currScope;
             currScope = currClass.OutermostScope;
 
             foreach (var info in n.ClassMemberInfo) {
-                if (info.Item4 is Function) {
-                    
+                if (info.Item4 is Function)
+                {
                     Function node = (Function)info.Item4;
-                    (string name, List<RecipeFlavorInfo> parameters, List<RecipeFlavorInfo> outputs) = parseHeader(node.Header);
-                    
-                    // duplicate function in class check
-                    if (currClass.Recipes.ContainsKey(name)) {
-                        Errors.DuplicateRecipeInClass(name, currClass.Name, filePath, node.LineNumber);
+                    (string name, List<RecipeFlavorInfo> parameters, List<RecipeFlavorInfo> outputs) = getFunctionInfo(node.Header);
+
+                    // create unique function key and add it to the function header node itself (in the AST)
+                    node.Header.Key = RecipeKeys.Generate(name, node.Header.Params);
+
+                    // if keys aren't unique, then functions are literal duplicates (same name, same parameters, etc.)
+                    Dictionary<string, RecipeTable> recipesWithSameName = currClass.Functions[name];
+                    if (recipesWithSameName[name] != null && recipesWithSameName.ContainsKey(node.Header.Key)) {
+                        Errors.DuplicateRecipeInClass(node.Header.Key, currClass.Name, filePath, node.LineNumber);
                         continue;
                     }
 
+                    // add function to class table
                     currFunction = new GumRecipeTable(info.Item2, info.Item1, name, parameters, outputs, 
                         node.LineNumber, node.StartCol);
                     Visit((Function)info.Item4);
-                    currClass.Recipes[currFunction.Name] = (GumRecipeTable)currFunction;
+
+                    if (!currClass.Functions.ContainsKey(name))
+                        currClass.Functions[name] = new();
+
+                    currClass.Functions[name][node.Header.Key] = (GumRecipeTable)currFunction;
                 }
                 else if (info.Item4 is PrimitiveDeclaration1) {
                     PrimitiveDeclaration1 node = (PrimitiveDeclaration1)info.Item4;
@@ -126,8 +163,8 @@ namespace AST
             currScope = currScope!.ParentScope;
 
             if (namesspace!.Classes.ContainsKey(n.Name) 
-                || namesspace.Interfaces.ContainsKey(n.Name)
-                || namesspace.Structs.ContainsKey(n.Name)) {
+                || namesspace!.Interfaces.ContainsKey(n.Name)
+                || namesspace!.Structs.ContainsKey(n.Name)) {
                 Errors.DuplicateClassInNamespace(n.Name, namesspace.Name, filePath, n.LineNumber);
             }
             else {
@@ -137,19 +174,28 @@ namespace AST
         }
 
         public void Visit(Interface n) {
+            // set interface table and update its info by scopes
             currInterface = new WrapperTable(n.Visbility, n.IsSticky, n.Name, n.LineNumber, n.StartCol);
-
             ScopeTable ogScope = currScope;
             currScope = new ScopeTable();
 
             foreach (var info in n.InterfaceMemberInfo) {
+
+                // update function table inside interface table
                 if (info.Item4 is FunctionHeader) {
                     FunctionHeader node = (FunctionHeader)info.Item4;
-                    (string name, List<RecipeFlavorInfo> parameters, List<RecipeFlavorInfo> outputs) = parseHeader(node);
+                    (string name, List<RecipeFlavorInfo> parameters, List<RecipeFlavorInfo> outputs) = getFunctionInfo(node);
                     
                     currFunction = new GumRecipeTable(info.Item2, info.Item1, name, parameters, outputs, 
                         node.LineNumber, node.StartCol);
-                    currInterface.Recipes[currFunction.Name] = (GumRecipeTable)currFunction;
+
+                    // create unique function key and add it to the function header node itself (in the AST)
+                    node.Key = RecipeKeys.Generate(name, node.Params);
+
+                    if (!currInterface.Functions.ContainsKey(name))
+                        currInterface.Functions[name] = new();
+
+                    currInterface.Functions[name][node.Key] = (GumRecipeTable)currFunction;
                 }
                 else if (info.Item4 is PrimitiveDeclaration1) {
                     PrimitiveDeclaration1 node = (PrimitiveDeclaration1)info.Item4;
@@ -171,21 +217,23 @@ namespace AST
             
             currScope = ogScope;
 
+            // add this interface table to it's corresponding namespace and file table
             if (namesspace!.Classes.ContainsKey(n.Name) 
-                || namesspace.Interfaces.ContainsKey(n.Name)
-                || namesspace.Structs.ContainsKey(n.Name)) {
+                || namesspace!.Interfaces.ContainsKey(n.Name)
+                || namesspace!.Structs.ContainsKey(n.Name)) {
                 Errors.DuplicateInterfaceInNamespace(n.Name, namesspace.Name, filePath, n.LineNumber);
             }
             else {
-                namesspace.Interfaces.Add(n.Name, currInterface);
+                namesspace!.Interfaces.Add(n.Name, currInterface);
                 file!.Interfaces.Add(n.Name, currInterface);
             }
         }
 
         
         public void Visit(Struct n) {
-            currStruct = new CandyTable(n.Name, n.Visibility, n.LineNumber, n.StartCol);
 
+            // create struct table and update its info by scope
+            currStruct = new CandyTable(n.Name, n.Visibility, n.LineNumber, n.StartCol);
             ScopeTable ogScope = currScope!;
             currScope = new ScopeTable();
 
@@ -210,6 +258,7 @@ namespace AST
             
             currScope = ogScope;
             
+            // added struct table to its corresponding file table and namespace table
             if (namesspace!.Classes.ContainsKey(n.Name) 
                 || namesspace.Interfaces.ContainsKey(n.Name)
                 || namesspace.Structs.ContainsKey(n.Name)) {
@@ -221,8 +270,10 @@ namespace AST
             }
         }
 
-
-        private (string, List<RecipeFlavorInfo>, List<RecipeFlavorInfo>) parseHeader(FunctionHeader n) 
+        // returns variable info for a function given a function header node
+        // returns the function name, a list of info about its parameter vars (flavors), and a list
+        // of info about its output vars (flavors)
+        private (string, List<RecipeFlavorInfo>, List<RecipeFlavorInfo>) getFunctionInfo(FunctionHeader n) 
         {
             var parameters = new List<RecipeFlavorInfo>();
             var outputs = new List<RecipeFlavorInfo>();
@@ -239,6 +290,7 @@ namespace AST
             return (n.Name, parameters, outputs);
         }
 
+        // update function table
         public void Visit(Function n)
         {
             currFunction!.OutermostScope.ParentScope = currScope;
@@ -249,6 +301,7 @@ namespace AST
             }
         }
 
+        // creates symbol for variable info, and adds a reference to that in current scope table. Requires a type of var declaration
         private void addToScope(PrimitiveDeclaration1 node, Visbility get, Visbility set, bool isSticky) {
             foreach (string name in node.Variables) {
                 var newVar = new GumFlavorInfo(get, set, isSticky, name, 
@@ -260,7 +313,9 @@ namespace AST
                     currScope!.Vars.Add(name, newVar);
             }
         }
-         private void addToScope(PrimitiveDeclaration2 node, Visbility get, Visbility set, bool isSticky) {
+
+        // creates symbol for variable info, and adds a reference to that in current scope table. Requires a type of var declaration
+        private void addToScope(PrimitiveDeclaration2 node, Visbility get, Visbility set, bool isSticky) {
             foreach (var pair in node.TypeVarPair) {
                 PrimitiveType type = new PrimitiveType(pair.Item1);
                 string name = pair.Item2;
@@ -273,6 +328,8 @@ namespace AST
                     currScope!.Vars.Add(name, newVar);
             }
         }
+
+        // creates symbol for variable info, and adds a reference to that in current scope table. Requires a var assignment
         private void addToScope(Assignment node, Visbility get, Visbility set, bool isSticky) {
             // we only care about new vars being assigned
             foreach (var assignee in node.Assignees) {
@@ -293,6 +350,7 @@ namespace AST
 
         public void Visit(AssignDeclLHS n) {}
 
+        //
         public void Visit(Assignment n)
         { 
             // we only care about new vars being assigned

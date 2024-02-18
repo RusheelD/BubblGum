@@ -19,7 +19,7 @@ namespace AST
         public GumTable? ParentGum;
         public HashSet<WrapperTable> ParentWrappers;
         
-        public Dictionary<string, GumRecipeTable> Recipes;
+        public Dictionary<string, Dictionary<string, RecipeTable>> Functions; // key = recipe name, second_key = recipe key
 
         public ScopeTable OutermostScope;
         
@@ -34,7 +34,7 @@ namespace AST
             Name = name;
 
             ParentWrappers = new();
-            Recipes = new();
+            Functions = new();
             OutermostScope = new();
             
             LineNum = line;

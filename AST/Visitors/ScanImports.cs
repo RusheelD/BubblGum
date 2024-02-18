@@ -10,6 +10,8 @@ using static BubblGumParser;
 
 namespace AST
 {
+    /// <summary> Does import scanning, and returns a list of all new files that should be imported 
+    /// because of the provided file. </summary>
     public class ScanImports
     {
         private Namespace baseNamespace;

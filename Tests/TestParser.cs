@@ -35,7 +35,7 @@ public class TestParser
             // parse test file and if successful, store output in memory stream
             var memoryStream = new MemoryStream();
             var outputStream = new StreamWriter(TEMP_TEST_FILE_NAME, false);
-            bool isSuccess = BubblGum.ExecuteParser(new List<string>() { inputFile }, outputStream);
+            bool isSuccess = BubblGum.ParseFilesToASTs(new List<string>() { inputFile }, outputStream);
             Assert.AreEqual(shouldSucceed, isSuccess);
 
             // compare received output to expected output

@@ -18,7 +18,7 @@ namespace AST
         public Dictionary<string, WrapperTable> Interfaces;
         public Dictionary<string, GumTable> Classes; 
         public Dictionary<string, CandyTable> Structs; 
-        public Dictionary<string, RecipeTable> Functions;
+        public Dictionary<string, Dictionary<string, RecipeTable>> Functions; // key = recipe name, second_key = recipe key
         public ScopeTable OuterScope;
 
         public List<StockTable> ImportedNamespaces;

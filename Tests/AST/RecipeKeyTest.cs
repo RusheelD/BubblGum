@@ -8,7 +8,7 @@ using System.Text;
 public static class RecipeKeyTest
 {
     private const int numMethods = 100000;
-    private const int numParameters = 10;
+    private const int numParameters = 5;
 
     // tests out unique methods key generation + lookup
     // prints performance time in milliseconds
@@ -35,13 +35,14 @@ public static class RecipeKeyTest
 
         // generate unique lookup keys for all methods
         // print time to do so
-        timer.Start();
+      //  timer.Start();
         for (int i = 0; i < numMethods; i++)
         {
             keys.Add(RecipeKeys.Generate(methodNames[i], parameterList));
             RecipeTables[keys[i]] = i * 2 - 1;
         }
 
+        /*
         Console.WriteLine($"Time:{timer.ElapsedMilliseconds}");
         timer.Restart();
 
@@ -52,7 +53,47 @@ public static class RecipeKeyTest
         if (a != 2)
             Console.WriteLine("result was " + a);
 
+        Console.WriteLine($"Time:{timer.ElapsedMilliseconds}");*/
+
+
+        Dictionary<string, int> dict = new();
+        List<int> list = new(); //
+
+        Random random = new Random();
+        for (int i = 0; i < 3; i++)
+        {
+            int num = random.Next();
+            dict[keys[i]] = num;
+            list.Add(num);
+        }
+
+        timer.Start();
+        long test = 0;
+        for (int i = 0; i < 10000000; i++)
+        {
+            int b = dict[keys[i%3]] + random.Next(0,2);
+            test += b;
+        }
+
+        if (test == 4)
+            return;
+
         Console.WriteLine($"Time:{timer.ElapsedMilliseconds}");
+        timer.Stop();
+        timer.Restart();
+        timer.Start();
+        test = 0;
+        for (int i = 0; i < 10000000; i++)
+        {
+            int b = list[i%3] + random.Next(0, 2);
+            test += b;
+        }
+
+        if (test == 4)
+            Console.Write("bruh");
+
+        Console.WriteLine($"Time:{timer.ElapsedMilliseconds}");
+
     }
 
     private static AnyType getRandomType(Random rand)

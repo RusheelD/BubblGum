@@ -10,6 +10,7 @@ using static BubblGumParser;
 
 namespace AST
 {
+    /// <summary> Prints a program AST </summary>
     public class PrintAST : Visitor, TypeVisitor
     {
         private int nestedPrints = 0;

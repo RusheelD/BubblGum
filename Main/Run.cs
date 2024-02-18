@@ -21,13 +21,15 @@ public class Run
 
         else if (args[0] == "test")
         {
-            (bool success, HashSet<string> filePath) = BubblGum.ExecuteHeaderParser(args[1], Console.Out);
+            RecipeKeyTest.Execute();
+            /*
+            (bool success, HashSet<string> filePath) = BubblGum.GetAllFilesUsed(args[1], Console.Out);
             if (filePath != null)
             {
                 foreach (string path in filePath)
                     Console.WriteLine(path);
             }
-            Console.WriteLine(success);
+            Console.WriteLine(success);*/
         }
     }
 }

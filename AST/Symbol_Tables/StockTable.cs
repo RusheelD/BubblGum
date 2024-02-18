@@ -18,7 +18,7 @@ namespace AST
         public Dictionary<string, WrapperTable> Interfaces; // interfaces
         public Dictionary<string, GumTable> Classes; // classes
         public Dictionary<string, CandyTable> Structs; // structs
-        public Dictionary<string, RecipeTable> Functions; // global functions
+        public Dictionary<string, Dictionary<string, RecipeTable>> Functions; // global functions, key = recipe name, second_key = recipe key
         public Dictionary<string, FlavorInfo> Vars; // global vars (outermost scope)
 
         public StockTable(string name)

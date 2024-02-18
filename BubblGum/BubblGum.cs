@@ -26,6 +26,16 @@ public class BubblGum
     private const string ERROR_MSG = "Please specify a valid mode (-P) to parse file and a file to scan";
 
 
+    /// <summary>
+    ///  Handles bubble gum terminal run commands. Requires an args list with what part of the compiler to run (see options below)
+    ///  and the main entry file's path.
+    ///  
+    ///  Run options (strings):
+    ///    - A (run entire compiler)
+    ///    - H (Get all files used)
+    ///    - P (Parse files used to ASTs)
+    ///    - T (Execute semantic analysis on ASTs)
+    /// </summary>
     public static void Execute(string[] args)
     {
         if (args.Length != 2)
@@ -43,21 +53,21 @@ public class BubblGum
         TextWriter outStream = (!DEBUG_MODE) ? Console.Out : new StreamWriter(OUTPUT_FILE, false);
 
         if (args[0].Equals("-A")) {
-            (bool success, HashSet<string> filePaths) = ExecuteHeaderParser(args[1], outStream);
+            (bool success, HashSet<string> filePaths) = GetAllFilesUsed(args[1], outStream);
             if (!success)
                 return;
             
-            success = ExecuteParser(filePaths.ToList(), outStream);
+            success = ParseFilesToASTs(filePaths.ToList(), outStream);
             if (!success)
                 return;
 
             success = ExecuteSemanticAnalysis(args[1], outStream);
         } 
         else if (args[0].Equals("-H")) {
-            ExecuteHeaderParser(args[1], outStream);
+            GetAllFilesUsed(args[1], outStream);
         } 
         else if (args[0].Equals("-P")) {
-            ExecuteParser(new List<string>() { args[1] }, outStream);
+            ParseFilesToASTs(new List<string>() { args[1] }, outStream);
         }
         else if (args[0].Equals("-T")) {
             ExecuteSemanticAnalysis(args[1], outStream);
@@ -67,7 +77,12 @@ public class BubblGum
             Console.Error.WriteLine("Specified compiler mode not yet implemented");
     }
 
-    public static (bool, HashSet<string>?) ExecuteHeaderParser(string filePath, TextWriter outStream) 
+    /// <summary>
+    ///  Requires the main entry file's path, and an outstream to print compiler messages to. 
+    ///  Finds all the files USED by the overall program based on main file, it's stock, 
+    ///  and all imported stocks + files. Also finds files USED based on config files.
+    /// </summary>
+    public static (bool, HashSet<string>?) GetAllFilesUsed(string filePath, TextWriter outStream) 
     {
         if (!File.Exists(filePath))
         {
@@ -88,30 +103,32 @@ public class BubblGum
         Console.SetOut(outStream);
 
         // add all file paths recursively in main file's directory + subdirectories
+        // add all file paths in imported external directories from config files
         filePath = Path.GetRelativePath(directoryPrefix, filePath);
         List<string>filePathsFound = getFilePathsRecursively();
 
-        foreach (string file in filePathsFound)
-            Console.WriteLine(file);
-
+        // create a namespace table and populate it with all namespaces and files in each namespace or sub-namespace
         var baseNamespace = new Namespace("");
         var filePathToProgram = new Dictionary<string, Program>();
-        (bool success, string errorPath) = updateNamespaceAndPrograms(baseNamespace, filePathToProgram, filePathsFound);
+        (bool success, string errorPath) = populateNamespaceTable(baseNamespace, filePathToProgram, filePathsFound);
+
         if (!success) {
             Console.SetOut(originalOutStream);
             Console.Error.WriteLine($"Parsing failed for file {errorPath} due to syntax errors.");
             return (false, null);
         }
 
-        // generate list of all files used
-        // start with the main entry point file, and scan its import statements with BFS
+        // generate condensed list of all files USED (optimization before code-generation, not all coded files need to be generated)
+        // start with the main entry point file, and scan its import statements
         var allFilesUsed = new HashSet<string>() {};
         var filesToScan = new Queue<string>();
         filesToScan.Enqueue(filePath);
 
-        // setup import scanning
+        // do import scanning. 
         var scanImports = new ScanImports(baseNamespace, filePathToProgram, allFilesUsed);
         int errorCount = 0;
+
+        // scan all files used in the provided file path, and then repeat for those files 
         while (filesToScan.Count > 0)
         {
             var path = filesToScan.Dequeue();
@@ -129,13 +146,12 @@ public class BubblGum
         Console.Out.Close();
         Console.SetOut(originalOutStream);
 
-        success = errorCount == 0;
         return (errorCount == 0, allFilesUsed);
     }
 
-    // Takes in an outstream to print compiler messages to, and a file to parse
+    // Takes in an outstream to print compiler messages to, and a list of file paths to parse into ASTs.
     // Returns whether parsing was successful (ie. 0 errors)
-    public static bool ExecuteParser(List<string> filePaths, TextWriter outStream)
+    public static bool ParseFilesToASTs(List<string> filePaths, TextWriter outStream)
     {
         var originalOutStream = Console.Out;
         Console.SetOut(outStream);
@@ -173,75 +189,8 @@ public class BubblGum
     }
     public static bool ExecuteSemanticAnalysis(string filePath, TextWriter outStream) {return true;}
 
-    private static void printProgramPieces(Program program)
-    {
-        var nodes = new Stack<Statement>();
-        for (int i = program.Pieces.Count - 1; i >= 0; i--)
-            nodes.Push((Statement)program.Pieces[i]);
-
-        while (nodes.Count > 0)
-        {
-            var node = nodes.Pop();
-            Console.WriteLine($"{node.GetType()}");
-        }
-    }
-
-    private static void dfs(BubblGumParser.ProgramContext rootNode)
-    {
-        var branches = new Stack<IParseTree>();
-        for (int i = rootNode.children.Count - 1; i >= 0; i--)
-            branches.Push(rootNode.children[i]);
-
-        int lineNum = 1;
-        while (branches.Count > 0)
-        {
-            var tree = branches.Pop();
-            for (int i = tree.ChildCount - 1; i >= 0; i--)
-                branches.Push(tree.GetChild(i));
-
-            if (tree.ChildCount == 0)
-            {
-                var token = (IToken)tree.Payload;
-
-                // EOF
-                if (token.Type == -1)
-                    break;
-
-                if (token.Line != lineNum)
-                {
-                    lineNum = token.Line;
-                    Console.Out.Write("\n" + token.Text + " ");
-                    Console.Out.Write(token.Line + " " + token.Column + " " +
-                        BubblGumLexer.ruleNames[token.Type-1] + "\n");
-                }
-                else
-                {
-                    Console.Write(token.Text + " ");
-                    Console.Out.Write(token.Line + " " + token.Column + " " + 
-                        BubblGumLexer.ruleNames[token.Type-1] + "\n");
-                }
-            }
-        }
-    }
-
-    private static void bfs(BubblGumParser.ProgramContext rootNode)
-    {
-        var treesToExplore = new Queue<IParseTree>();
-        for (int i = 0; i < rootNode.children.Count; i++)
-            treesToExplore.Enqueue(rootNode.children[i]);
-
-        while (treesToExplore.Count > 0)
-        {
-            var tree = treesToExplore.Dequeue();
-            for (int i = 0; i < tree.ChildCount; i++)
-                treesToExplore.Enqueue(tree.GetChild(i));
-
-            if (tree.ChildCount == 0)
-                Console.Out.Write(tree.GetText() + " ");
-        }
-    }
-
     // add all file paths recursively in main file's directory + subdirectories
+    // add all file paths in imported external directories from config files
     private static List<string> getFilePathsRecursively() 
     {
         string requiredFileEnding = "*" + Constants.FILE_EXTENSION;
@@ -270,7 +219,8 @@ public class BubblGum
         return filePathsFound;
     }
 
-    private static (bool, string) updateNamespaceAndPrograms(Namespace baseNamespace, 
+    // add all file paths recursively in main file's directory + subdirectories
+    private static (bool, string) populateNamespaceTable(Namespace baseNamespace, 
         Dictionary<string, Program> filePathToProgram, List<string> filePathsFound)
     {
         
@@ -301,6 +251,8 @@ public class BubblGum
         return (true, "");
     }
 
+    // read all the specified config files, and add their listed directories to a collection of directories to search
+    // also requires the current directory (that config files are in)
     private static void parseConfigs(string[] configs, Queue<string> directoriesToSearch, string currDirectory)
     {
         foreach (var config in configs)
@@ -319,8 +271,6 @@ public class BubblGum
                             directoriesToSearch.Enqueue(fullPath);
                         else
                             Console.Error.WriteLine($"External directory {{{dir}}} could not be imported in {{{config}}}");
-
-                        // check if it is a file after
                     }
                 }
                 else

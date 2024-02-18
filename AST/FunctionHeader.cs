@@ -13,6 +13,8 @@ namespace AST
         public List<(bool, AnyType, string, bool)> Params; // isImmutable, type, name, isEllipses
         public List<(AnyType, string, bool)> Outputs; // Type, VarName, HasEllipses
 
+        public string? Key; // Dictionary lookup key unique to this function
+
         public FunctionHeader(string name, List<(bool, AnyType, string, bool)> Params,
             List<(AnyType, string, bool)> outputs, int lineNumber, int startCol)
         {
