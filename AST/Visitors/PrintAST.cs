@@ -18,7 +18,6 @@ namespace AST
         private int numTabs = 0;
 
         // program + program piecesend
-
         public void Visit(Program n)
         {
             foreach (var piece in n.Pieces)

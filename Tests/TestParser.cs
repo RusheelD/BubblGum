@@ -61,7 +61,6 @@ public class TestParser
         }
     }
 
-
     [TestMethod]
     public void testIfStatements()
     {

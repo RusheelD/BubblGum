@@ -47,7 +47,9 @@ namespace AST
             visit(filePathToProgram[currFilePath]);
             return (success, newFilesToImport);
         }
-        
+
+
+        // entry point
         private void visit(Program n)
         {
             foreach (var node in n.Pieces)
@@ -62,7 +64,10 @@ namespace AST
             }
         }
 
+        // import the namespace this file is literally a part of
         private void visit(Stock n) {
+
+            // get a reference to the corresponding Namespace node based on namespace label
             Namespace currNamespace = baseNamespace;
             foreach (string name in n.Names)
             {
@@ -75,8 +80,10 @@ namespace AST
            importNamespace(currNamespace);
         }
 
+        // import an external namespace
         private void visit(ChewNames n) 
         {
+            // get a reference to the corresponding Namespace node based on namespace label
             Namespace currNamespace = baseNamespace;
             foreach (string name in n.Names)
             {
@@ -89,9 +96,11 @@ namespace AST
                 currNamespace = currNamespace.ChildNamespaces[name];
             }
             
-           importNamespace(currNamespace);
+            // import said namespace
+            importNamespace(currNamespace);
         }
         
+        // based on import path name, add a specific imported file to list of new Files to Import
         private void visit(ChewPath n)
         {
             string? shortDirectory = Path.GetDirectoryName(currFilePath);
@@ -106,8 +115,6 @@ namespace AST
             var fullPath = Path.Combine(Path.Combine(directoryPrefix, shortDirectory), n.Path);
             var key = Path.GetRelativePath(directoryPrefix, fullPath);
 
-            var sb = new StringBuilder();
-
             if (filePathToProgram.ContainsKey(key) && !filesUsed.Contains(key))
                 newFilesToImport.Add(key);
             else {
@@ -116,12 +123,15 @@ namespace AST
             }
         }
 
+        // Mark the provided namespace and all it's child namespaces (recursively) as imported
+        // Adds all files (in all newly imported namespaces) to the list of new Files To Import
         private void importNamespace(Namespace currNamespace) {
             if (currNamespace.IsImported)
                 return;
 
             var namespacesToAdd = new Queue<Namespace>();
             namespacesToAdd.Enqueue(currNamespace);
+
             while (namespacesToAdd.Count > 0) {
                 var tempNamespace = namespacesToAdd.Dequeue();
                 tempNamespace.IsImported = true;

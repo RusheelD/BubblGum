@@ -10,11 +10,13 @@ using static BubblGumParser;
 
 namespace AST
 {
+    /// <summary> Add file paths to namespaces in Namespace Table </summary>
     public class GatherNamespaces
     {
         private Namespace baseNamespace;
         private string filePath;
 
+        /// <summary> Add current file path to this namespace in Namespace Table </summary>
         public void Execute(Program n, Namespace baseNamespace, string filePath)
         {
             this.baseNamespace = baseNamespace;
@@ -30,8 +32,10 @@ namespace AST
             }
         }
 
+        // add current file path to this namespace
         public void Visit(Stock n)
         {
+            // get a reference to the corresponding Namespace node based on namespace label
             Namespace currNamespace = baseNamespace;
             foreach (string name in n.Names)
             {
