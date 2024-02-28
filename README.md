@@ -145,6 +145,7 @@ recipe: DetectOverlap([Physics->Collisions.CircleCollider] cols) yum {
                  
                   if (dist < radiiSum):
                      pop yup
+		     pop
               } 
            }
         }
