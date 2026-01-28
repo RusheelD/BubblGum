@@ -1,0 +1,6 @@
+# Simple test program for LLVM code generation
+recipe: main() sugar {
+    sugar x :: 42
+    (x)!
+    pop 0
+}

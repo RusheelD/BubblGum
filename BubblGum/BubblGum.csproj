@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -12,6 +12,7 @@
     <ProjectReference Include="..\Lexer_Parser\AntlrCSharp.csproj" />
     <ProjectReference Include="..\AST\Ast.csproj" />
     <ProjectReference Include="..\Preprocessing\Preprocessing.csproj" />
+    <ProjectReference Include="..\CodeGeneration\CodeGeneration.csproj" />
   </ItemGroup>
 
 </Project>
